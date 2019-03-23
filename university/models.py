@@ -54,6 +54,8 @@ class Subject(models.Model):
     credits = models.FloatField()
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
     coordinator = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)
+    # 1 or 2
+    half = models.IntegerField()
 
 
 class CourseSubject(models.Model):
