@@ -75,8 +75,14 @@ WSGI_APPLICATION = 'university_management_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
+        # 'ENGINE': 'django.db.backends.mysql' instead of the following.
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'polls',
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
     }
 }
 
