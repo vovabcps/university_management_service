@@ -3,7 +3,14 @@ from .models import *
 
 # Register your models here.
 admin.site.register(SchoolYear)
-admin.site.register(Room)
+
+
+class RoomAdmin(admin.ModelAdmin):
+  search_fields = ["room_number"]
+  list_filter = ("can_give_class", "room_number")
+  list_display = ("room_number","can_give_class")
+admin.site.register(Room, RoomAdmin)
+
 admin.site.register(Role)
 admin.site.register(SystemUser)
 admin.site.register(PersonalInfo)

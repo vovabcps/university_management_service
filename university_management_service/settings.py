@@ -75,18 +75,30 @@ WSGI_APPLICATION = 'university_management_service.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+"""
+
+
 DATABASES = {
     'default': {
         # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
         # 'ENGINE': 'django.db.backends.mysql' instead of the following.
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wyvern',
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'NAME': 'mysql', #'NAME': 'wyvern',
+        'USER': 'root', #os.getenv('DATABASE_USER'),
+        'PASSWORD': 'pass', #os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
+
+
 
 
 # Password validation
@@ -126,3 +138,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
+#...../university_management_service/university/static
