@@ -1,9 +1,11 @@
 from django.db import migrations, transaction
 from ..models import *
 from django.conf import settings
-from django.contrib.auth import get_user_model
 import math
+import random
 from django.contrib.auth.models import User
+from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 
 
@@ -78,15 +80,43 @@ def makeRoleOBJs():
 
 @transaction.atomic
 def makeAuth_userOBJs():
-    newUSER= User.objects.create_user(username="adminF", password="damabranca", is_superuser=True, is_staff=True)
+    newUSER= User.objects.create_user(username="adminF", password="damabranca", email="adminF@alunos.fc.ul.pt", is_superuser=True, is_staff=True)
+    #newUSER= User(username="adminF", password="damabranca", email="adminF@alunos.fc.ul.pt", is_superuser=True, is_staff=True)
     newUSER.save()
-    with open(settings.STATIC_ROOT + "/peoplesName800PT.txt") as rfile:
-        for line in rfile:
-            #[fname, lname] = line.split()
-            fname_lname = line.split()
-            obj = User.objects.latest('id')
-            newUSER= User.objects.create_user(username="fc"+str((obj.id+1)), password=fname_lname[0]+"123", email="fc"+str((obj.id+1))+"@alunos.fc.ul.pt", is_superuser=False, first_name=fname_lname[0], last_name=fname_lname[1])
-            newUSER.save()
+    for _ in range(799):
+        obj = User.objects.latest('id')
+        newUSER= User.objects.create_user(username="fc"+str((obj.id+1)), password="blabla"+str((obj.id+1)), email="fc"+str((obj.id+1))+"@alunos.fc.ul.pt", is_superuser=False)
+        #newUSER= User(username="fc"+str((obj.id+1)), password="blabla"+str((obj.id+1)), email="fc"+str((obj.id+1))+"@alunos.fc.ul.pt", is_superuser=False)
+        newUSER.save()
+
+
+@transaction.atomic
+def makeSystemUserOBJs():
+    allUsers= User.objects.all()
+    r= Role.objects.get(role="Aluno")
+    for user in allUsers :
+        newUSER= SystemUser(user=user) #,rooms= )
+        newUSER.save()
+        newUSER.roles.add(r)
+
+
+@transaction.atomic
+def makePersonalInfoOBJs():
+    allSystemUsers= SystemUser.objects.all()
+    with open(settings.STATIC_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt") as rfile:
+        listData = rfile.readlines()
+    num= 0
+    for user in allSystemUsers :
+        name, gender, nationality, date_str, address, vat =listData[num].split("||")
+        email= name.split()[-1]+str(user.id)+random.choice(["@hotmail.com", "@gmail.com"]) #unique
+        phone = "9" + str(random.randint(00000000,99999999)) #because they are in portugal so they need a pt phone number xd
+        random.seed(user.id)
+        idDocument= str(random.randint(00000000,99999999)) #unique
+        date = datetime.strptime(date_str, "%d/%m/%Y").date()
+        newUSER= PersonalInfo(user=user, address=address, birth_date=date, name=name,
+                 phone_number=phone, personal_email=email, gender=gender, nationality=nationality, id_document=idDocument, vat_number=vat)
+        newUSER.save()
+        num += 1
 
 
 def mainInsertData(apps, schema_editor):
@@ -94,6 +124,8 @@ def mainInsertData(apps, schema_editor):
     makeSchoolYearOBJs(2017,2019)
     makeRoomOBJs(200,42)
     makeAuth_userOBJs()
+    makeSystemUserOBJs()
+    makePersonalInfoOBJs()
 
 class Migration(migrations.Migration):
     dependencies = [

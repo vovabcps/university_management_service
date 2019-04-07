@@ -22,7 +22,12 @@ class SystemUser(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     roles = models.ManyToManyField(Role)
     rooms = models.ManyToManyField(Room)
-#(1, 1, 1)
+
+    def get_roles(self):
+        return "\n".join([r.role for r in self.roles.all()])
+
+    def get_rooms(self):
+        return "\n".join([room.room_number for room in self.rooms.all()])
 
 
 class PersonalInfo(models.Model):
@@ -36,7 +41,6 @@ class PersonalInfo(models.Model):
     nationality = models.CharField(max_length=200, null=True)
     id_document = models.CharField(max_length=200, null=True, unique=True)
     vat_number = models.CharField(max_length=200, null=True, unique=True)
-#(2, Rua de Sesamo, 12/12/2012, Rute Monteiro, 933 333 333, hotmail, Female, Portugues, 15155821, nif )
 
 
 class Course(models.Model):
