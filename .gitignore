@@ -19,3 +19,4 @@ coverage.xml
 *.log
 .git
 settings.py
+.DS_Store
