@@ -20,16 +20,18 @@ class RoleAdmin(admin.ModelAdmin):
     list_display = ["role"]
 admin.site.register(Role, RoleAdmin)
 
+
 class SystemUserAdmin(admin.ModelAdmin):
-    search_fields = ["user", "roles", "rooms"]
-    list_filter = ["roles"]
+    search_fields = ["user__username"]
+    list_filter = ["roles__role"]
     list_display = ["user", "get_roles", "get_rooms"]
 admin.site.register(SystemUser, SystemUserAdmin)
 
+
 class PersonalInfoAdmin(admin.ModelAdmin):
-    search_fields = ["user", "birth_date", "personal_email", "name", "id_document", "vat_number"]
+    search_fields = ["user__user__username", "personal_email", "name", "id_document", "vat_number"]
     list_filter = ["gender", "nationality"]
-    list_display = [ "name" , "personal_email", "gender", "nationality", "birth_date", "vat_number"]
+    list_display = [ "get_systemUser_user", "name" , "personal_email", "gender", "nationality", "birth_date", "vat_number"]
 admin.site.register(PersonalInfo, PersonalInfoAdmin)
 
 
