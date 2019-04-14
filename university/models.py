@@ -18,6 +18,8 @@ class Role(models.Model):
 
 
 
+#1 aluno pode pertece a mais que uma faculdade (so se for minor)
+
 class SystemUser(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     roles = models.ManyToManyField(Role)
@@ -46,37 +48,62 @@ class PersonalInfo(models.Model):
         return self.user.user #ex: fc1085
 
 
+class Faculdade(models.Model):
+    name = models.CharField(max_length=200, default="Faculdade de Ciências")
+
+
 class Course(models.Model):
     name = models.CharField(max_length=200, unique=True)
-    credits_number = models.FloatField()
-    coordinator = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)
-    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
-#(LTI , 260.0, professor, 2018/2019)
+    grau = models.CharField(max_length=200, null=False, default="Licenciatura")
+    #Licenciatura, Minor, ramos, mestrado
+    credits_number = models.IntegerField(default=180)
+    duration= models.IntegerField(null=True) #semesters
+    timetable= models.CharField(max_length=200, null=True)
+    coordinator = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)
+     #o coordenador é um professor qualquer, nao precisa de dar nenhuma aula das cadeiras desse curso
+    minors_ramos= models.ManyToManyField("self")
 
+
+class SystemUser_Faculdade(models.Model): #ex: fazer minor em outra faculdade
+    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+    faculdade= models.ForeignKey(Faculdade, on_delete=models.CASCADE)
+
+class Course_Faculdade(models.Model):
+    faculdade= models.ForeignKey(Faculdade, on_delete=models.CASCADE)
+    course= models.ForeignKey(Course, on_delete=models.CASCADE)
+
+class Course_SchoolYear(models.Model):
+    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
+    course= models.ForeignKey(Course, on_delete=models.CASCADE)
 
 class SystemUserCourse(models.Model):
+    #users que estao inscritos em cursos
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    semester1 = models.IntegerField(null=True)
-    semester2 = models.IntegerField(null=True)
-#(49050, LTI, 1, 2)
+    estadoActual = models.CharField(max_length=200, null=True) #ex: matriculado
+    anoLectivoDeInício = models.CharField(max_length=200, null=True) #ex: 2016/2017
+    anoActual = models.IntegerField(null=True) #1ºano, 2ºano, ...
+
+class SystemUser_SchoolYear(models.Model):
+    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+    
 
 
 class Subject(models.Model):
+    #id -> codigo
     name = models.CharField(max_length=200, unique=True)
-    credits = models.FloatField()
-    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
-    coordinator = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)
-    # 1 or 2
-    half = models.IntegerField(default=0)
-#(Aplicações Distribuidas, 6.0, 2018/2019, Jóse Cecilio, ???)
+    credits_number = models.IntegerField(default=6) 
+    regente = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
+
 
 
 class CourseSubject(models.Model):
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    semester = models.IntegerField()
-#(Aplicações Distribuidas, LTI, 1)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    year= models.IntegerField(default=0) #1,2,3,4..
+    semester = models.IntegerField(default=0) # 1 or 2 
+    type= models.CharField(max_length=200, null=False, default="Semestral") #Semestral, Semestral (Opção), Anual
 
 
 class SystemUserSubject(models.Model):
@@ -85,7 +112,7 @@ class SystemUserSubject(models.Model):
     # 0 - pending, 1 - approved, 2 - not approved
     state = models.IntegerField(null=True)
     grade = models.FloatField(null=True)
-#(49050, Aplicações Distribuidas, 2, ?null?)
+
 
 
 class Lesson(models.Model):
@@ -96,6 +123,7 @@ class Lesson(models.Model):
     duration = models.FloatField()
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
     users = models.ManyToManyField(SystemUser)
-#(0, 2, 18:45, 1:30, 3.2.15, Aplicações Distribuidas, 2018/2019, 49050)
+    presenças= models.IntegerField()
+
+
