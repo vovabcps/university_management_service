@@ -1,11 +1,10 @@
 from django.urls import path
 from . import views
 
-
-#university.urls
-
 urlpatterns = [
-    path('', views.login, name='login'), 
+    path('', views.login_page, name='login'),
+
+    path('logout', views.logout_user, name='logout'),
 
     path('profile', views.profile, name='profile'), 
 
@@ -26,4 +25,3 @@ urlpatterns = [
     path('admin/password_alt', views.password_alt_a, name='password_alt_a'), 
 
 ]
-
