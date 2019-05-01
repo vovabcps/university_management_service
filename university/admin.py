@@ -21,11 +21,11 @@ class RoleAdmin(admin.ModelAdmin):
 admin.site.register(Role, RoleAdmin)
 
 
-class SystemUserAdmin(admin.ModelAdmin):
-    search_fields = ["user__username"]
-    list_filter = ["roles__role"]
-    list_display = ["user", "get_roles", "get_rooms"]
-admin.site.register(SystemUser, SystemUserAdmin)
+#class SystemUserAdmin(admin.ModelAdmin):
+#    search_fields = ["user__username"]
+#    list_filter = ["roles__role"]
+#    list_display = ["user", "get_roles", "get_rooms"]
+#admin.site.register(SystemUser, SystemUserAdmin)
 
 
 class PersonalInfoAdmin(admin.ModelAdmin):
