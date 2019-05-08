@@ -85,7 +85,7 @@ DATABASES = {
 }
 """
 
-
+"""
 DATABASES = {
     'default': {
         # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
@@ -98,7 +98,27 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+"""
 
+
+DATABASES = {
+    'default': {
+        # For MySQL
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sys',
+        'USER': 'root',
+        'PASSWORD': 'girassol987',
+        'PORT': '3306',
+    }
+}
+# In the flexible environment, you connect to CloudSQL using a unix socket.
+# Locally, you can use the CloudSQL proxy to proxy a localhost connection
+# to the instance
+DATABASES['default']['HOST'] = '/cloudsql/wyvern-239319:europe-west2:wyvern'
+if os.getenv('GAE_INSTANCE'):
+    pass
+else:
+    DATABASES['default']['HOST'] = '127.0.0.1'
 
 
 
