@@ -1,0 +1,61 @@
+{% extends "admin/base_site.html" %}
+{% load staticfiles %}
+
+
+
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content_title %}Welcome{% endblock %}
+
+
+{% block content %}
+<div id="container_home">
+<div class="row" style="width:100%">
+  <div class="col-sm-4">
+    <div class="module" id="recent-actions-module">
+        <h2><span>Recent actions</span></h2>
+        <h3><span>My actions</span></h3>
+            {% load log %}
+            {% get_admin_log 10 as admin_log for_user user %}
+            {% if not admin_log %}
+            <p><span>None available</span></p>
+            {% else %}
+            <ul class="actionlist">
+            {% for entry in admin_log %}
+            <li class="{% if entry.is_addition %}addlink{% endif %}{% if entry.is_change %}changelink{% endif %}{% if entry.is_deletion %}deletelink{% endif %}">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                    {{ entry.object_repr }}
+                {% else %}
+                    <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+                {% endif %}
+                <br>
+                {% if entry.content_type %}
+                    <span class="mini quiet">{% filter capfirst %}{{ entry.content_type }}{% endfilter %}</span>
+                {% else %}
+                    <span class="mini quiet"><span>Unknown content</span></span>
+                {% endif %}
+            </li>
+            {% endfor %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+
+  <div class="col-sm-8">
+    <a class="weatherwidget-io" href="https://forecast7.com/pt/38d72n9d14/lisbon/" data-label_1="LISBON" data-label_2="WEATHER" data-theme="original" >LISBON WEATHER</a>
+  </div>
+</div>
+</div>
+
+
+
+
+
+<div id="miniWyvern"><img src="{% static 'our/admin/img/miniWyvern.png' %}" alt="miniWyvern" height=auto></div>
+                          
+
+<script>
+!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src='https://weatherwidget.io/js/widget.min.js';fjs.parentNode.insertBefore(js,fjs);}}(document,'script','weatherwidget-io-js');
+</script>
+{% endblock %}
