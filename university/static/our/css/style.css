@@ -1,0 +1,59 @@
+.reservado{
+  color: white !important;
+}
+
+.back_img {
+  background: url("../img/wyvern.png") no-repeat center center fixed;
+  /*nao repetir e ficar fixa no centro*/
+  background-size: cover;
+}
+
+.rodape {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 5%;
+  width: 100%;
+  text-align: center;
+  background-color: black;
+  /*background-color: #30a5ff;*/
+    color: black !important;
+}
+
+
+/* Remove o Scroll */
+body {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* Posição da janela de Login*/
+#login_box {
+  margin-top: 14% !important;
+}
+
+/* Logo */
+.logoBar {
+  position: fixed;
+  top: 0px;
+  width: 100%;
+  height: 8%;
+  text-align: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 100px;
+  color: #676F72;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black; 
+}
+
+
+
+.panel{
+  border: 1px solid black !important;
+}
+
+fieldset {
+  border: none !important;
+}
+

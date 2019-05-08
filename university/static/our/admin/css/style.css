@@ -1,0 +1,131 @@
+#miniWyvern{
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+#miniWyvern img{
+  width: 200px;
+}
+
+
+
+#content{
+   padding: 0px 0px;
+
+}
+
+#content h1{
+  padding: 0px 4px;
+
+}
+
+input[type=submit], input[type=button], .submit-row input, a.button {
+  background: #30a5ff !important;
+}
+
+#content-main, #container_home{
+  padding: 20px 40px;
+}
+
+#container_home .module{
+  background-color: #fff;
+}
+
+.module caption, .module h2{
+  background-color: #30a5ff;
+}
+
+.selector .selector-chosen h2{
+  background-color: #30a5ff !important;
+}
+
+#result_list thead th{
+  background-color: #30a5ff;
+  color: white !important;
+}
+
+#result_list thead th:hover a, #result_list thead th:hover{
+  color: black !important;
+  text-decoration: none;
+}
+
+#result_list thead th:hover{
+  background-color: #f6f6f6;
+}
+
+
+#result_list thead th a{
+  color: white !important;
+}
+
+table tbody a{
+  color: black !important;
+  line-height: 20px; 
+  padding: 2px;
+}
+table tbody{
+  background-color: #fff;
+}
+
+div .breadcrumbs{
+padding: 10px 15px 10px 15px;
+background: #e9ecf2;
+color: #30a5ff;
+}
+
+div.breadcrumbs a {
+  color: #777 !important;
+}
+
+
+.module{
+  background-color: #f1f4f7;
+}
+
+
+
+#changelist-search input{
+  padding: 10px 10px !important;
+  margin-top: 1px !important;
+  width: 75% !important;
+}
+
+#changelist-search button {
+  padding: 4px 10px !important;
+  background: #ddd;
+  font-size: 10px;
+  border: none;
+  cursor: pointer;
+}
+#changelist #toolbar {
+  background-color: #f1f4f7 !important;
+  border-top: none !important;
+  border-bottom: none !important;
+}
+
+#changelist #toolbar form input {
+  border-radius: 0px !important;
+}
+
+
+.object-tools {
+  margin-top: -35px !important;
+}
+
+.submit-row a.deletelink{
+    height: auto !important;
+}
+
+p a:link, p a:visited {
+  color: #30a5ff;
+}
+
+
+.paginator a:link, .paginator a:visited {
+  background-color: #30a5ff !important;
+}
+
+#result_list tbody td img{
+  width: 15px;
+}
