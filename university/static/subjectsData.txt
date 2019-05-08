@@ -1,5 +1,0 @@
-#nome da cadeira, creditos || nome do curso, ano, semestre, tipo !! nome do curso, ano, semestre, tipo !! ...
-#tipo-> Semestral, Semestral (Opção), Anual
-
-Arquiteturas de Computadores, 6||Licenciatura em Tecnologias de Informação,1, 1, Semestral
-Elementos de Matemática I, 6||Licenciatura em Tecnologias de Informação,1, 1, Semestral
