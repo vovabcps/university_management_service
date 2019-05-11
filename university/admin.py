@@ -35,7 +35,11 @@ class PersonalInfoAdmin(admin.ModelAdmin):
 admin.site.register(PersonalInfo, PersonalInfoAdmin)
 
 
-admin.site.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+  search_fields = ["name", "coordinator"]
+  list_filter = ["grau", "credits_number", "duration", "timetable"]
+  list_display = ["name", "grau", "credits_number", "get_coordinator_name", "get_minors_ramos"]
+admin.site.register(Course, CourseAdmin)
 
 
 admin.site.register(SystemUserCourse)
@@ -43,3 +47,12 @@ admin.site.register(Subject)
 admin.site.register(CourseSubject)
 admin.site.register(SystemUserSubject)
 admin.site.register(Lesson)
+
+
+"""
+class __bla__Admin(admin.ModelAdmin):
+  search_fields = []
+  search_fields = []
+  list_display = []
+admin.site.register(__bla__,  __bla__Admin)
+"""

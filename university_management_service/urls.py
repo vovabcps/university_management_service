@@ -15,8 +15,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from university import views
 
 urlpatterns = [
+
+    path('admin/login/', views.login_page, name='login_page'), #overwrite django path
+    path('admin/login/?next=/admin/', views.login_page, name='login_page'), #overwrite django path
+
+    path('admin/home', views.home_a, name='home_a'), 
+    path('admin/consult', views.consult_a, name='consult_a'), 
+    path('admin/university/', views.consult_uni_a, name='consult_uni_a'),  #overwrite django path
+    path('admin/auth/', views.consult_auth_a, name='consult_auth_a'), #overwrite django path
+    path('admin/insert', views.insert_a, name='insert_a'), 
+
     path('admin/', admin.site.urls),
     #path('admin/consult_teachers', admin.site.urls, name='consult_teachers_a'),
     path('', include('university.urls'))

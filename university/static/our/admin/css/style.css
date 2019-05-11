@@ -129,3 +129,18 @@ p a:link, p a:visited {
 #result_list tbody td img{
   width: 15px;
 }
+
+
+.delete-confirmation form .cancel-link {
+  height: auto !important;
+  line-height:  normal !important;
+}
+
+
+.sidebar ul.nav ul.children li a {
+  background-color: transparent !important;
+}
+
+.sidebar ul.nav ul.children {
+  padding: 8%;
+}

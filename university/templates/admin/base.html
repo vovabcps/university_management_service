@@ -100,20 +100,9 @@
 		<ul class="nav menu">
 			<li id="home"><a href="{% url 'home_a' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
             <li id="consult" ><a href="{% url 'consult_a'%}"><em class="fa fa-search">&nbsp;</em>Consultas</a></li>
-            <li id="insert" ><a href="{% url 'insert_a' %}"><em class="fa fa-pencil">&nbsp;</em>Inserir/Remover</a></li>
-            <li id="password_alt" ><a data-toggle="collapse" href="#sub-item-3">
-                <em class="fa fa-navicon">&nbsp;</em> Gestão de Passwords <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-3">
-					<li><a class="" href="{% url 'password_alt_a' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Alteração de Passwords
-					</a></li>
-					<li><a class="" href="{% url 'admin:password_change' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Alterar a minha password
-					</a></li>
-				</ul>
-			</li>
-            <li id="siteView" ><a href="{{ site_url }}"><em class="fa fa-eye">&nbsp;</em>Ver o site</a></li>
+            <li id="insert" ><a href="{% url 'insert_a' %}"><em class="fa fa-pencil">&nbsp;</em>Editar/Inserir/Remover</a></li>
+            <li id="bloco" ><a href="{% url 'insert_a' %}"><em class="fa fa-th-list">&nbsp;</em>Operações em bloco</a></li>
+            <li id="password_change" ><a href="{% url 'admin:password_change' %}"><em class="fa fa-key">&nbsp;</em>Mudar a minha pass</a></li>
 			<li id="logout" ><a href="{% url 'admin:logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
@@ -122,10 +111,10 @@
      <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %} col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
    
-            {% block breadcrumbs %}
+    {% block breadcrumbs %}
     <div class="breadcrumbs">
-    <a href="{% url 'admin:index' %}"><em class="fa fa-home"></em></a>
-    {% if title %} &rsaquo; {{ title }}{% endif %}
+        <a href="{% url 'admin:index' %}"><em class="fa fa-home"></em></a>
+        {% if title %} &rsaquo; {{ title }}{% endif %}
     </div>
     {% endblock %}
    
@@ -158,19 +147,31 @@
 
 <script>
 var pageArray = location.pathname.split('/');
-var pag = pageArray[pageArray.length - 1];
-var li= document.getElementById(pag);
-if (li == null) { //se for null
-    if (pageArray[pageArray.length - 2] == "logout"){
-        pag="logout"
+console.log(pageArray);
+var pag, li;
+if (pageArray[pageArray.length - 1] == ""){
+    pag = pageArray[pageArray.length - 2]
+}else{
+    pag = pageArray[pageArray.length - 1]
+}
+if (pag == "logout") {
         var div= document.getElementById("content").children;
         console.log(div)
         div[3].innerHTML= "<a href='/'>Log in again</a>"
-    }else{
-        pag="home";
-    }
-    li= document.getElementById(pag);
 }
+if (pag == "admin") pag="home";    
+if (pag == "university") pag="consult";
+if (pag == "auth") pag="consult";
+
+
+li= document.getElementById(pag);
+if (li == null){
+    pag= "consult"; //por default
+    if (pageArray.includes("add")) pag= "insert";
+    if (pageArray.includes("change")) pag= "insert";
+    if (document.getElementsByTagName("body")[0].classList.contains("delete-confirmation")) pag= "insert";
+    li= document.getElementById(pag);
+} 
 li.classList.add("active");
 
 
@@ -178,6 +179,18 @@ var navBar= document.getElementById("changelist-search");
 if (navBar){
 navBar.innerHTML="<div><label for='searchbar'></label><input type='text' placeholder='Search..' size='40' name='q' value='' id='searchbar' autofocus=''><button type='submit'><i class='fa fa-search'></i></button></div>";
 }
+
+/*
+var links= document.getElementsByTagName("a");
+console.log(links);
+for (i=0; i<links.length; i++) {
+    text= links[i].innerHTML;
+    console.log(links[i].innerHTML)
+    if (text == "University" || text == "Authentication and Authorization") {
+        links[i].setAttribute("href", "");
+    }
+}
+*/
 </script>
 
 </body>

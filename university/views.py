@@ -111,21 +111,26 @@ def home_a(request):
         return redirect_to_user_home(request)
     return render(request, 'admin/index.html', {})
 
-def consult_details_a(request):
-    return render(request, 'admin/consult_details.html', {})
 
 def consult_a(request):
     admin_index = admin.site.index(request)
     app_list = admin_index.context_data['app_list']
     return render(request, 'admin/consult.html', {'app_list':app_list})
 
+def consult_auth_a(request):
+    admin_index = admin.site.index(request)
+    app_list = admin_index.context_data['app_list']
+    return render(request, 'admin/consult.html', {'app_list':[app_list[0]]})
+
+
+def consult_uni_a(request):
+    admin_index = admin.site.index(request)
+    app_list = admin_index.context_data['app_list']
+    return render(request, 'admin/consult.html', {'app_list':[app_list[1]]})
+
 def insert_a(request):
     admin_index = admin.site.index(request)
     app_list = admin_index.context_data['app_list']
     return render(request, 'admin/insert.html', {'app_list':app_list})
-
-
-def password_alt_a(request):
-    return render(request, 'admin/password_alt.html', {})
 
 

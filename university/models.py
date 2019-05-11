@@ -38,10 +38,10 @@ class SystemUser(models.Model):
 
     def get_roles(self):
         #return "\n".join([r.role for r in self.roles.all()])
-        return self.role
+        return self.role.role
 
     def get_rooms(self):
-        return "\n".join([room.room_number for room in self.rooms.all()])
+        return ",\n".join([room.room_number for room in self.rooms.all()])
 
 
 class PersonalInfo(models.Model):
@@ -74,6 +74,13 @@ class Course(models.Model):
     coordinator = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)
      #o coordenador é um professor qualquer, nao precisa de dar nenhuma aula das cadeiras desse curso
     minors_ramos= models.ManyToManyField("self")
+
+    def get_coordinator_name(self):
+        detalhesOBJ= PersonalInfo.objects.get(user=self.coordinator)
+        return detalhesOBJ.name
+
+    def get_minors_ramos(self):
+        return ",\n".join([minors_ramo.name for minors_ramo in self.minors_ramos.all()])
 
 
 class SystemUser_Faculdade(models.Model): #ex: fazer minor em outra faculdade
