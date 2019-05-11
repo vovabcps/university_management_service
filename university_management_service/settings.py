@@ -85,11 +85,9 @@ DATABASES = {
 }
 """
 
-"""
+
 DATABASES = {
     'default': {
-        # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
-        # 'ENGINE': 'django.db.backends.mysql' instead of the following.
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mysql', #'NAME': 'wyvern', university
         'USER': 'root', #os.getenv('DATABASE_USER'), django
@@ -98,12 +96,12 @@ DATABASES = {
         'PORT': '3306',
     }
 }
+
+
 """
-
-
 DATABASES = {
     'default': {
-        # For MySQL
+        # # If you are using Cloud SQL for MySQL
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sys',
         'USER': 'root',
@@ -119,7 +117,7 @@ if os.getenv('GAE_INSTANCE'):
     pass
 else:
     DATABASES['default']['HOST'] = '127.0.0.1'
-
+"""
 
 
 # Password validation
