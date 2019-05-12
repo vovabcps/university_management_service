@@ -3,6 +3,7 @@ venv/
 .idea
 db.sqlite3
 __pycache__
+university_management_service/__pycache__
 *.pyc
 *.pyo
 *.pyd
