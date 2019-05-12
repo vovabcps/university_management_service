@@ -27,6 +27,7 @@ urlpatterns = [
     path('admin/university/', views.consult_uni_a, name='consult_uni_a'),  #overwrite django path
     path('admin/auth/', views.consult_auth_a, name='consult_auth_a'), #overwrite django path
     path('admin/insert', views.insert_a, name='insert_a'), 
+    path('admin/operacoesBloco', views.operacoesBloco_a, name='operacoesBloco_a'), 
 
     path('admin/', admin.site.urls),
     #path('admin/consult_teachers', admin.site.urls, name='consult_teachers_a'),

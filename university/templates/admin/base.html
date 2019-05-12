@@ -11,6 +11,7 @@
 <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
 <link href="{% static 'template/css/style.css' %}" rel="stylesheet">
 <link href="{% static "our/admin/css/style.css" %}" rel="stylesheet">
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
 <link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
 
@@ -75,13 +76,7 @@
 
 
 
-    {% block messages %}
-        {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
-        {% endif %}
-    {% endblock messages %}
+
 
    
     <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
@@ -101,7 +96,7 @@
 			<li id="home"><a href="{% url 'home_a' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
             <li id="consult" ><a href="{% url 'consult_a'%}"><em class="fa fa-search">&nbsp;</em>Consultas</a></li>
             <li id="insert" ><a href="{% url 'insert_a' %}"><em class="fa fa-pencil">&nbsp;</em>Editar/Inserir/Remover</a></li>
-            <li id="bloco" ><a href="{% url 'insert_a' %}"><em class="fa fa-th-list">&nbsp;</em>Operações em bloco</a></li>
+            <li id="operacoesBloco" ><a href="{% url 'operacoesBloco_a' %}"><em class="fa fa-th-list">&nbsp;</em>Operações em bloco</a></li>
             <li id="password_change" ><a href="{% url 'admin:password_change' %}"><em class="fa fa-key">&nbsp;</em>Mudar a minha pass</a></li>
 			<li id="logout" ><a href="{% url 'admin:logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
@@ -111,6 +106,15 @@
      <!-- Content -->
     <div id="content" class="{% block coltype %}colM{% endblock %} col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
    
+     {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+    
     {% block breadcrumbs %}
     <div class="breadcrumbs">
         <a href="{% url 'admin:index' %}"><em class="fa fa-home"></em></a>
@@ -156,7 +160,6 @@ if (pageArray[pageArray.length - 1] == ""){
 }
 if (pag == "logout") {
         var div= document.getElementById("content").children;
-        console.log(div)
         div[3].innerHTML= "<a href='/'>Log in again</a>"
 }
 if (pag == "admin") pag="home";    

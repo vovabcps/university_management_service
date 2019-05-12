@@ -1,6 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib import messages
 
 # convert to json
 import json
@@ -11,6 +12,13 @@ import university.models
 
 #app_list
 from django.contrib import admin
+
+#connection db
+from django.db import connection
+from django.core.files.storage import FileSystemStorage
+
+
+import sys
 
 
 
@@ -133,4 +141,29 @@ def insert_a(request):
     app_list = admin_index.context_data['app_list']
     return render(request, 'admin/insert.html', {'app_list':app_list})
 
+
+def operacoesBloco_a(request):
+    if request.method == 'POST':
+        if request.FILES.get('file_sql', False):
+            valid= "yapp"
+            myfile = request.FILES['file_sql']
+
+            fs = FileSystemStorage()
+            filename = fs.save(myfile.name, myfile) # saves the file to `media` folder
+            uploaded_file_url = fs.url(filename) # gets the url
+
+            with connection.cursor() as cursor:
+                try:
+                    for line in open(uploaded_file_url):
+                        cursor.execute(line)
+                except Exception as e:
+                    messages.error(request, "O ficheiro contem erros!")
+                    valid = "error"           
+
+        else:
+            valid= "empty"
+        return render(request, 'admin/oper_bloco.html', {'uploaded': valid})
+
+    return render(request, 'admin/oper_bloco.html')
+       
 
