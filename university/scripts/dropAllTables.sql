@@ -1,6 +1,6 @@
 DROP TABLE IF EXISTS university_systemuser_role;
 DROP TABLE IF EXISTS university_lesson_users;
-DROP TABLE IF EXISTS university_course_minors_ramos;
+DROP TABLE IF EXISTS university_course_minicourse;
 DROP TABLE IF EXISTS university_course_faculdade;
 DROP TABLE IF EXISTS university_systemuser_faculdade;
 DROP TABLE IF EXISTS university_systemuser_rooms; 

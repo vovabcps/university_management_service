@@ -1,5 +1,99 @@
 #nome da cadeira, creditos || nome do curso, ano, semestre, tipo !! nome do curso, ano, semestre, tipo !! ...
 #tipo-> Semestral, Semestral (Opção), Anual
 
-Arquiteturas de Computadores, 6||Licenciatura em Tecnologias de Informação,1, 1, Semestral
+#nota: os cursos que apontam para outros cursos não tem essa cadeira 
+#ex: Biogeografia, 3||Licenciatura em Tecnologias de Informação??Minor Biologia (errado, porque Licenciatura em Tecnologias de Informação ja aponta para o Minor de Biologia)
+#ex: Biogeografia, 3||Minor Biologia
+
+#>>>Licenciatura em Tecnologias de Informação<<<
+Arquiteturas de Computadores, 6||Licenciatura em Tecnologias de Informação, 1, 1, Semestral
 Elementos de Matemática I, 6||Licenciatura em Tecnologias de Informação,1, 1, Semestral
+Produção de Documentos Técnicos, 3||Licenciatura em Tecnologias de Informação, 1, 1, Semestral!!Licenciatura em Engenharia Informática, 1, 1, Semestral
+Programação I (LTI), 6||Licenciatura em Tecnologias de Informação, 1, 1, Semestral
+Elementos de Matemática II, 6||Licenciatura em Tecnologias de Informação, 1, 2, Semestral
+Introdução às Probabilidades e Estatística, 6||Licenciatura em Tecnologias de Informação, 1, 2, Semestral!!Licenciatura em Engenharia Informática, 1, 2, Semestral
+Introdução às Tecnologias Web, 6||Licenciatura em Tecnologias de Informação, 1, 2, Semestral
+Programação II (LTI), 6||Licenciatura em Tecnologias de Informação, 1, 2, Semestral
+Redes de Computadores (LTI), 6||Licenciatura em Tecnologias de Informação, 1, 2, Semestral
+Bases de Dados, 6||Licenciatura em Tecnologias de Informação, 2, 1, Semestral
+Fundamentos e Técnicas de Visualização, 6||Licenciatura em Tecnologias de Informação, 2, 1, Semestral
+Interação com Computadores, 6||Licenciatura em Tecnologias de Informação, 2, 1, Semestral
+Programação Centrada em Objetos, 6||Licenciatura em Tecnologias de Informação, 2, 1, Semestral
+Sistemas Operativos (LTI), 6||Licenciatura em Tecnologias de Informação, 2, 1, Semestral
+Análise e Desenho de Software, 6||Licenciatura em Tecnologias de Informação, 2, 2, Semestral
+Aplicações Distribuídas, 6||Licenciatura em Tecnologias de Informação, 2, 2, Semestral
+Aplicações e Serviços na Web, 6||Licenciatura em Tecnologias de Informação, 2, 2, Semestral
+Conceção de Produto, 6||Licenciatura em Tecnologias de Informação, 2, 2, Semestral
+Sistemas Inteligentes, 6||Licenciatura em Tecnologias de Informação, 2, 2, Semestral
+Construção de Sistemas de Software (LTI), 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral
+Planeamento e Gestão de Projeto, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral
+Projeto de Tecnologias de Informação, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral
+Projeto de Tecnologias de Redes, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral
+Princípios de Programação, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 2, 1, Semestral
+Teoria da Computação, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 1, Semestral
+Engenharia do Conhecimento, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 2, Semestral
+Segurança Informática, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)
+
+#>>>Licenciatura em Engenharia Informática<<<
+Arquiteturas de Sistemas Computacionais, 6||Licenciatura em Engenharia Informática, 1, 1, Semestral
+Cálculo, 6||Licenciatura em Engenharia Informática, 1, 1, Semestral
+Introdução à Programação, 6||Licenciatura em Engenharia Informática, 1, 1, Semestral
+Lógica de Primeira Ordem, 6||Licenciatura em Engenharia Informática, 1, 1, Semestral
+Algoritmos e Estruturas de Dados, 6||Licenciatura em Engenharia Informática, 1, 2, Semestral
+Elementos de Álgebra Linear, 6||Licenciatura em Engenharia Informática, 1, 2, Semestral
+Física A, 6||Licenciatura em Engenharia Informática, 1, 2, Semestral
+Laboratórios de Programação, 6||Licenciatura em Engenharia Informática, 1, 2, Semestral
+Física Experimental, 6||Licenciatura em Engenharia Informática, 2, 1, Semestral
+Introdução à Investigação Operacional, 6||Licenciatura em Engenharia Informática, 2, 1, Semestral
+Redes de Computadores, 6||Licenciatura em Engenharia Informática, 2, 1, Semestral
+Sistemas de Informação e Base de Dados, 6||Licenciatura em Engenharia Informática, 2, 1, Semestral
+Desenvolvimento Centrado em Objetos, 6||Licenciatura em Engenharia Informática, 2, 2, Semestral
+Interfaces Pessoa-Máquina, 6||Licenciatura em Engenharia Informática, 2, 2, Semestral
+Matemática Discreta, 6||Licenciatura em Engenharia Informática, 2, 2, Semestral
+Pensamento Crítico, 3||Licenciatura em Engenharia Informática, 2, 2, Semestral
+Sistemas Operativos, 6||Licenciatura em Engenharia Informática, 2, 2, Semestral
+Análise e Design de Sistemas de Informação, 6||Licenciatura em Engenharia Informática, 3, 1, Semestral
+Computação Gráfica, 6||Licenciatura em Engenharia Informática, 3, 1, Semestral
+Introdução à Inteligência Artificial, 6||Licenciatura em Engenharia Informática, 3, 1, Semestral
+Sistemas Distribuídos, 6||Licenciatura em Engenharia Informática, 3, 1, Semestral
+Construção de Sistemas de Software, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
+Projeto de Sistemas de Informação, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
+Segurança e Confiabilidade, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
+Ciências da Linguagem e da Cognição, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral (Opção)
+Ciências da Vida, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral (Opção)
+
+
+
+#>>>Formação Cultura Social e Ética<<<
+Abrindo a Caixa Negra: Tecnologia História e Sociedade, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Ciência Tecnologia e a Cidade, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Ciência e Cultura, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Ciência e Cultura A, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Ciência em Portugal, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Ciência em Portugal A, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Controvérsias Científicas, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Controvérsias Científicas A, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Curso de Competências Sociais e Desenvolvimento Pessoal, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Empreendedorismo em Ciências, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)!!450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Evolução das Ideias em Física, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Evolução do Pensamento Matemático, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Geologia e Sociedade, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+História da Matemática Recreativa, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+História das Ideias em Biologia, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Informática na Ótica do Utilizador, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)!!450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Introdução à Filosofia da Ciência, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Laboratório de Matemática, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)!!450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Sociologia e Modernidade, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+Terra Ambiente e Clima, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
+
+Astronomia e Astrofísica, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Bioética, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Competências Transversais para a Empregabilidade, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Haverá Limites na Ciência?, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+História dos Jogos de Tabuleiro, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+História Experimental da Ciência, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Jardins como Espaços de Ciências, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Matemática e Arte, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Perspetivas em Investigação e Desenvolvimento, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+Sustentabilidade Energética, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+

@@ -155,10 +155,15 @@ def operacoesBloco_a(request):
             with connection.cursor() as cursor:
                 try:
                     for line in open(uploaded_file_url):
-                        cursor.execute(line)
+                        if line != "\n" and len(line) > 5 and line[0] != "-": #para ignorar as linhas em branco ou so com espaços ou start with '-'
+                            cursor.execute(line)
                 except Exception as e:
                     messages.error(request, "O ficheiro contem erros!")
-                    valid = "error"           
+                    valid = "error"  
+                    
+            fs.delete(myfile.name)
+
+
 
         else:
             valid= "empty"
