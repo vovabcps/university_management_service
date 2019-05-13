@@ -38,7 +38,7 @@ admin.site.register(PersonalInfo, PersonalInfoAdmin)
 class CourseAdmin(admin.ModelAdmin):
   search_fields = ["name"]
   list_filter = ["grau", "credits_number", "duration", "timetable"]
-  list_display = ["name", "grau", "credits_number", "get_coordinator_name"]
+  list_display = ["name", "grau", "credits_number", "duration", "get_coordinator_name", "timetable"]
 admin.site.register(Course, CourseAdmin)
 
 class Course_MiniCourseAdmin(admin.ModelAdmin):
