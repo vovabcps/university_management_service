@@ -34,7 +34,8 @@ def login_page(request):
 
 
 def redirect_to_user_home(request):
-    role = request_user_role(request)
+    su= request_user(request)
+    role = su.role
     if role.is_a(university.models.ADMIN_ROLE):
         return HttpResponseRedirect(reverse('home_a'))
     elif role.is_a(university.models.TEACHER_ROLE):
@@ -63,10 +64,10 @@ def login_user(request):
         return HttpResponse(json.dumps({"message": "invalid"}), content_type="application/json")
 
 
-def request_user_role(request):
+def request_user(request):
     u = request.user
     su = SystemUser.objects.get(user=u)
-    return su.role
+    return su
 
 
 # --------------- logout ---------------
@@ -76,26 +77,42 @@ def logout_user(request):
 
 
 
-
-
-
 #--------------- all ---------------
+def is_authenticated(request, role_name):
+    u = request.user
+    if u.is_authenticated:
+        su = SystemUser.objects.get(user=u)
+        role= su.role
+        return role.is_a(role_name)
+    return False
 
-def profile(request):
-    return render(request, 'profile.html', {})
 
 # --------------- student ---------------
-def consult_details_s(request):
-    return render(request, 'student/consult_details_s.html', {})
-
 def home_s(request):
-    role = request_user_role(request)
-    if not role.is_a(university.models.STUDENT_ROLE):
-        return redirect_to_user_home(request)
-    return render(request, 'student/home.html', {})
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/home.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+        
+def consult_details_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_details_s.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
 
 def password_alt_s(request):
-    return render(request, 'student/password_alt.html', {})
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/password_alt.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+def inscricoes_subject_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/inscricoes_curso.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 def consult_contacts(request):
     return render(request, 'student/consult_contacts.html', {})
@@ -111,7 +128,8 @@ def consult_details_t(request):
     return render(request, 'teacher/consult_details_t.html', {})
 
 def home_t(request):
-    role = request_user_role(request)
+    su= request_user(request)
+    role = su.role
     if not role.is_a(university.models.TEACHER_ROLE):
         return redirect_to_user_home(request)
     return render(request, 'teacher/home.html', {})
@@ -125,61 +143,80 @@ def consult_contacts(request):
 
 # --------------- admin ---------------
 def home_a(request):
-    role = request_user_role(request)
-    if not role.is_a(university.models.ADMIN_ROLE):
-        return redirect_to_user_home(request)
-    return render(request, 'admin/index.html', {})
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        return render(request, 'admin/index.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 
 def consult_a(request):
-    admin_index = admin.site.index(request)
-    app_list = admin_index.context_data['app_list']
-    return render(request, 'admin/consult.html', {'app_list':app_list})
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        admin_index = admin.site.index(request)
+        app_list = admin_index.context_data['app_list']
+        return render(request, 'admin/consult.html', {'app_list':app_list})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 def consult_auth_a(request):
-    admin_index = admin.site.index(request)
-    app_list = admin_index.context_data['app_list']
-    return render(request, 'admin/consult.html', {'app_list':[app_list[0]]})
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        admin_index = admin.site.index(request)
+        app_list = admin_index.context_data['app_list']
+        return render(request, 'admin/consult.html', {'app_list':[app_list[0]]})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 
 def consult_uni_a(request):
-    admin_index = admin.site.index(request)
-    app_list = admin_index.context_data['app_list']
-    return render(request, 'admin/consult.html', {'app_list':[app_list[1]]})
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        admin_index = admin.site.index(request)
+        app_list = admin_index.context_data['app_list']
+        return render(request, 'admin/consult.html', {'app_list':[app_list[1]]})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 def insert_a(request):
-    admin_index = admin.site.index(request)
-    app_list = admin_index.context_data['app_list']
-    return render(request, 'admin/insert.html', {'app_list':app_list})
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        admin_index = admin.site.index(request)
+        app_list = admin_index.context_data['app_list']
+        return render(request, 'admin/insert.html', {'app_list':app_list})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
+
+        
+    
 
 def operacoesBloco_a(request):
-    if request.method == 'POST':
-        if request.FILES.get('file_sql', False):
-            valid= "yapp"
-            myfile = request.FILES['file_sql']
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        if request.method == 'POST':
+            if request.FILES.get('file_sql', False):
+                valid= "yapp"
+                myfile = request.FILES['file_sql']
 
-            fs = FileSystemStorage()
-            filename = fs.save(myfile.name, myfile) # saves the file to `media` folder
-            uploaded_file_url = fs.url(filename) # gets the url
+                fs = FileSystemStorage()
+                filename = fs.save(myfile.name, myfile) # saves the file to `media` folder
+                uploaded_file_url = fs.url(filename) # gets the url
 
-            with connection.cursor() as cursor:
-                try:
-                    for line in open(uploaded_file_url):
-                        if line != "\n" and len(line) > 5 and line[0] != "-": #para ignorar as linhas em branco ou so com espaços ou start with '-'
-                            cursor.execute(line)
-                except Exception as e:
-                    messages.error(request, "O ficheiro contem erros!")
-                    valid = "error"  
-                    
-            fs.delete(myfile.name)
+                with connection.cursor() as cursor:
+                    try:
+                        for line in open(uploaded_file_url):
+                            if line != "\n" and len(line) > 5 and line[0] != "-": #para ignorar as linhas em branco ou so com espaços ou start with '-'
+                                cursor.execute(line)
+                    except Exception as e:
+                        messages.error(request, "O ficheiro contem erros!")
+                        valid = "error"  
+
+                fs.delete(myfile.name)
 
 
 
-        else:
-            valid= "empty"
-        return render(request, 'admin/oper_bloco.html', {'uploaded': valid})
+            else:
+                valid= "empty"
+            return render(request, 'admin/oper_bloco.html', {'uploaded': valid})
+        elif request.method == 'GET':
+            return render(request, 'admin/oper_bloco.html')
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
-    return render(request, 'admin/oper_bloco.html')
        
 

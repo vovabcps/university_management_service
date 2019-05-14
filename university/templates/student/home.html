@@ -1,15 +1,18 @@
-{% load staticfiles %}
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Projeto PTI-PTR</title>
-	
-	<link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Home student{% endblock %}
+
+{% block content_title %}Dashboard{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
 
 	<link href="{% static 'our/css/style.css' %}" rel="stylesheet">
 	
@@ -284,20 +287,7 @@
 					</div>
 				</div>
 			</div><!--/.col-->
-			<div class="col-sm-12">
-				<p class="back-link">G05 PTI e PTR | 2019</p>
-			</div>
 		</div><!--/.row-->
-	</div>	<!--/.main-->
+</div>	<!--/.main-->
 
-	<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'template/js/chart.min.js' %}"></script>
-	<script src="{% static 'template/js/chart-data.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'template/js/custom.js' %}"></script>
-		
-</body>
-</html>
+{% endblock %}

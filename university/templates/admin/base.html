@@ -98,7 +98,7 @@
             <li id="insert" ><a href="{% url 'insert_a' %}"><em class="fa fa-pencil">&nbsp;</em>Editar/Inserir/Remover</a></li>
             <li id="operacoesBloco" ><a href="{% url 'operacoesBloco_a' %}"><em class="fa fa-th-list">&nbsp;</em>Operações em bloco</a></li>
             <li id="password_change" ><a href="{% url 'admin:password_change' %}"><em class="fa fa-key">&nbsp;</em>Mudar a minha pass</a></li>
-			<li id="logout" ><a href="{% url 'admin:logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+			<li id="logout" ><a href="{% url 'logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
     </div>
@@ -158,10 +158,6 @@ if (pageArray[pageArray.length - 1] == ""){
 }else{
     pag = pageArray[pageArray.length - 1]
 }
-if (pag == "logout") {
-        var div= document.getElementById("content").children;
-        div[3].innerHTML= "<a href='/'>Log in again</a>"
-}
 if (pag == "admin") pag="home";    
 if (pag == "university") pag="consult";
 if (pag == "auth") pag="consult";
@@ -183,17 +179,6 @@ if (navBar){
 navBar.innerHTML="<div><label for='searchbar'></label><input type='text' placeholder='Search..' size='40' name='q' value='' id='searchbar' autofocus=''><button type='submit'><i class='fa fa-search'></i></button></div>";
 }
 
-/*
-var links= document.getElementsByTagName("a");
-console.log(links);
-for (i=0; i<links.length; i++) {
-    text= links[i].innerHTML;
-    console.log(links[i].innerHTML)
-    if (text == "University" || text == "Authentication and Authorization") {
-        links[i].setAttribute("href", "");
-    }
-}
-*/
 </script>
 
 </body>

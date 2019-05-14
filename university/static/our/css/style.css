@@ -57,3 +57,14 @@ fieldset {
   border: none !important;
 }
 
+
+.breadcrumbs {
+  padding: 10px 15px 10px 15px;
+  background: #e9ecf2;
+  color: #30a5ff;
+}
+
+.breadcrumbs a {
+  background: #e9ecf2;
+  color: #777;
+}
