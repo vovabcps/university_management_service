@@ -97,6 +97,14 @@ def home_s(request):
 def password_alt_s(request):
     return render(request, 'student/password_alt.html', {})
 
+def consult_contacts(request):
+    return render(request, 'student/consult_contacts.html', {})
+
+def consult_courses(request):
+    return render(request, 'student/consult_courses.html', {})
+
+def consult_university(request):
+    return render(request, 'student/consult_university.html', {})
 
 # --------------- teacher ---------------
 def consult_details_t(request):
@@ -110,6 +118,9 @@ def home_t(request):
 
 def password_alt_t(request):
     return render(request, 'teacher/password_alt.html', {})
+
+def consult_contacts(request):
+    return render(request, 'teacher/consult_contacts.html', {})
 
 
 # --------------- admin ---------------

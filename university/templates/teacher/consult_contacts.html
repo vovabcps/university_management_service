@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Projeto PTI-PTR</title>
+	<title>teacher home</title>
 
 	<link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
 	<link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
@@ -25,7 +25,7 @@
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span></button>
-				<a class="navbar-brand" href=""><span>wyvern</span>|Professor</a>
+				<a class="navbar-brand" href=""><span>wyvern</span>|PROFESSOR</a>
 				<ul class="nav navbar-top-links navbar-right">
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
 						<em class="fa fa-envelope"></em><span class="label label-danger">15</span>
@@ -157,55 +157,95 @@
 	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
 		<div class="row">
 			<ol class="breadcrumb">
-				<li><a href="{% url 'home_t' %}home.html">
+				<li><a href="{% url 'home_t' %}">
 					<em class="fa fa-home"></em>
 				</a></li>
-				<li class="active">Gestão de Passwords / Alteração de Passwords</li>
+                <li class="active">Consultas Gerais</li>
+                <li class="active">Pesquisa de Contactos</li>
 			</ol>
 		</div><!--/.row-->
 		
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">Alteração de Passwords</h1>
+				<h1 class="page-header">Pesquisa de Contactos</h1>
 			</div>
 		</div><!--/.row-->
 		
 		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Por favor introduza os dados abaixo
-						<span class="pull-right clickable panel-toggle panel-button-tab-left"></span></div>
-					<div class="panel-body">
-                       <form>
-                          <div class="form-group">
-                            <label for="exampleInputEmail1">Endereço de email</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-													</div>
-													<div class="form-group">
-                            <label for="exampleInputPassword1">Antiga Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-													</div>
-													<br>
-                          <div class="form-group">
-                            <label for="exampleInputPassword1">Nova Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-													</div>
-													<div class="form-group">
-                            <label for="exampleInputPassword1">Confirmar Nova Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                          </div>
-                          <button type="submit" class="btn btn-primary">Alterar</button>
-                        </form>                        
-					</div>
-				</div>
-			</div><!--/.col-->
-			
-			<div class="col-sm-12">
-				<p class="back-link">G05 PTI e PTR | 2019</p>
-			</div>
-		</div><!--/.row-->
-	</div>	<!--/.main-->
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Procurar Contacto</div>
+                    <div class="panel-body">
+                        <form role="form" id="">
+                            <div class="form-group">
+                                <label>Nome</label>
+                                <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 1);">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><!--/.row-->
+
+        <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Alunos</div>
+                        <div class="panel-body">
+                            <table id="resultTable" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Número/ID</th>
+                                        <th>Nome</th>
+                                        <th>Instituição</th>
+                                        <th>Estatuto</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>40000</td>
+                                        <td>João Balsa</td>
+                                        <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                        <td>Professor</td>
+                                        <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>50000</td>
+                                        <td>Dulce Domingos</td>
+                                        <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                        <td>Professor</td>
+                                        <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>50036</td>
+                                        <td>Mariana Costa Leites</td>
+                                        <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                        <td>Aluno</td>
+                                        <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>50476</td>
+                                        <td>Raquel Matias</td>
+                                        <td>Escola Superior de Tecnologia da Saúde de Lisboa (ESTSL)</td>
+                                        <td>Aluno</td>
+                                        <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                    </tr>
+                                    <tr>
+                                        <td>7715</td>
+                                        <td>Mafalda Alexandra Dias</td>
+                                        <td>Escola Superior de Enfermagem de Lisoa (ESEL)</td>
+                                        <td>Aluno</td>
+                                        <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/.row-->
+
+	</div><!--/.main-->
 	
 	<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
 	<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
@@ -214,7 +254,30 @@
 	<script src="{% static 'template/js/easypiechart.js' %}"></script>
 	<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
 	<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'template/js/custom.js' %}"></script>
-		
+    <script src="{% static 'template/js/custom.js' %}"></script>
+    <script>
+        function DoSearch(id_input, id_table, n_column) {
+            var input, filter, table, tr, td, i;
+            
+            input = document.getElementById(id_input);
+            filter = input.value.toUpperCase();
+            
+            table = document.getElementById(id_table);
+            tr = table.getElementsByTagName("tr");
+            
+            for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[n_column];
+            
+            if (td) {
+                if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                } else {
+                tr[i].style.display = "none";
+                }
+            }
+            }
+        };
+    </script>
+	
 </body>
 </html>

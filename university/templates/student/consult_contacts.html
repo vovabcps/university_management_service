@@ -149,89 +149,84 @@
 					<em class="fa fa-home"></em>
 				</a></li>
                 <li class="active">Consultas</li>
-                <li class="active">Dados Pessoais</li>
+                <li class="active">Pesquisa de Contactos</li>
 			</ol>
 		</div><!--/.row-->
 		
 		<div class="row">
-			<div class="col-lg-12">
-				<h1 class="page-header">Dados Pessoais</h1>
-			</div>
-		</div><!--/.row-->
-		
-		<div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Pesquisa de Contactos</h1>
+                </div>
+            </div><!--/.row-->
+            
+            <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
-                        <div class="panel-heading">Informação Pessoal</div>
+                        <div class="panel-heading">Procurar Contacto</div>
                         <div class="panel-body">
-                            <img src="{% static 'template/media/profile_pic.png' %}" alt="photo" width="150" height="150" style="float: right">
-                            <h3>Nome:</h3><p>Sérgio Filipe Pereira Pacheco Mendes</p>
-                            <h3>Email Faculdade:</h3><p>fc49050@alunos.fc.ul.pt</p>
-                            <h3>Número Telefone:</h3><p>937 085 090</p>
+                            <form role="form" id="">
+                                <div class="form-group">
+                                    <label>Nome</label>
+                                    <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 1);">
+                                </div>
+                            </form>
+
+                            <br><hr><br>
+
+                            <table id="resultTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Número/ID</th>
+                                            <th>Nome</th>
+                                            <th>Instituição</th>
+                                            <th>Estatuto</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>40000</td>
+                                            <td>João Balsa</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Professor</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50000</td>
+                                            <td>Dulce Domingos</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Professor</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50036</td>
+                                            <td>Mariana Costa Leites</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50476</td>
+                                            <td>Raquel Matias</td>
+                                            <td>Escola Superior de Tecnologia da Saúde de Lisboa (ESTSL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>7715</td>
+                                            <td>Mafalda Alexandra Dias</td>
+                                            <td>Escola Superior de Enfermagem de Lisoa (ESEL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                         </div>
                     </div>
                 </div>
-        </div>
-            
-            
-        <div class="row">
-                <div class="col-md-12">
-                        <div class="panel panel-default articles">
-                                <div class="panel-heading">Disciplinas</div>
+            </div><!--/.row-->
     
-                                <div class="panel-body articles-container">
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26752</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Sistemas Inteligentes</a></h4>
-                                                    <p>João Balsa (Regente) | Gabinete: 6.3.38A</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
-                                    
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26709</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Aplicações Distribuídas</a></h4>
-                                                    <p>Alysson Bessani | Gabinete: 6.3.23</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
-                                    
-                                    <div class="article">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26719</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Projeto de Tecnologias de Informação</a></h4>
-                                                    <p>António Ferreira (PTI) | Gabinete: </p>
-                                                    <p>Fernando Ramos (PTR) | Gabinete: </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
-                                </div>
-                            </div><!--End .articles-->
-                </div><!--/.col-->
-        </div>
+            
 	</div><!--/.main-->
 	
 
@@ -244,7 +239,30 @@
 	<script src="{% static 'template/js/easypiechart.js' %}"></script>
 	<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
 	<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'template/js/custom.js' %}"></script>
+    <script src="{% static 'template/js/custom.js' %}"></script>
+    <script>
+            function DoSearch(id_input, id_table, n_column) {
+                var input, filter, table, tr, td, i;
+                
+                input = document.getElementById(id_input);
+                filter = input.value.toUpperCase();
+                
+                table = document.getElementById(id_table);
+                tr = table.getElementsByTagName("tr");
+                
+                for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[n_column];
+                
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    } else {
+                    tr[i].style.display = "none";
+                    }
+                }
+                }
+            };
+        </script>
 	
 </body>
 </html>
