@@ -35,11 +35,19 @@ def password_change(request):
         su = SystemUser.objects.get(user=u)
         roleName = su.role.role
 
+        current_url = request.resolver_match.view_name
+
         if (roleName == "Admin") :
+            if current_url != "password_change_a" : 
+                return HttpResponseRedirect(reverse('password_change_a'))
             base_template = "admin/base_site.html"
         elif (roleName == "Professor") :
+            if current_url != "password_change_t" : 
+                return HttpResponseRedirect(reverse('password_change_t'))
             base_template = "teacher/base_t.html"
         else :
+            if current_url != "password_change_s" : 
+                return HttpResponseRedirect(reverse('password_change_s'))
             base_template = "student/base_s.html"
         
 
