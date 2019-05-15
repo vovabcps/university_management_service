@@ -11,13 +11,11 @@ urlpatterns = [
 
     path('student/consult_details', views.consult_details_s, name='consult_details_s'), 
     path('student/home', views.home_s, name='home_s'), 
-    #path('student/password_alt', views.password_alt_s, name='password_alt_s'), 
     path('student/inscricoes_subject', views.inscricoes_subject_s, name='inscricoes_subject_s'),
     path('student/passwordchang', views.password_change, name='password_change_s'),
 
     path('teacher/consult_details', views.consult_details_t, name='consult_details_t'), 
     path('teacher/home', views.home_t, name='home_t'), 
-    #path('teacher/password_alt', views.password_alt_t, name='password_alt_t')
     path('teacher/passwordchang', views.password_change, name='password_change_t'),
 ]
 
