@@ -21,7 +21,51 @@ from django.core.files.storage import FileSystemStorage
 import sys
 
 
+#password change
+from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.shortcuts import render, redirect
 
+
+#--------------------- all in common -----------------------
+
+def password_change(request):
+    u = request.user
+    if u.is_authenticated:
+        su = SystemUser.objects.get(user=u)
+        roleName = su.role.role
+
+        if (roleName == "Admin") :
+            base_template = "admin/base_site.html"
+        elif (roleName == "Professor") :
+            base_template = "teacher/base_t.html"
+        else :
+            base_template = "student/base_s.html"
+        
+
+        if request.method == 'POST':
+            form = PasswordChangeForm(request.user, request.POST)
+            if form.is_valid():
+                user = form.save()
+                update_session_auth_hash(request, user) 
+                messages.success(request, 'Your password was successfully updated!')
+                #return redirect('password_change_a') #se correr bem
+            else:
+                messages.error(request, 'Please correct the error below.')
+        else:
+            form = PasswordChangeForm(request.user)
+        return render(request, 'password_alt.html', {'form': form, 'roleName': roleName, 'base_template':base_template}) #se correr mal
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def is_authenticated(request, role_name):
+    u = request.user
+    if u.is_authenticated:
+        su = SystemUser.objects.get(user=u)
+        role= su.role
+        return role.is_a(role_name)
+    return False
 
 # --------------- login ---------------
 def login_page(request):
@@ -76,17 +120,6 @@ def logout_user(request):
     return HttpResponseRedirect(reverse('login'))
 
 
-
-#--------------- all ---------------
-def is_authenticated(request, role_name):
-    u = request.user
-    if u.is_authenticated:
-        su = SystemUser.objects.get(user=u)
-        role= su.role
-        return role.is_a(role_name)
-    return False
-
-
 # --------------- student ---------------
 def home_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
@@ -120,11 +153,12 @@ def consult_details_t(request):
     return render(request, 'teacher/consult_details_t.html', {})
 
 def home_t(request):
-    su= request_user(request)
-    role = su.role
-    if not role.is_a(university.models.TEACHER_ROLE):
-        return redirect_to_user_home(request)
-    return render(request, 'teacher/home.html', {})
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/home.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
 
 def password_alt_t(request):
     return render(request, 'teacher/password_alt.html', {})

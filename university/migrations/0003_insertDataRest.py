@@ -194,8 +194,9 @@ def makeSubjectAndCourseSubjectOBJs():
                 lstCourses= cadeira_curso[1].split("!!")
                 for course in lstCourses :
                     nameCourse, year, semester, type = course.split(",")
+                    cleanType= type.split("\n")[0] #pq ao usar readlines() o line fica com "\n" no final
                     course= Course.objects.get(name=nameCourse)
-                    newCourseSubject= CourseSubject(course=course, subject=newSubject, year=year, semester=semester, type=type)
+                    newCourseSubject= CourseSubject(course=course, subject=newSubject, year=year, semester=semester, type=cleanType)
                     newCourseSubject.save()
 
 

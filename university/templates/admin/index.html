@@ -4,7 +4,11 @@
 
 
 
-{% block breadcrumbs %}{% endblock %}
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'home_a' %}"><em class="fa fa-home"></em></a>
+    </div>
+{% endblock %}
 
 {% block content_title %}Welcome{% endblock %}
 

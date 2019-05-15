@@ -68,3 +68,9 @@ fieldset {
   background: #e9ecf2;
   color: #777;
 }
+
+
+ul.messagelist {
+  padding: 0;
+  margin: 0;
+}
