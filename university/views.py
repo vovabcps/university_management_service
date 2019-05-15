@@ -135,25 +135,42 @@ def home_s(request):
     else: 
         return HttpResponseRedirect(reverse('login'))
 
-        
-def consult_details_s(request):
-    if is_authenticated(request, university.models.STUDENT_ROLE) :
-        return render(request, 'student/consult_details_s.html', {})
-    else: 
-        return HttpResponseRedirect(reverse('login'))
-
-
-def password_alt_s(request):
-    if is_authenticated(request, university.models.STUDENT_ROLE) :
-        return render(request, 'student/password_alt.html', {})
-    else: 
-        return HttpResponseRedirect(reverse('login'))
 
 def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
-        return render(request, 'student/inscricoes_curso.html', {})
+        return render(request, 'student/inscricoes_subject.html', {})
     else: 
         return HttpResponseRedirect(reverse('login'))
+
+
+def consult_contacts_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_contacts.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def consult_details_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_details.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def consult_subjects_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_subjects.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def consult_university_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_university.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
 
 
 # --------------- teacher ---------------

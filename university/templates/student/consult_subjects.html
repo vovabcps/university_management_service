@@ -1,0 +1,156 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Consultar cadeiras{% endblock %}
+
+{% block content_title %}Disciplinas:{% endblock %}
+
+{% block breadcrumbs %}
+        › Consultar cadeiras
+{% endblock %}
+
+
+{% block content %}
+
+	<div id="content-main">
+
+
+
+        <div class="row">
+                <div class="col-md-12">
+                        <div class="panel panel-default articles">
+                                <div class="panel-heading">As Minhas Disciplinas</div>
+    
+                                <div class="panel-body articles-container">
+                                    <div class="article border-bottom">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26752</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Sistemas Inteligentes</a></h4>
+                                                    <p>João Balsa (Regente) | Gabinete: 6.3.38A</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+                                    
+                                    <div class="article border-bottom">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26709</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Aplicações Distribuídas</a></h4>
+                                                    <p>Alysson Bessani | Gabinete: 6.3.23</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+                                    
+                                    <div class="article">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26719</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Projeto de Tecnologias de Informação</a></h4>
+                                                    <p>António Ferreira (PTI) | Gabinete: </p>
+                                                    <p>Fernando Ramos (PTR) | Gabinete: </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+                                </div>
+                            </div><!--End .articles-->
+                </div><!--/.col-->
+        </div>
+            
+        <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Procurar Disciplinas</div>
+                        <div class="panel-body">
+                            <form role="form" id="">
+                                <div class="form-group">
+                                    <label>Disciplina</label>
+                                    <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 1);">
+                                </div>
+                            </form>
+
+                            <p>As disciplinas apresentadas abaixo são do curso em que o aluno está inscrito.</p>
+                            <br><hr><br>
+                            
+                            <table id="resultTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Código</th>
+                                            <th>Título</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>00000</td>
+                                            <td>Arquitetura de Computadores</td>
+                                        </tr>
+                                        <tr>
+                                            <td>11111</td>
+                                            <td>Programação I</td>
+                                        </tr>
+                                        <tr>
+                                            <td>22222</td>
+                                            <td>Programação II</td>
+                                        </tr>
+                                        <tr>
+                                            <td>33333</td>
+                                            <td>Redes de Computadores</td>
+                                         </tr>
+                                        <tr>
+                                            <td>44444</td>
+                                            <td>Elementos de Matemática I</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+        </div><!--/.row-->
+	</div><!--/.main-->
+	
+
+
+
+    <script>
+            function DoSearch(id_input, id_table, n_column) {
+                var input, filter, table, tr, td, i;
+                
+                input = document.getElementById(id_input);
+                filter = input.value.toUpperCase();
+                
+                table = document.getElementById(id_table);
+                tr = table.getElementsByTagName("tr");
+                
+                for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[n_column];
+                
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    } else {
+                    tr[i].style.display = "none";
+                    }
+                }
+                }
+            };
+</script>
+
+{% endblock %}
