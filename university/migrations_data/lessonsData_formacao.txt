@@ -1,0 +1,57 @@
+Sustentabilidade Energética||T,21,QUARTA,15:00,1:00!!TP,21,QUINTA,11:30,1:30!!TP,23,TERCA,16:30,1:30!!TP,22,SEXTA,16:00,1:30
+
+Perspetivas em Investigação e Desenvolvimento||S,21,QUARTA,14:00,1:30
+
+Matemática e Arte||T,21,QUARTA,10:00,2:00
+
+Jardins como Espaços de Ciências||T,21,QUINTA,16:30,2:00
+
+História Experimental da Ciência||T,21,SEGUNDA,14:30,2:00
+
+História dos Jogos de Tabuleiro||T,21,QUINTA,9:30,2:00!!T,22,QUARTA,16:30,2:00!!T,23,TERÇA,14:00,2:00!!T,24,SEGUNDA,10:00,2:00
+
+Haverá Limites na Ciência?||T,21,QUINTA,11:00,2:00
+
+Competências Transversais para a Empregabilidade||TP,21,SEGUNDA,13:30,2:00!!TP,22,SEGUNDA,15:30,2:00
+
+Bioética||T,21,SEGUNDA,12:30,1:00!!T,22,SEGUNDA,17:00,1:00!!T,21,QUARTA,13:30,1:00!!T,22,SEXTA,16:00,1:00
+
+Astronomia e Astrofísica||T,21,TERCA,14:00,2:00
+
+Terra Ambiente e Clima||T,11,TERCA,11:30,1:00!!T,11,SEXTA,10:00,1:00
+
+Sociologia e Modernidade||TP,11,QUARTA,16:30,3:00
+
+Laboratório de Matemática||PL,12,TERCA,10:30,2:00!!PL,11,QUARTA,14:00,2:00
+
+Introdução à Filosofia da Ciência||T,11,SEGUNDA,13:30,2:00!!T,11,QUINTA,11:00,1:00!!TP,11,QUINTA,12:00,1:30
+
+Informática na Ótica do Utilizador||TP,11,SEGUNDA,9:30,1:30!!TP,17,SEGUNDA,11:00,1:30!!TP,14,SEGUNDA,13:30,1:30!!TP,15,SEGUNDA,15:00,1:30!!TP,12,TERCA,8:00,1:30!!TP,18,QUINTA,11:00,1:30!!TP,13,QUINTA,14:00,1:30!!TP,19,QUINTA,15:30,1:30!!TP,16,SEXTA,10:00,1:30
+
+História das Ideias em Biologia||T,11,TERCA,11:00,1:00!!T,11,QUINTA,11:00,1:00
+
+História da Matemática Recreativa||T,11,TERCA,11:00,2:00!!T,12,TERCA,16:00,2:00
+
+Geologia e Sociedade||T,11,TERCA,12:00,1:30!!T,11,QUINTA,12:30,1:30
+
+Evolução do Pensamento Matemático||T,12,QUARTA,10:30,2:00!!T,11,QUARTA,16:00,2:00
+
+Evolução das Ideias em Física||T,11,SEGUNDA,10:00,2:00
+
+Empreendedorismo em Ciências||TP,11,SEGUNDA,10:00,2:00!!TP,12,QUINTA,10:30,2:00
+
+Curso de Competências Sociais e Desenvolvimento Pessoal||TP,12,SEGUNDA,13:30,4:00!!TP,13,TERCA,12:30,4:00!!TP,14,TERCA,12:30,4:00!!TP,11,QUINTA,13:30,4:00
+
+Controvérsias Científicas A||T,11,QUARTA,15:00,2:00
+
+Controvérsias Científicas||T,11,SEGUNDA,8:00,2:00!!TP,11,SEGUNDA,10:00,2:00
+
+Ciência em Portugal A||T,11,QUINTA,15:30,2:00
+
+Ciência em Portugal||TP,11,TERCA,16:00,2:30!!T,11,QUINTA,15:30,2:00
+
+Ciência e Cultura A||T,11,SEXTA,11:30,2:00
+
+Ciência e Cultura||TP,11,TERCA,10:30,2:30!!T,11,SEXTA,11:30,2:00
+
+Ciência Tecnologia e a Cidade||T,11,QUINTA,16:00,2:00

@@ -180,12 +180,13 @@ class Lesson(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # T, TP, PL, O ...
     type = models.CharField(max_length=200, null=False, default="T")
-    week_day = models.IntegerField()
-    hour = models.TimeField()
-    duration = models.FloatField()
+    turma = models.CharField(max_length=200, null=False, default="")
+    week_day = models.CharField(max_length=200, null=True)
+    hour = models.CharField(max_length=200, null=True)
+    duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     users = models.ManyToManyField(SystemUser)
-    presenças= models.IntegerField()
+    presenças= models.IntegerField(null=True)
     
     def get_subject_name(self):
         return self.subject.name 

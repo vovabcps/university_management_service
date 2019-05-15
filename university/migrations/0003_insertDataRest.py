@@ -123,7 +123,7 @@ def makeSystemUserOBJs():
 @transaction.atomic
 def makePersonalInfoOBJs():
     allSystemUsers= SystemUser.objects.all()
-    with open(settings.STATIC_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt") as rfile:
         listData = rfile.readlines()
     num= 0
     for user in allSystemUsers :
@@ -182,12 +182,13 @@ def makeCourseOBJs():
 
 @transaction.atomic
 def makeSubjectAndCourseSubjectOBJs():
-    with open(settings.STATIC_ROOT + "/subjectsData.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/subjectsData.txt") as rfile:
         for line in rfile.readlines():
             if "#" not in line and "||" in line: 
                 
                 cadeira_curso= line.split("||")
                 nomeCadeira, cred = cadeira_curso[0].split(",")
+                print(nomeCadeira)
                 newSubject= Subject(name=nomeCadeira, credits_number=int(cred))
                 newSubject.save()
 
@@ -203,7 +204,7 @@ def makeSubjectAndCourseSubjectOBJs():
 
 
 
-
+@transaction.atomic
 def makeSystemUserCourseOBJs():
     #allSystemUsers= SystemUser.objects.exclude(id__in= table2.objects.filter(roles=["Admin"]).values_list('id', flat=True))
     allSystemUsers= SystemUser.objects.all()
@@ -223,7 +224,26 @@ def makeSystemUserCourseOBJs():
             
             if "Aluno" == roles_str : #if "Aluno" in roles_str :
                 SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício="2017/2018", anoActual=2)
-            
+
+
+@transaction.atomic         
+def makeLessonOBJs():
+    with open(settings.MIGRATIONS_DATA_ROOT + "/lessonsData_formacao.txt") as rfile:
+        for line in rfile.readlines():
+            if "#" not in line and "||" in line: 
+                
+                cadeira_lessons= line.split("||")
+                nomeCadeira = cadeira_lessons[0]
+                print(nomeCadeira)
+                lstLessons= cadeira_lessons[1].split("!!")
+
+                for lesson in lstLessons :
+                    type, turma, weekDay, hour, duration = lesson.split(",")
+                    cleanDuration= duration.split("\n")[0] #pq ao usar readlines() o line fica com "\n" no final
+                    subject= Subject.objects.get(name=nomeCadeira)
+                    newLesson= Lesson(subject=subject, type=type, turma=turma, week_day=weekDay, hour=hour, duration=cleanDuration)#, room=)
+                    newLesson.save()
+
 
 def mainInsertData(apps, schema_editor):
     #reset (para nao dar duplicado)
@@ -236,6 +256,7 @@ def mainInsertData(apps, schema_editor):
     Subject.objects.all().delete()
     CourseSubject.objects.all().delete()
     SystemUserCourse.objects.all().delete()
+    Lesson.objects.all().delete()
 
     makeRoleOBJs()
     makeSchoolYearOBJs(2017,2019)
@@ -245,6 +266,7 @@ def mainInsertData(apps, schema_editor):
     makeCourseOBJs()
     makeSubjectAndCourseSubjectOBJs()
     makeSystemUserCourseOBJs()
+    makeLessonOBJs()
 
 class Migration(migrations.Migration):
     dependencies = [

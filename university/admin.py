@@ -76,8 +76,9 @@ admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):
   search_fields = ["subject"]
-  list_filter = ["type", "week_day", "hour", "duration", "room", "presenças"]
-  list_display = ["get_subject_name", "type", "week_day", "hour", "duration", "get_room_room_number", "presenças"]
+  list_filter = ["type", "week_day", "turma", "hour", "duration", "room", "presenças"]
+  list_display = ["get_subject_name", "type", "turma", "week_day", "hour", "duration", "presenças"]
+  #"get_room_room_number",
 admin.site.register(Lesson,  LessonAdmin)
 
 
