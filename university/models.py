@@ -32,12 +32,10 @@ class Role(models.Model):
 
 class SystemUser(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    #roles = models.ManyToManyField(Role)
     role = models.ForeignKey(Role, null=True,  on_delete=models.CASCADE)
     rooms = models.ManyToManyField(Room)
 
     def get_roles(self):
-        #return "\n".join([r.role for r in self.roles.all()])
         return self.role.role
 
     def get_rooms(self):
@@ -145,6 +143,9 @@ class Subject(models.Model):
         detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
         return detalhesOBJ.name
 
+    class Meta:
+        ordering = ['name']
+
 
 
 class CourseSubject(models.Model):
@@ -176,6 +177,7 @@ class SystemUserSubject(models.Model):
 
 
 
+
 class Lesson(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # T, TP, PL, O ...
@@ -192,6 +194,12 @@ class Lesson(models.Model):
         return self.subject.name 
 
     def get_room_room_number(self):
-        return self.room.room_number 
+        return self.room.room_number     
+
+    def __str__(self):
+        return self.subject.name
+
+    class Meta:
+        ordering = ['subject__name']
 
 

@@ -75,6 +75,17 @@ def is_authenticated(request, role_name):
         return role.is_a(role_name)
     return False
 
+
+# --------------- sigla ---------------
+def getSigla (umaString):
+    lista = umaString.split(" ")
+    sigla = ""
+    for word in lista:
+        if len(word) > 3:
+            sigla = sigla + word[0]
+
+    return sigla
+
 # --------------- login ---------------
 def login_page(request):
     if request.method == "GET":

@@ -72,7 +72,7 @@ def makeBuilding(numBuilding, numFloors, numOfRoomsPerFloor, totalRooms, totalro
 
 @transaction.atomic
 def makeRoleOBJs():
-    roles = ["Professor", "Aluno", "Admin", "Monitor", "Aluno externo", "Erasmus"]
+    roles = ["Professor", "Aluno", "Admin"]
     for r in roles:
         newRole= Role(role=r)
         newRole.save()
@@ -81,41 +81,36 @@ def makeRoleOBJs():
 
 @transaction.atomic
 def makeSystemUserOBJs():
-    #800 users
-    #42 gabinetes
-    allUsers= User.objects.all()
-    gabinetes= Room.objects.filter(can_give_class= False)
+    allUsers= User.objects.all() #800 users
+    gabinetes= Room.objects.filter(can_give_class= False) #42 gabinetes
     #roles objs
     rProfessor= Role.objects.get(role="Professor")
     rAluno= Role.objects.get(role="Aluno")
     rAdmin= Role.objects.get(role="Admin")
-    rMonitor= Role.objects.get(role="Monitor")
-    rAlunoExterno= Role.objects.get(role="Aluno externo")
-    rErasmus= Role.objects.get(role="Erasmus")
 
-    #[totalusers , [roles], tem gabinete?]
-    #totalUserRoles= [ [3, [rAdmin], True], [1, [rAdmin, rAluno], True], [10, [rAlunoExterno], False], [2, [rErasmus], False], 
-    #                  [3, [rMonitor], False], [84, [rProfessor], True], [1, [rAluno, rAlunoExterno], False], [800, [rAluno], False] ] #-1 -> o resto
+    #[totalusers , roles, tem gabinete?]
+ 
+    totalUserRoles= [[3, rAdmin, True, "@admin.fc.ul.pt"], [84, rProfessor, True, "@professor.fc.ul.pt"], [713, rAluno, False, "@alunos.fc.ul.pt"]] 
+                   #3+84=87;    800-87=713 resto
 
-    totalUserRoles= [ [3, rAdmin, True], [1, rAdmin, True], [10, rAlunoExterno, False], [2, rErasmus, False], 
-                   [3, rMonitor, False], [84, rProfessor, True], [1, rAluno, False], [800, rAluno, False] ] #-1 -> o resto
-
-    #4 gabinetes vao ter 3 pessoas cada, e o resto(32) vao ter 2 pessoas cada
 
     cont=1
     i=0
     gab= 0
     for user in allUsers :
-        total= sum([n for (n,l,b) in totalUserRoles[:(i+1)]]) 
+        total= sum([n for (n,l,b,d) in totalUserRoles[:(i+1)]]) 
         if cont > total :
             i += 1
         newUSER= SystemUser(user=user, role=totalUserRoles[i][1])
-        newUSER.save()
-        #newUSER.roles.add(* totalUserRoles[i][1]) 
+        newUSER.save() #tem q ser antes do rooms.add
+        user.email = user.username + totalUserRoles[i][3]
 
         if totalUserRoles[i][2] :
             newUSER.rooms.add(gabinetes[gab])
             gab = (gab+1) % gabinetes.count() #array circular
+
+        
+        user.save()
         cont += 1 
 
 
@@ -144,7 +139,6 @@ def makeCourseOBJs():
     allSystemUsers= SystemUser.objects.all()
     allSchoolYears= SchoolYear.objects.all()
     allTeachers= list(SystemUser.objects.filter(role__role="Professor"))
-    #allTeachers= list(SystemUser.objects.filter(roles__role="Professor"))
 
     schoolyearOBJ_17_18= SchoolYear.objects.get(begin=2017)
     
@@ -207,23 +201,16 @@ def makeSubjectAndCourseSubjectOBJs():
 @transaction.atomic
 def makeSystemUserCourseOBJs():
     #allSystemUsers= SystemUser.objects.exclude(id__in= table2.objects.filter(roles=["Admin"]).values_list('id', flat=True))
-    allSystemUsers= SystemUser.objects.all()
-    allCourses= Course.objects.all()
-
-    allMinors= Course.objects.filter(grau="Minor")
+    allStudents= SystemUser.objects.filter(role__role="Aluno")
     allLicenciaturas= Course.objects.filter(grau="Licenciatura")
-    for user in allSystemUsers :
-        roles_str= user.get_roles()
-        #if "Admin" not in roles_str and "Erasmus" not in roles_str and "Professor" not in roles_str:
-        if "Admin" != roles_str and "Erasmus" != roles_str and "Professor" != roles_str:
-            if "Aluno externo" == roles_str : #if "Aluno externo" in roles_str :
-                SystemUserCourse(user=user, course=random.choice(allMinors), estadoActual="Matriculado", anoLectivoDeInício="2017/2018", anoActual=2)
-            
-            if "Monitor" == roles_str : #if "Monitor" in roles_str :
-                SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício="2017/2018", anoActual=2)
-            
-            if "Aluno" == roles_str : #if "Aluno" in roles_str :
-                SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício="2017/2018", anoActual=2)
+
+    for user in allStudents :
+        newSystemUserCourse= SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício=random.choice(["2016/2017", "2017/2018", "2018/2019"]), anoActual=random.randint(1,3))
+        newSystemUserCourse.save()
+
+@transaction.atomic         
+def makeSystemUserSubjectOBJs():
+    pass
 
 
 @transaction.atomic         
@@ -243,6 +230,47 @@ def makeLessonOBJs():
                     subject= Subject.objects.get(name=nomeCadeira)
                     newLesson= Lesson(subject=subject, type=type, turma=turma, week_day=weekDay, hour=hour, duration=cleanDuration)#, room=)
                     newLesson.save()
+    
+    #put rooms
+    lessons= Lesson.objects.order_by("week_day", "subject__name", "turma")
+    rooms= list(Room.objects.filter(can_give_class= True)) #200 rooms that can have class
+
+    prim=True
+    i=0
+    for lesson in lessons:
+        if prim :
+            lesson.room=rooms[i]
+            prim = False
+        else :
+            if lessonAnt.week_day != lesson.week_day :
+                i= 0
+                lesson.room=rooms[i]
+            else:
+                if addMinutes(lessonAnt.hour, lessonAnt.duration) <= hourToMinutes(lesson.hour) :
+                    lesson.room=rooms[i]
+                else: 
+                    i += 1
+                    lesson.room=rooms[i]
+        lesson.save()
+        lessonAnt = lesson
+        
+    
+
+
+def hourToMinutes(hour):
+    lhour= hour.split(":")
+    return int(lhour[0])*60 + int(lhour[1])
+
+
+def addMinutes(hour, duration):
+    return hourToMinutes(hour) + hourToMinutes(duration)
+
+    
+
+
+
+
+
 
 
 def mainInsertData(apps, schema_editor):
@@ -255,8 +283,9 @@ def mainInsertData(apps, schema_editor):
     Course.objects.all().delete()
     Subject.objects.all().delete()
     CourseSubject.objects.all().delete()
-    SystemUserCourse.objects.all().delete()
+    SystemUserCourse.objects.all().delete() 
     Lesson.objects.all().delete()
+    SystemUserSubject.objects.all().delete()
 
     makeRoleOBJs()
     makeSchoolYearOBJs(2017,2019)
@@ -265,8 +294,9 @@ def mainInsertData(apps, schema_editor):
     makePersonalInfoOBJs()
     makeCourseOBJs()
     makeSubjectAndCourseSubjectOBJs()
-    makeSystemUserCourseOBJs()
-    makeLessonOBJs()
+    makeSystemUserCourseOBJs() #falta
+    makeLessonOBJs() #falta
+    makeSystemUserSubjectOBJs() #falta
 
 class Migration(migrations.Migration):
     dependencies = [
