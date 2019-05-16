@@ -7,7 +7,7 @@ from django.contrib import messages
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
-from .models import SystemUser
+from .models import *
 import university.models
 
 #app_list

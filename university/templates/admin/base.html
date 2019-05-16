@@ -86,7 +86,7 @@
 				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
 			</div>
 			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">{% firstof user.get_short_name user.get_username %}</div>
+				<div class="profile-usertitle-name">{{personalData.name}}</div>
 				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
 			</div>
 			<div class="clear"></div>
@@ -181,7 +181,14 @@ li.classList.add("active");
 
 var navBar= document.getElementById("changelist-search");
 if (navBar){
-navBar.innerHTML="<div><label for='searchbar'></label><input type='text' placeholder='Search..' size='40' name='q' value='' id='searchbar' autofocus=''><button type='submit'><i class='fa fa-search'></i></button></div>";
+    var div= navBar.children[0];
+    div.children[0].innerHTML = "";
+    div.children[1].setAttribute("placeholder", "Search...");
+    var but= document.createElement('button');
+    but.setAttribute("type", "submit");
+    but.innerHTML ="<i class='fa fa-search'></i>"
+    div.replaceChild(but, div.children[2]);
+  
 }
 
 
