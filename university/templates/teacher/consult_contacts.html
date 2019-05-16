@@ -1,21 +1,17 @@
+{% extends "teacher/base_t.html" %}
+{% load i18n static %}
 
-		
-	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-		<div class="row">
-			<ol class="breadcrumb">
-				<li><a href="{% url 'home_t' %}">
-					<em class="fa fa-home"></em>
-				</a></li>
-                <li class="active">Consultas Gerais</li>
-                <li class="active">Pesquisa de Contactos</li>
-			</ol>
-		</div><!--/.row-->
-		
-		<div class="row">
-			<div class="col-lg-12">
-				<h1 class="page-header">Pesquisa de Contactos</h1>
-			</div>
-		</div><!--/.row-->
+{% block title %}Consultar contactos{% endblock %}
+
+{% block content_title %}Pesquisa de Contactos{% endblock %}
+
+{% block breadcrumbs %}
+        › Pesquisa de Contactos
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
 		
 		<div class="row">
             <div class="col-md-12">
@@ -33,7 +29,7 @@
             </div>
         </div><!--/.row-->
 
-        <div class="row">
+            <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">Alunos</div>
@@ -91,7 +87,7 @@
                 </div>
             </div><!--/.row-->
 
-	</div><!--/.main-->
+</div><!--/.main-->
 	
 
     <script>
@@ -118,5 +114,4 @@
         };
     </script>
 	
-</body>
-</html>
+{% endblock %}

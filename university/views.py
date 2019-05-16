@@ -185,9 +185,6 @@ def consult_university_s(request):
 
 
 # --------------- teacher ---------------
-def consult_details_t(request):
-    return render(request, 'teacher/consult_details_t.html', {})
-
 def home_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
         return render(request, 'teacher/home.html', {})
@@ -195,9 +192,19 @@ def home_t(request):
         return HttpResponseRedirect(reverse('login'))
 
 
+def consult_contacts_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/consult_contacts.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
-def password_alt_t(request):
-    return render(request, 'teacher/password_alt.html', {})
+    
+def consult_details_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/consult_details.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
 
 
 # --------------- admin ---------------
