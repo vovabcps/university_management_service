@@ -192,7 +192,16 @@
      <!-- Content -->
   <div id="content" class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
    
+    <!-- caminho -->
+    <div class="row">
+      <div class="breadcrumbs">
+       <a href="{% url 'home_s' %}"><em class="fa fa-home"></em></a>
+       {% block breadcrumbs %}
+        {% endblock %}
+      </div>
+    </div>
 
+		
    <!-- messages -->
      {% block messages %}
         {% if messages %}
@@ -202,14 +211,6 @@
         {% endif %}
     {% endblock messages %}
 
-    <!-- caminho -->
-    <div class="row">
-      <div class="breadcrumbs">
-       <a href="{% url 'home_s' %}"><em class="fa fa-home"></em></a>
-       {% block breadcrumbs %}
-        {% endblock %}
-      </div>
-    </div>
 
 
     <!-- header -->
