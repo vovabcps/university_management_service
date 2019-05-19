@@ -5,6 +5,7 @@ from django.conf import settings
 
 
 
+
 STUDENT_ROLE = 'Aluno'
 TEACHER_ROLE = 'Professor'
 ADMIN_ROLE = 'Admin'
@@ -33,12 +34,12 @@ class Role(models.Model):
 class SystemUser(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, null=True,  on_delete=models.CASCADE)
-    rooms = models.ManyToManyField(Room)
+    rooms = models.ManyToManyField(Room) #gabinete
 
     def get_roles(self):
         return self.role.role
 
-    def get_rooms(self):
+    def gabinete(self):
         return ",\n".join([room.room_number for room in self.rooms.all()])
 
 
@@ -137,11 +138,12 @@ class Subject(models.Model):
     #id -> codigo
     name = models.CharField(max_length=200, unique=True)
     credits_number = models.IntegerField(default=6) 
-    regente = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
+    regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
 
     def get_regente_name(self):
         detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
         return detalhesOBJ.name
+        #return self.regente.user
 
     class Meta:
         ordering = ['name']
@@ -160,6 +162,9 @@ class CourseSubject(models.Model):
 
     def get_subject_name(self):
         return self.subject.name 
+
+    def get_subject_credits(self):
+        return self.subject.credits_number 
 
 
 class SystemUserSubject(models.Model):
@@ -187,13 +192,20 @@ class Lesson(models.Model):
     hour = models.CharField(max_length=200, null=True)
     duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
-    users = models.ManyToManyField(SystemUser)
-    presenças= models.IntegerField(null=True)
-    
+    professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
+    presencas = models.IntegerField(null=True)
+
+
+    def get_lesson_detalhes(self):
+        return self.subject.name  + ", " + self.type + ", " + self.week_day + ", " + self.hour
+
     def get_subject_name(self):
         return self.subject.name 
 
-    def get_room_room_number(self):
+    def professor_fc(self):
+        return self.professor.user 
+
+    def room_number(self):
         return self.room.room_number     
 
     def __str__(self):
@@ -201,5 +213,22 @@ class Lesson(models.Model):
 
     class Meta:
         ordering = ['subject__name']
+
+
+
+
+class LessonSystemUser(models.Model):
+    lesson= models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    systemUser= models.ForeignKey(SystemUser, on_delete=models.CASCADE) #so alunos xd
+    presente= models.BooleanField()
+    date= models.DateField()
+
+
+    def get_systemUser_user(self):
+        return self.systemUser.user #ex: fc1085
+
+    def get_lesson_information(self):
+        return self.lesson.get_lesson_detalhes(self)
+
 
 

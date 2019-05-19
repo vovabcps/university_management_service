@@ -129,8 +129,8 @@ def login_user(request):
 
 def request_user(request):
     u = request.user
-    su = SystemUser.objects.get(user=u)
-    return su
+    return SystemUser.objects.get(user=u)
+
 
 
 # --------------- logout ---------------
@@ -149,7 +149,11 @@ def home_s(request):
 
 def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
-        return render(request, 'student/inscricoes_subject.html', {})
+        su= request_user(request)
+        suCourse= SystemUserCourse.objects.get(user=su)
+        MiniC= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
+        course_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
+        return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'MiniC':MiniC, 'course_subjs':course_subjs})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -219,6 +223,7 @@ def consult_a(request):
     if is_authenticated(request, university.models.ADMIN_ROLE) :
         admin_index = admin.site.index(request)
         app_list = admin_index.context_data['app_list']
+        print(app_list)
         return render(request, 'admin/consult.html', {'app_list':app_list})
     else: 
         return HttpResponseRedirect(reverse('login'))
@@ -283,6 +288,16 @@ def operacoesBloco_a(request):
             return render(request, 'admin/oper_bloco.html')
     else: 
         return HttpResponseRedirect(reverse('login'))
+
+
+def export_a(request):
+    if is_authenticated(request, university.models.ADMIN_ROLE) :
+        admin_index = admin.site.index(request)
+        app_list = admin_index.context_data['app_list']
+        return render(request, 'admin/export.html', {'app_list':[app_list[1]]})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
 
        
 

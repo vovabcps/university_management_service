@@ -6,6 +6,7 @@ import random
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.shortcuts import get_object_or_404
+import collections
 
 
 
@@ -90,8 +91,9 @@ def makeSystemUserOBJs():
 
     #[totalusers , roles, tem gabinete?]
  
-    totalUserRoles= [[3, rAdmin, True, "@admin.fc.ul.pt"], [84, rProfessor, True, "@professor.fc.ul.pt"], [713, rAluno, False, "@alunos.fc.ul.pt"]] 
-                   #3+84=87;    800-87=713 resto
+    totalUserRoles= [[3, rAdmin, True, "@admin.fc.ul.pt"], [110, rProfessor, True, "@professor.fc.ul.pt"], [687, rAluno, False, "@alunos.fc.ul.pt"]] 
+                   #3+110=113;    800-113=687 resto
+                   #num professores = num cadeiras (regente)
 
 
     cont=1
@@ -143,7 +145,7 @@ def makeCourseOBJs():
     schoolyearOBJ_17_18= SchoolYear.objects.get(begin=2017)
     
    
-    minors= [(0, "Minor em Biologia")]
+    minors= [(0, "Minor em Biologia"), (1, "Minor em Gestão")]
     minorsOBJ= []
     for (_, minor) in minors:
         newCourse= Course(name=minor, grau="Minor", credits_number=30, duration=2, timetable="Diurno", coordinator=allTeachers.pop())
@@ -182,7 +184,7 @@ def makeSubjectAndCourseSubjectOBJs():
                 
                 cadeira_curso= line.split("||")
                 nomeCadeira, cred = cadeira_curso[0].split(",")
-                print(nomeCadeira)
+                #print(nomeCadeira)
                 newSubject= Subject(name=nomeCadeira, credits_number=int(cred))
                 newSubject.save()
 
@@ -208,35 +210,47 @@ def makeSystemUserCourseOBJs():
         newSystemUserCourse= SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício=random.choice(["2016/2017", "2017/2018", "2018/2019"]), anoActual=random.randint(1,3))
         newSystemUserCourse.save()
 
+
+
 @transaction.atomic         
 def makeSystemUserSubjectOBJs():
     pass
 
 
+
+@transaction.atomic         
+def makeLessonSystemUserOBJs():
+    pass
+
+
 @transaction.atomic         
 def makeLessonOBJs():
-    with open(settings.MIGRATIONS_DATA_ROOT + "/lessonsData_formacao.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/lessonsData.txt") as rfile:
         for line in rfile.readlines():
             if "#" not in line and "||" in line: 
                 
                 cadeira_lessons= line.split("||")
                 nomeCadeira = cadeira_lessons[0]
-                print(nomeCadeira)
+                #print(nomeCadeira)
                 lstLessons= cadeira_lessons[1].split("!!")
 
                 for lesson in lstLessons :
                     type, turma, weekDay, hour, duration = lesson.split(",")
+                    if len(hour) == 4 : 
+                        hour= "0" + hour
+                    if len(turma) == 1 :
+                        turma= "0" + turma
                     cleanDuration= duration.split("\n")[0] #pq ao usar readlines() o line fica com "\n" no final
                     subject= Subject.objects.get(name=nomeCadeira)
-                    newLesson= Lesson(subject=subject, type=type, turma=turma, week_day=weekDay, hour=hour, duration=cleanDuration)#, room=)
+                    newLesson= Lesson(subject=subject, type=type, turma=turma, week_day=weekDay, hour=hour, duration=cleanDuration)
                     newLesson.save()
     
     #put rooms
     lessons= Lesson.objects.order_by("week_day", "subject__name", "turma")
-    rooms= list(Room.objects.filter(can_give_class= True)) #200 rooms that can have class
-
+    rooms= Room.objects.filter(can_give_class= True) #200 rooms that can have class
     prim=True
     i=0
+
     for lesson in lessons:
         if prim :
             lesson.room=rooms[i]
@@ -245,15 +259,88 @@ def makeLessonOBJs():
             if lessonAnt.week_day != lesson.week_day :
                 i= 0
                 lesson.room=rooms[i]
-            else:
+            else: #no mesmo dia de semana
                 if addMinutes(lessonAnt.hour, lessonAnt.duration) <= hourToMinutes(lesson.hour) :
                     lesson.room=rooms[i]
                 else: 
-                    i += 1
+                    i = (i+1) % rooms.count() #array circular
                     lesson.room=rooms[i]
         lesson.save()
         lessonAnt = lesson
+
+
+
+    #atribuir professores
+    lstLessonsPrim= []
+    lstLessonsSeg= []
+
+    #dados
+    subjs= Subject.objects.all()
+    allTeachers= SystemUser.objects.filter(role__role="Professor")
+
+    #separar cadeiras por semestre e ordena-las
+    for subj in subjs:
+        lesson= Lesson.objects.filter(subject=subj).order_by("week_day", "hour") #lista de lessons
+        CRsubjs= CourseSubject.objects.filter(subject=subj)
+        if CRsubjs[0].semester == 1 :
+            lstLessonsPrim.append(lesson)
+        else: #2
+            lstLessonsSeg.append(lesson)
+
+    allLessons = [lstLessonsPrim, lstLessonsSeg]
+   
+ 
+    for semestre in allLessons:
+        i = 0
+        for lessons in semestre: #lessons- lista de lessons de todas as cadeiras de um semestre
+            subjectProfs= []
+            for lesson in lessons: #lessons de uma cadeira
+
+                while is_lesson_sobreposta(allTeachers[i], lesson):
+                    i = (i+1) % allTeachers.count() #array circular
+                
+                lesson.professor= allTeachers[i]
+                lesson.save()
+                subjectProfs.append(lesson.professor)
+
+            #todos os professores dessa cadeira
+            TuplosProfNumOrd = ordenarPorNumOcorrencias(subjectProfs) #sort: professor q da mais aulas dessa cadeira
+            subj= lesson.subject
+            tem= False
+            for prof,n in TuplosProfNumOrd:
+                if not Subject.objects.filter(regente=prof).first() : #este prof ainda nao é regente
+                    subj.regente =  prof
+                    tem= True
+                    break
+            if not tem :
+                subj.regente = TuplosProfNumOrd[0][0] #nota: assim um prof pode ser regente de mais uma cadeira!
+            subj.save()
+
+
+def is_lesson_sobreposta(professor, lesson):
+    lessonProfAnt= Lesson.objects.filter(professor=professor, week_day=lesson.week_day).order_by("hour").last()
+    if lessonProfAnt : #se ele ja tiver aulas nesse dia de semana
+        if addMinutes(lessonProfAnt.hour, lessonProfAnt.duration) <= hourToMinutes(lesson.hour) :
+            return False
+        else:
+            return True
         
+    return False
+
+
+
+def ordenarPorNumOcorrencias(lstObjs):
+    counts = collections.Counter(lstObjs)
+    tuploOrd= counts.most_common(len(counts))
+    return tuploOrd
+
+
+
+
+        
+
+
+
     
 
 
@@ -286,6 +373,7 @@ def mainInsertData(apps, schema_editor):
     SystemUserCourse.objects.all().delete() 
     Lesson.objects.all().delete()
     SystemUserSubject.objects.all().delete()
+    LessonSystemUser.objects.all().delete()
 
     makeRoleOBJs()
     makeSchoolYearOBJs(2017,2019)
@@ -297,6 +385,9 @@ def mainInsertData(apps, schema_editor):
     makeSystemUserCourseOBJs() #falta
     makeLessonOBJs() #falta
     makeSystemUserSubjectOBJs() #falta
+    makeLessonSystemUserOBJs() #falta
+
+
 
 class Migration(migrations.Migration):
     dependencies = [

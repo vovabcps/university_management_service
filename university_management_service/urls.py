@@ -28,6 +28,8 @@ urlpatterns = [
     path('admin/auth/', views.consult_auth_a, name='consult_auth_a'), #overwrite django path
     path('admin/insert', views.insert_a, name='insert_a'), 
     path('admin/operacoesBloco', views.operacoesBloco_a, name='operacoesBloco_a'), 
+    path('admin/export', views.export_a, name='export'),
+
 
     path('admin/passwordchang', views.password_change, name='password_change_a'),
 

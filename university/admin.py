@@ -24,7 +24,7 @@ admin.site.register(Role, RoleAdmin)
 class SystemUserAdmin(admin.ModelAdmin):
     search_fields = ["user__username"]
     list_filter = ["role__role"]
-    list_display = ["user", "get_roles", "get_rooms"]
+    list_display = ["user", "get_roles", "gabinete"]
 admin.site.register(SystemUser, SystemUserAdmin)
 
 
@@ -75,12 +75,16 @@ class SystemUserSubjectAdmin(admin.ModelAdmin):
 admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):
-  search_fields = ["subject__name"]
-  list_filter = ["type", "week_day", "turma", "hour", "duration", "room__room_number", "presenças"]
-  list_display = ["get_subject_name", "type", "turma", "week_day", "hour", "duration", "get_room_room_number", "presenças"]
+  search_fields = ["subject__name", "professor__user__username", "room__room_number", "turma"]
+  list_filter = ["type", "week_day", "hour", "duration", "presencas"]
+  list_display = ["get_subject_name", "type", "turma", "week_day", "hour", "duration", "professor_fc", "room_number", "presencas"]
 admin.site.register(Lesson,  LessonAdmin)
 
-
+class LessonSystemUserAdmin(admin.ModelAdmin):
+  search_fields = ["user__user__username", "date"]
+  list_filter = ["presente"]
+  list_display = ["get_lesson_information", "get_systemUser_user", "presente", "date"]
+admin.site.register(LessonSystemUser,  LessonSystemUserAdmin)
 
 
 

@@ -1,0 +1,44 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Turmas{% endblock %}
+
+{% block content_title %}Preencha o formulario:{% endblock %}
+
+{% block breadcrumbs %}
+        › Inscrição Turmas
+{% endblock %}
+
+
+{% block content %}
+
+<div id="content-main">
+
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Incrições em turmas</div>
+					<div class="panel-body">
+						<div class="col-md-12">
+              
+							<form role="form" id="insert_disciplina">
+								{{MiniC}}
+
+								<p>Escolha a cadeira:</p>
+                
+                
+
+								<br><br>
+								<a href="{{ model.admin_url }}"><button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" onclick="addDisciplinas()" >Submit Button</button></a>
+								<button type="reset" class="btn btn-default">Reset Button</button>
+							</form>
+						</div>
+					</div>
+				</div><!-- /.panel-->
+			</div><!-- /.col-->
+		</div><!-- /.row -->
+</div>
+
+{% endblock %}
+	

@@ -1,9 +1,11 @@
 #nome da cadeira, creditos || nome do curso, ano, semestre, tipo !! nome do curso, ano, semestre, tipo !! ...
 #tipo-> Semestral, Semestral (Opção), Anual
 
-#nota: os cursos que apontam para outros cursos não tem essa cadeira 
+#nota: os cursos que apontam para outros cursos não ponho o curso 
 #ex: Biogeografia, 3||Licenciatura em Tecnologias de Informação??Minor Biologia (errado, porque Licenciatura em Tecnologias de Informação ja aponta para o Minor de Biologia)
 #ex: Biogeografia, 3||Minor Biologia
+
+
 
 #>>>Licenciatura em Tecnologias de Informação<<<
 Arquiteturas de Computadores, 6||Licenciatura em Tecnologias de Informação, 1, 1, Semestral
@@ -33,6 +35,8 @@ Princípios de Programação, 6||Licenciatura em Tecnologias de Informação, 3,
 Teoria da Computação, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 1, Semestral
 Engenharia do Conhecimento, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 2, Semestral
 Segurança Informática, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)
+
+
 
 #>>>Licenciatura em Engenharia Informática<<<
 Arquiteturas de Sistemas Computacionais, 6||Licenciatura em Engenharia Informática, 1, 1, Semestral
@@ -64,8 +68,8 @@ Ciências da Vida, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral (
 
 
 
+
 #>>>Formação Cultura Social e Ética<<<
-Abrindo a Caixa Negra: Tecnologia História e Sociedade, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
 Ciência Tecnologia e a Cidade, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
 Ciência e Cultura, 6||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
 Ciência e Cultura A, 3||450_Formação Cultural Social e Ética, 1, 1, Semestral (Opção)
@@ -96,4 +100,31 @@ Jardins como Espaços de Ciências, 3||450_Formação Cultural Social e Ética, 
 Matemática e Arte, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
 Perspetivas em Investigação e Desenvolvimento, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
 Sustentabilidade Energética, 3||450_Formação Cultural Social e Ética, 2, 2, Semestral (Opção)
+
+
+
+
+#>>>Minor Gestão<<<
+Análise da Informação Económica e Empresarial, 6||Minor em Gestão, 3, 1, Semestral (Opção)
+Introdução à Gestão, 6||Minor em Gestão, 3, 1, Semestral (Opção)
+Marketing Operacional, 6||Minor em Gestão, 3, 1, Semestral (Opção)
+Contabilidade Geral I, 6||Minor em Gestão, 3, 2, Semestral (Opção)
+Estratégia Empresarial, 6||Minor em Gestão, 3, 2, Semestral (Opção)
+Sistemas de Informação para Gestão, 6||Minor em Gestão, 3, 2, Semestral (Opção)
+
+
+
+#>>>Minor Biologia<<< 
+Biogeografia, 3||Minor em Biologia, 3, 1, Semestral (Opção)
+Biologia Animal I, 6||Minor em Biologia, 3, 1, Semestral (Opção)
+Biologia Celular, 6||Minor em Biologia, 3, 1, Semestral (Opção)
+Ecologia Numérica, 6||Minor em Biologia, 3, 1, Semestral (Opção)
+Fundamentos de Bioinformática, 6||Minor em Biologia, 3, 1, Semestral (Opção)
+Fundamentos de Biologia Molecular, 6||Minor em Biologia, 3, 1, Semestral (Opção)
+Biologia Ambiental e Conservação, 3||Minor em Biologia, 3, 2, Semestral (Opção)
+Biologia Microbiana, 6||Minor em Biologia, 3, 2, Semestral (Opção)
+Biologia Vegetal, 6||Minor em Biologia, 3, 2, Semestral (Opção)
+Ecologia, 6||Minor em Biologia, 3, 2, Semestral (Opção)
+Evolução, 6||Minor em Biologia, 3, 2, Semestral (Opção)
+Genética, 6||Minor em Biologia, 3, 2, Semestral (Opção)
 

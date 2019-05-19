@@ -1,0 +1,82 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Export{% endblock %}
+
+{% block content_title %}Exportar Dados{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'home_a' %}"><em class="fas fa-file-export"></em></a> › Export
+    </div>
+{% endblock %}
+
+{% block content %}
+
+
+<body>
+
+
+  <div class="container">
+      <p>Lista de Tabelas</p>
+      <form method=POST action="">
+          {{ app_list }}
+      </form>
+
+      <table>
+          {% for item in query_results %}
+          <tr>
+              <td></td>
+          </tr>
+          {% endfor %}
+      </table>
+  </div>
+
+
+
+
+
+  <form id= "tabelasExport" method="post" action="" enctype="multipart/form-data">
+    <h5>Tabelas</h5>
+<select name="Tabelas">
+      <option value="Faculdade">Faculdade</option>
+      <option value="Curso">Curso</option>
+      <option value="SchoolYear">SchoolYear</option>
+      <option value="Room">Room</option>
+      <option value="Role">Role</option>
+      <option value="SystemUser">SystemUser</option>
+      <option value="PersonalInfo">PersonalInfo</option>
+      <option value="SystemUser_Faculdade">SystemUser_Faculdade</option>
+      <option value="Course_Faculdade">Course_Faculdade</option>
+      <option value="Course_SchoolYear">Course_SchoolYear</option>
+      <option value="SystemUserCourse">SystemUserCourse</option>
+      <option value="SystemUser_SchoolYear">SystemUser_SchoolYear</option>
+      <option value="Subject">Subject</option>
+    </select>   
+ <br><br>
+    <input type="submit">
+  </form>
+
+</body>
+
+<div id="content-main">
+
+<script>
+
+$(document).ready(function(){
+  $('#tabelasExport input').change(function () {
+
+  });
+});
+
+
+
+</script>
+
+
+</div>
+
+{% endblock %}
