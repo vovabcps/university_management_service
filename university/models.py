@@ -5,6 +5,7 @@ from django.conf import settings
 
 
 
+
 STUDENT_ROLE = 'Aluno'
 TEACHER_ROLE = 'Professor'
 ADMIN_ROLE = 'Admin'
@@ -32,16 +33,14 @@ class Role(models.Model):
 
 class SystemUser(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    #roles = models.ManyToManyField(Role)
     role = models.ForeignKey(Role, null=True,  on_delete=models.CASCADE)
-    rooms = models.ManyToManyField(Room)
+    rooms = models.ManyToManyField(Room) #gabinete
 
     def get_roles(self):
-        #return "\n".join([r.role for r in self.roles.all()])
-        return self.role
+        return self.role.role
 
-    def get_rooms(self):
-        return "\n".join([room.room_number for room in self.rooms.all()])
+    def gabinete(self):
+        return ",\n".join([room.room_number for room in self.rooms.all()])
 
 
 class PersonalInfo(models.Model):
@@ -68,12 +67,39 @@ class Course(models.Model):
     name = models.CharField(max_length=200, unique=True)
     grau = models.CharField(max_length=200, null=False, default="Licenciatura")
     #Licenciatura, Minor, ramos, mestrado
-    credits_number = models.IntegerField(default=180)
+    credits_number = models.IntegerField(null=True)
     duration= models.IntegerField(null=True) #semesters
-    timetable= models.CharField(max_length=200, null=True)
+    timetable= models.CharField(max_length=200, null=True) #Diurno
     coordinator = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)
      #o coordenador é um professor qualquer, nao precisa de dar nenhuma aula das cadeiras desse curso
-    minors_ramos= models.ManyToManyField("self")
+
+    def get_coordinator_name(self):
+        detalhesOBJ= PersonalInfo.objects.get(user=self.coordinator)
+        return detalhesOBJ.name
+
+
+class Course_MiniCourse(models.Model):
+    course= models.ForeignKey(Course, on_delete=models.CASCADE)
+    miniCourse= models.ForeignKey(Course, related_name="miniCourso", on_delete=models.CASCADE)
+    credits_number = models.IntegerField(null=True)
+    year= models.IntegerField(default=0) #1,2,3,4..
+    semester = models.IntegerField(default=0) #em q semestre começa, semester + Course duration , 
+
+    #pq ha mini cursos em que os seus credits_number variam de semestre para semeste(exemplo minor), 
+    #por isso so posso ter uma linnha nesta tabela com o total de credits_number
+    #ex: (Licenciatura em Tecnologias de Informação, Minor em Biologia, 30, 3, 1)
+    #começa no 1º semestre e dura 2 semestres
+    
+    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 2, 2)
+    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 1, 1)
+
+    #ex: (Licenciatura em Tecnologias de Informação, 450_Formação Cultural Social e Ética - FCSE, 9, 1, 1)
+
+    def get_course_name(self):
+        return self.course.name
+
+    def get_miniCourse_name(self):
+        return self.miniCourse.name
 
 
 class SystemUser_Faculdade(models.Model): #ex: fazer minor em outra faculdade
@@ -96,6 +122,12 @@ class SystemUserCourse(models.Model):
     anoLectivoDeInício = models.CharField(max_length=200, null=True) #ex: 2016/2017
     anoActual = models.IntegerField(null=True) #1ºano, 2ºano, ...
 
+    def get_systemUser_user(self):
+        return self.user.user #ex: fc1085
+
+    def get_course_name(self):
+        return self.course.name
+
 class SystemUser_SchoolYear(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
@@ -106,7 +138,15 @@ class Subject(models.Model):
     #id -> codigo
     name = models.CharField(max_length=200, unique=True)
     credits_number = models.IntegerField(default=6) 
-    regente = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
+    regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
+
+    def get_regente_name(self):
+        detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
+        return detalhesOBJ.name
+        #return self.regente.user
+
+    class Meta:
+        ordering = ['name']
 
 
 
@@ -117,6 +157,15 @@ class CourseSubject(models.Model):
     semester = models.IntegerField(default=0) # 1 or 2 
     type= models.CharField(max_length=200, null=False, default="Semestral") #Semestral, Semestral (Opção), Anual
 
+    def get_course_name(self):
+        return self.course.name
+
+    def get_subject_name(self):
+        return self.subject.name 
+
+    def get_subject_credits(self):
+        return self.subject.credits_number 
+
 
 class SystemUserSubject(models.Model):
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
@@ -125,17 +174,61 @@ class SystemUserSubject(models.Model):
     state = models.IntegerField(null=True)
     grade = models.FloatField(null=True)
 
+    def get_systemUser_user(self):
+        return self.user.user #ex: fc1085
+
+    def get_subject_name(self):
+        return self.subject.name 
+
+
 
 
 class Lesson(models.Model):
-    # 0 - T, 1 - TP, 2 - PL, 3 - O ...
-    type = models.IntegerField()
-    week_day = models.IntegerField()
-    hour = models.TimeField()
-    duration = models.FloatField()
-    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    users = models.ManyToManyField(SystemUser)
-    presenças= models.IntegerField()
+    # T, TP, PL, O ...
+    type = models.CharField(max_length=200, null=False, default="T")
+    turma = models.CharField(max_length=200, null=False, default="")
+    week_day = models.CharField(max_length=200, null=True)
+    hour = models.CharField(max_length=200, null=True)
+    duration = models.CharField(max_length=200, null=True)
+    room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
+    professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
+    presencas = models.IntegerField(null=True)
+
+
+    def get_lesson_detalhes(self):
+        return self.subject.name  + ", " + self.type + ", " + self.week_day + ", " + self.hour
+
+    def get_subject_name(self):
+        return self.subject.name 
+
+    def professor_fc(self):
+        return self.professor.user 
+
+    def room_number(self):
+        return self.room.room_number     
+
+    def __str__(self):
+        return self.subject.name
+
+    class Meta:
+        ordering = ['subject__name']
+
+
+
+
+class LessonSystemUser(models.Model):
+    lesson= models.ForeignKey(Lesson, on_delete=models.CASCADE)
+    systemUser= models.ForeignKey(SystemUser, on_delete=models.CASCADE) #so alunos xd
+    presente= models.BooleanField()
+    date= models.DateField()
+
+
+    def get_systemUser_user(self):
+        return self.systemUser.user #ex: fc1085
+
+    def get_lesson_information(self):
+        return self.lesson.get_lesson_detalhes(self)
+
 
 

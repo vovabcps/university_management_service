@@ -56,8 +56,7 @@ ROOT_URLCONF = 'university_management_service.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -65,12 +64,15 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'university.context_processors.request_userData',
             ],
         },
     },
 ]
 
 WSGI_APPLICATION = 'university_management_service.wsgi.application'
+
+
 
 DATABASES = {
     'default': {
@@ -89,6 +91,7 @@ CACHES = {
         'LOCATION': 'memcached-service.memcached.svc.cluster.local'
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [    
     {
@@ -124,4 +127,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
+MIGRATIONS_DATA_ROOT = os.path.join(BASE_DIR, 'university/migrations_data')

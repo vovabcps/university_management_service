@@ -129,3 +129,68 @@ p a:link, p a:visited {
 #result_list tbody td img{
   width: 15px;
 }
+
+
+.delete-confirmation form .cancel-link {
+  height: auto !important;
+  line-height:  normal !important;
+}
+
+
+.sidebar ul.nav ul.children li a {
+  background-color: transparent !important;
+}
+
+.sidebar ul.nav ul.children {
+  padding: 8%;
+}
+
+
+
+
+
+
+#dropForm{
+  width: 500px;
+  height: 200px;
+  border: 4px dashed black;
+}
+
+#dropForm p{
+  width: inherit;
+  height: inherit;
+  text-align: center;
+  line-height: 180px;
+  color: black;
+}
+#dropForm input{
+  position: absolute;
+  margin: 0;
+  padding: 0;
+  width: inherit;
+  height: inherit;
+  outline: none;
+  opacity: 0;
+}
+
+#dropForm button{
+  margin: 0;
+  color: #fff;
+  background: #30a5ff;
+  border: none;
+  width: 508px;
+  height: 35px;
+  margin-top: -20px;
+  margin-left: -4px;
+  border-radius: 4px;
+  border-bottom: 4px solid #30a5ff;
+  transition: all .2s ease;
+  outline: none;
+}
+#dropForm button:hover{
+  background: black;
+	color: #30a5ff;
+}
+#dropForm button:active{
+  border:0;
+}

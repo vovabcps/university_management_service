@@ -1,0 +1,67 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Inscriçoes{% endblock %}
+
+{% block content_title %}Preencha o formulario:{% endblock %}
+
+{% block breadcrumbs %}
+        › Inscrição Curso
+{% endblock %}
+
+
+{% block content %}
+
+<div id="content-main">
+
+
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="panel panel-default">
+					<div class="panel-heading">Incrições</div>
+					<div class="panel-body">
+						<div class="col-md-12">
+              <div>
+                <p id="curso"><strong>Curso em que se Encontra Inscrito:</strong> {{suCourse.course.name}}<p>
+                <p id="ano_curricular"><strong>Ano Curricular:</strong> {{suCourse.anoActual}}º ano</p>
+                <p id="ano_lectivo"><strong>Ano Lectivo:</strong> <span id="ano_lectivo_act"></span></p>
+                <p id="creditosInscrito"><strong>Total de Créditos a que se Encontra Inscrito:</strong><span id="NumCreditosInscrito"> 0.0 </span>ECTS</p>
+								<p id="creditosApr"><strong>Créditos para Aprovação:</strong> <span id="ano_lectivo_act">180.0</span></p>
+							</div>
+              <br><br>
+							<form role="form" id="insert_disciplina">
+								{{MiniC}}
+
+								<p>Selecione as Disciplinas:</p>
+								{% for course_subj in course_subjs %}
+									<input type="checkbox" name="subjs" value="{{course_subj.get_subject_name}}"> {{course_subj.get_subject_name}}, {{course_subj.year}} ano
+									, {{course_subj.semester}} semestre, {{course_subj.type}}, {{course_subj.get_subject_credits}}.0	Créd.<br>
+								{% endfor %}
+								<br><br>
+								<a href="{{ model.admin_url }}"><button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" onclick="addDisciplinas()" >Submit Button</button></a>
+								<button type="reset" class="btn btn-default">Reset Button</button>
+							</form>
+						</div>
+					</div>
+				</div><!-- /.panel-->
+			</div><!-- /.col-->
+		</div><!-- /.row -->
+</div>
+
+<script>
+	var today = new Date();
+	var anoAct= today.getFullYear();
+	var mesAct = today.getMonth() + 1;
+	var setembro= 9;
+	var anoLectivo;
+	if (mesAct >= setembro){
+		anoLectivo= anoAct + "/" + (anoAct+1);
+	}else{
+		anoLectivo= (anoAct-1) + "/" + anoAct;
+	}
+	document.getElementById("ano_lectivo_act").innerHTML= anoLectivo;
+
+</script>
+
+{% endblock %}
+	

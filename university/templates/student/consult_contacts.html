@@ -1,0 +1,113 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Consultar contactos{% endblock %}
+
+{% block content_title %}Pesquisa de Contactos{% endblock %}
+
+{% block breadcrumbs %}
+        › Pesquisa de Contactos
+{% endblock %}
+
+
+{% block content %}
+
+	<div id="content-main">
+		
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Procurar Contacto</div>
+                        <div class="panel-body">
+                            <form role="form" id="">
+                                <div class="form-group">
+                                    <label>Nome</label>
+                                    <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 1);">
+                                </div>
+                            </form>
+
+                            <br><hr><br>
+
+                            <table id="resultTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Número/ID</th>
+                                            <th>Nome</th>
+                                            <th>Instituição</th>
+                                            <th>Estatuto</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>40000</td>
+                                            <td>João Balsa</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Professor</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50000</td>
+                                            <td>Dulce Domingos</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Professor</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50036</td>
+                                            <td>Mariana Costa Leites</td>
+                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>50476</td>
+                                            <td>Raquel Matias</td>
+                                            <td>Escola Superior de Tecnologia da Saúde de Lisboa (ESTSL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td>7715</td>
+                                            <td>Mafalda Alexandra Dias</td>
+                                            <td>Escola Superior de Enfermagem de Lisoa (ESEL)</td>
+                                            <td>Aluno</td>
+                                            <td><a type="button" class="btn btn-md btn-link" href="consult_details.html">Ver Detalhes</a></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/.row-->
+    
+            
+	</div><!--/.main-->
+	
+
+    <script>
+            function DoSearch(id_input, id_table, n_column) {
+                var input, filter, table, tr, td, i;
+                
+                input = document.getElementById(id_input);
+                filter = input.value.toUpperCase();
+                
+                table = document.getElementById(id_table);
+                tr = table.getElementsByTagName("tr");
+                
+                for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[n_column];
+                
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    } else {
+                    tr[i].style.display = "none";
+                    }
+                }
+                }
+            };
+</script>
+
+{% endblock %}

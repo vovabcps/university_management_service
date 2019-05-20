@@ -1,0 +1,65 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Operaçoes em bloco{% endblock %}
+
+{% block content_title %}Introduza o ficheiro (.sql):{% endblock %}
+
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block bodyclass %}{{ block.super }} dashboard{% endblock %}
+
+{% block breadcrumbs %}
+    <div class="breadcrumbs">
+    <a href="{% url 'home_a' %}"><em class="fa fa-home"></em></a> › Operaçoes em bloco
+    </div>
+{% endblock %}
+
+{% block content %}
+
+
+
+
+
+<div id="content-main">
+
+
+<form id="dropForm" method="post" action="" enctype="multipart/form-data">
+ {% csrf_token %}
+  <input type="file" name="file_sql" data-max-file-size="2M">
+  <p>Drag your files here or click in this area.</p>
+  <button type="submit">Upload</button>
+</form>
+
+  {% if uploaded %}
+         {% if uploaded == "yapp" %}
+          <script>alert("Success")</script>
+          {% elif uploaded == "empty" %}
+          <script>alert("Insira um ficheiro")</script>
+        {% else %}
+          <script>alert("Tente novamente!")</script>
+          {% endif %}
+  {% endif %}
+
+
+
+<script>
+
+
+$(document).ready(function(){
+  $('#dropForm input').change(function () {
+    $('#dropForm p').text("Nome do ficheiro: " + this.files[0].name);
+  });
+});
+
+
+var li= document.getElementById("content");
+console.log(li);
+li.style.width= "100%";
+</script>
+
+</div>
+
+{% endblock %}
+
+
+

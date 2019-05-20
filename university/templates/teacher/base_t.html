@@ -1,38 +1,55 @@
 {% load staticfiles %}
 <!DOCTYPE html>
+
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Projeto PTI-PTR</title>
+  <meta charset="utf-8">
+  <title>{% block title %}{% endblock %}</title>
 
-	<link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+	{% block extrahead %}{% endblock %}
+  <link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
+  <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
+  <link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'our/css/style.css' %}" rel="stylesheet">
 
-	<link href="{% static 'our/css/style.css' %}" rel="stylesheet">
-	
-	<!--Custom Font-->
-	<link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-	
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+  <link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  {% block extrastyle %}{% endblock %}
+
+
+  {% block responsive %}
+      <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  {% endblock %}
 </head>
-<body>
-	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+
+<body class="{% block bodyclass %}{% endblock %}">
+
+
+
+<!-- Container -->
+<div id="container">
+
+<!-- Header -->
+{% block nav-global %}
+
+		<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
 		<div class="container-fluid">
 			<div class="navbar-header">
 				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span>
 					<span class="icon-bar"></span></button>
-				<a class="navbar-brand" href=""><span>wyvern</span>|Professor</a>
+				<a class="navbar-brand" href=""><span>wyvern</span>|PROFESSOR</a>
 				<ul class="nav navbar-top-links navbar-right">
 					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
 						<em class="fa fa-envelope"></em><span class="label label-danger">15</span>
 					</a>
 						<ul class="dropdown-menu dropdown-messages">
 							<li>
-								<div class="dropdown-messages-box"><a href="{% url 'profile' %}" class="pull-left">
+								<div class="dropdown-messages-box"><a href="" class="pull-left">
 									<img alt="image" class="img-circle" src="http://placehold.it/40/30a5ff/fff">
 									</a>
 									<div class="message-body"><small class="pull-right">3 mins ago</small>
@@ -42,7 +59,7 @@
 							</li>
 							<li class="divider"></li>
 							<li>
-								<div class="dropdown-messages-box"><a href="{% url 'profile' %}" class="pull-left">
+								<div class="dropdown-messages-box"><a href="" class="pull-left">
 									<img alt="image" class="img-circle" src="http://placehold.it/40/30a5ff/fff">
 									</a>
 									<div class="message-body"><small class="pull-right">1 hour ago</small>
@@ -52,7 +69,7 @@
 							</li>
 							<li class="divider"></li>
 							<li>
-								<div class="all-button"><a href="">
+								<div class="all-butt-on"><a href="">
 									<em class="fa fa-inbox"></em> <strong>All Messages</strong>
 								</a></div>
 							</li>
@@ -82,21 +99,30 @@
 			</div>
 		</div><!-- /.container-fluid -->
 	</nav>
-	<div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+  {% endblock %}
+    <!-- END Header -->
+
+
+
+
+
+
+  <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
 		<div class="profile-sidebar">
 			<div class="profile-userpic">
 				<img src="http://placehold.it/50/30a5ff/fff" class="img-responsive" alt="">
 			</div>
 			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">Filipe</div>
+				<div class="profile-usertitle-name">{{personalData.name}}</div>
 				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
 			</div>
 			<div class="clear"></div>
 		</div>
 		<div class="divider"></div>
 		<ul class="nav menu">
-			<li class="active"><a href="{% url 'home_t' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
-			<li class="parent "><a data-toggle="collapse" href="#sub-item-1">
+			<li id="home" ><a href="{% url 'home_t' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
+
+						<li id="consultar" class="parent "><a data-toggle="collapse" href="#sub-item-1">
 				<em class="fa fa-navicon">&nbsp;</em> Consultas Gerais <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-1">
@@ -106,7 +132,7 @@
                     <li><a class="" href="">
 						<span class="fa fa-arrow-right">&nbsp;</span> Horário
 					</a></li>
-                    <li><a class="" href="">
+                    <li><a class="" href="{% url 'consult_contacts_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Pesquisa de Contactos
 					</a></li>
 				</ul>
@@ -141,11 +167,11 @@
 					</a></li>
 				</ul>
 			</li>
-            <li class="parent "><a data-toggle="collapse" href="#sub-item-4">
+            <li id="passwordchang" class="parent "><a data-toggle="collapse" href="#sub-item-4">
 				<em class="fa fa-navicon">&nbsp;</em> Gestão de Passwords <span data-toggle="collapse" href="#sub-item-4" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-4">
-					<li><a class="" href="{% url 'password_alt_t' %}">
+					<li><a class="" href="{% url 'password_change_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Alteração de Passwords
 					</a></li>
 				</ul>
@@ -153,68 +179,96 @@
 			<li><a href="{% url 'logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
 		</ul>
 	</div><!--/.sidebar-->
+
+
+
+
+     <!-- Content -->
+  <div id="content" class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
+   
+
+    <!-- caminho -->
+    <div class="row">
+      <div class="breadcrumbs">
+       <a href="{% url 'home_t' %}"><em class="fa fa-home"></em></a>
+       {% block breadcrumbs %}
+        {% endblock %}
+      </div>
+    </div>
+
 		
-	<div class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-		<div class="row">
-			<ol class="breadcrumb">
-				<li><a href="{% url 'home_t' %}home.html">
-					<em class="fa fa-home"></em>
-				</a></li>
-				<li class="active">Gestão de Passwords / Alteração de Passwords</li>
-			</ol>
-		</div><!--/.row-->
-		
-		<div class="row">
-			<div class="col-lg-12">
-				<h1 class="page-header">Alteração de Passwords</h1>
-			</div>
-		</div><!--/.row-->
-		
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Por favor introduza os dados abaixo
-						<span class="pull-right clickable panel-toggle panel-button-tab-left"></span></div>
-					<div class="panel-body">
-                       <form>
-                          <div class="form-group">
-                            <label for="exampleInputEmail1">Endereço de email</label>
-                            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
-													</div>
-													<div class="form-group">
-                            <label for="exampleInputPassword1">Antiga Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-													</div>
-													<br>
-                          <div class="form-group">
-                            <label for="exampleInputPassword1">Nova Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-													</div>
-													<div class="form-group">
-                            <label for="exampleInputPassword1">Confirmar Nova Password</label>
-                            <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
-                          </div>
-                          <button type="submit" class="btn btn-primary">Alterar</button>
-                        </form>                        
-					</div>
-				</div>
-			</div><!--/.col-->
-			
-			<div class="col-sm-12">
-				<p class="back-link">G05 PTI e PTR | 2019</p>
-			</div>
-		</div><!--/.row-->
-	</div>	<!--/.main-->
-	
-	<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'template/js/chart.min.js' %}"></script>
-	<script src="{% static 'template/js/chart-data.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'template/js/custom.js' %}"></script>
-		
+   <!-- messages -->
+     {% block messages %}
+        {% if messages %}
+        <ul class="messagelist">{% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+        {% endfor %}</ul>
+        {% endif %}
+    {% endblock messages %}
+
+
+
+
+    <!-- header -->
+        {% block pretitle %}{% endblock %}
+        
+        <div class="row">
+			    <div class="col-lg-12">
+				    <h1 class="page-header">{% block content_title %}{% endblock %}</h1>
+			    </div>
+		    </div><!--/.row-->
+
+        {% block sidebar %}{% endblock %}
+        {% block content %}
+        {% block object-tools %}{% endblock %}
+        {{ content }}
+        {% endblock %}
+        
+        <br class="clear">
+    </div>
+    <!-- END Content -->
+  </div>
+
+    {% block footer %}
+      <footer class="rodape">
+          <p class="reservado"> © 2019 G05 DIANA GALVÃO, MARIANA LEITES, RUTE MONTEIRO, RUTE PALMEIRO, SÉRGIO MENDES, VOLODYMYR KELBEL  ALL RIGHTS RESERVED</p> 
+      </footer>
+    {% endblock %}
+
+
+</div>
+<!-- END Container -->
+
+
+
+
+  <script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
+  <script src="{% static 'template/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'template/js/chart.min.js' %}"></script>
+  <script src="{% static 'template/js/chart-data.js' %}"></script>
+  <script src="{% static 'template/js/easypiechart.js' %}"></script>
+  <script src="{% static 'template/js/easypiechart-data.js' %}"></script>
+  <script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
+  <script src="{% static 'template/js/custom.js' %}"></script>
+
+
+<script>
+var pageArray = location.pathname.split('/');
+console.log(pageArray);
+var pag, li;
+if (pageArray[pageArray.length - 1] == ""){
+    pag = pageArray[pageArray.length - 2]
+}else{
+    pag = pageArray[pageArray.length - 1]
+}
+
+if (pag == "consult_details" || pag == "consult_contacts"){
+	pag="consultar";  
+} 
+
+li= document.getElementById(pag);
+li.classList.add("active");
+</script>
+
 </body>
 </html>
