@@ -1,0 +1,35 @@
+#Note: execute following command from project root folder
+
+1. Enable Cloud SQL Admin API, Compute Engine API.
+
+2. Create Cloud SQL MySQL instance, save Instance Connection Name.
+
+3. Create database:
+  $ /deployments/create_database
+
+4. Change /cloudsql-proxy instance connection name in /deployments/wyvern/deployment.yaml
+
+5. Create Service Account, download JSON key.
+
+6. Create and configure kubernetes cluster:
+  $ /deployments/create_and_configure_k8s_cluster.sh
+
+7. Create database secrets:
+  $ /deployments/create_db_secrets.sh [username] [password]
+
+8. Create oauth secret for your Service Account:
+  $ /deployments/create_oauth_secret [path to your JSON key file]
+
+9. Change Django settings.py STATIC_URL attribute to
+  http://storage.googleapis.com/[your Google Cloud project ID]/
+
+10. Collect your Django static, i.e.:
+  $ python manage.py collectstatic
+
+11. Create and sync Cloud Storage Bucket:
+  $ /deployments/create_and_sync_storage.sh [your Google Cloud project ID]
+
+12. Deploy kubernetes Resources:
+  $ kubectl apply -f deployments/ -R
+
+13. Enter in a pod and make Django migration

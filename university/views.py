@@ -8,6 +8,9 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
 from .models import SystemUser
 import university.models
+from django.views.decorators.cache import cache_page
+
+
 
 #app_list
 from django.contrib import admin
@@ -16,6 +19,7 @@ from django.contrib import admin
 
 
 # --------------- login ---------------
+@cache_page(60 * 15)
 def login_page(request):
     if request.method == "GET":
         if request.user.is_authenticated:

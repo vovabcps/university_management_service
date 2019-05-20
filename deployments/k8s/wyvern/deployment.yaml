@@ -1,20 +1,23 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: base-service
+  name: wyvern-base
+  namespace: wyvern
   labels:
-    app: base-service
+    app: wyvern-base
 spec:
   # Number of replicas of our Django application
-  replicas: 3
+  replicas: 2
   template:
     metadata:
       labels:
-        app: base-service
+        app: wyvern-base
     spec:
       containers:
-      - name: base-service
-        image: gcr.io/university-management-system/base-service
+      - name: wyvern-base-app
+        image: vovabcps/wyvern-app:latest
+        # delete in production
+        imagePullPolicy: Always
         env:
             # [START cloudsql_secrets]
             - name: DATABASE_USER
@@ -32,10 +35,11 @@ spec:
         - containerPort: 8080
 
       # [START proxy_container]
-      - image: b.gcr.io/cloudsql-docker/gce-proxy:1.12
+      - image: b.gcr.io/cloudsql-docker/gce-proxy:latest
         name: cloudsql-proxy
+        # !!! Change instance connection name !!!
         command: ["/cloud_sql_proxy", "--dir=/cloudsql",
-                  "-instances=university-management-system:europe-west1:base-service=tcp:3306",
+                  "-instances=wyvern-240717:europe-west1:wyvern=tcp:2345",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
           - name: cloudsql-oauth-credentials
@@ -55,23 +59,4 @@ spec:
           hostPath:
             path: /etc/ssl/certs
         - name: cloudsql
-          emptyDir:
-      # [END volumes]
-# [END kubernetes_deployment]
-
----
-
-# [START service]
-apiVersion: v1
-kind: Service
-metadata:
-  name: base-service
-  labels:
-    app: base-service
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 8080
-  selector:
-    app: base-service
+          emptyDir: {}

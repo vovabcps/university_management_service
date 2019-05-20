@@ -25,7 +25,7 @@ SECRET_KEY = '*55f&3o6o(!r!p+$7kth1i4idv2fden6dve=d51zb$xfu1x=8n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -72,60 +72,25 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'university_management_service.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
-"""
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-"""
-
-"""
-DATABASES = {
-    'default': {
-        # If you are using Cloud SQL for MySQL rather than PostgreSQL, set
-        # 'ENGINE': 'django.db.backends.mysql' instead of the following.
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'mysql', #'NAME': 'wyvern', university
-        'USER': 'root', #os.getenv('DATABASE_USER'), django
-        'PASSWORD': 'pass', #os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
-"""
-
-
-DATABASES = {
-    'default': {
-        # For MySQL
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'sys',
-        'USER': 'root',
-        'PASSWORD': 'girassol987',
-        'PORT': '3306',
+        'NAME': 'wyvern',
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'PORT': '3306'#'2345',
     }
 }
-# In the flexible environment, you connect to CloudSQL using a unix socket.
-# Locally, you can use the CloudSQL proxy to proxy a localhost connection
-# to the instance
-DATABASES['default']['HOST'] = '/cloudsql/wyvern-239319:europe-west2:wyvern'
-if os.getenv('GAE_INSTANCE'):
-    pass
-else:
-    DATABASES['default']['HOST'] = '127.0.0.1'
 
+CACHES = {
+    'default':  {
+        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+        'LOCATION': 'memcached-service.memcached.svc.cluster.local'
+    }
+}
 
-
-# Password validation
-# https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
-
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS = [    
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -158,6 +123,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
-#...../university_management_service/university/static
+STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')

@@ -2,3 +2,4 @@ Django==2.1.7
 mysqlclient==1.4.2
 wheel==0.32.3
 gunicorn==19.9.0
+python-memcached==1.59
