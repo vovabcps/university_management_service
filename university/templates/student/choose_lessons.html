@@ -1,5 +1,6 @@
 {% extends "student/base_s.html" %}
 {% load i18n static %}
+{% load university_mytags %}
 
 {% block title %}Turmas{% endblock %}
 
@@ -23,15 +24,62 @@
 						<div class="col-md-12">
               
 							<form role="form" id="insert_disciplina">
-								{{MiniC}}
-
-								<p>Escolha a cadeira:</p>
-                
+            
                 
 
-								<br><br>
-								<a href="{{ model.admin_url }}"><button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" onclick="addDisciplinas()" >Submit Button</button></a>
-								<button type="reset" class="btn btn-default">Reset Button</button>
+                {{ subjs }}
+
+                {% for subj, dicTypeTurmaLessons in subjs.items %}
+                  <p>{{subj.name}}</p>
+                  {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
+                  <p>{{tipo}}</p>
+                  {% for turmaLessons in turmasLessons %}
+                  
+                    {% for lesson in turmaLessons|last %}
+                        
+                    {% setvar "w" as w %}
+                        {% setvar lesson.week_day|add:", "|add:lesson.hour as lessonID %}
+                        
+                     
+
+                        {% endfor %}
+                        
+                        <p>{{lessonID}}</p>
+
+                       
+                        
+                        
+
+                      
+                   
+                    
+                    
+               
+                        
+                 
+               
+                
+                  <button type="button" onclick="criarHorario({{lessonDetalhes}})" >{{turmaLessons|first}}</button>
+                  
+                  {% endfor %}
+
+                  {% endfor %}
+                  <br><br><br><br>
+                {% endfor %}
+
+
+
+
+                
+             
+
+                
+
+                <br><br>
+                
+                <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" >Submit Button</button>
+                <button type="reset" class="btn btn-default">Reset Button</button>
+                <button type="reset" class="btn btn-default"><a href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
 							</form>
 						</div>
 					</div>
@@ -39,6 +87,13 @@
 			</div><!-- /.col-->
 		</div><!-- /.row -->
 </div>
+
+<script>
+  function criarHorario(w){
+    console.log(w)
+  }
+</script>
+
 
 {% endblock %}
 	

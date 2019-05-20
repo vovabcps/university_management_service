@@ -1,5 +1,5 @@
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 
@@ -158,6 +158,40 @@ def inscricoes_subject_s(request):
         return HttpResponseRedirect(reverse('login'))
 
 
+def choose_lessons_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        if request.method == 'POST':
+            subjs = request.POST.getlist('subjs')
+            dicSubjsTypeTurmaAndLessons= {}
+            subjsLessonsOBJs= {}
+            for s in subjs : 
+                dicTypeTurmaLessons= {}
+                SubjObj= Subject.objects.get(name=s) 
+                lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
+                for l in lessons : 
+                    if l.type in dicTypeTurmaLessons :
+                        novaTurma= True
+                        for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
+                            if turma == l.turma :
+                                print(lstLessons)
+                                oldList= [[t,ls] for [t,ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
+                                dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + [l]]]
+                                novaTurma= False
+                                break
+                        if novaTurma:
+                                dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, [l]]]
+          
+                    else:
+                        dicTypeTurmaLessons[l.type] = [[l.turma, [l]]] #nao por tuplos pq eles sao imutaveis
+                dicSubjsTypeTurmaAndLessons[SubjObj]= dicTypeTurmaLessons
+            return render(request, 'student/choose_lessons.html', {'subjs':dicSubjsTypeTurmaAndLessons})
+
+        else:
+            return HttpResponseRedirect(reverse('inscricoes_subject_s'))
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
 def consult_contacts_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         return render(request, 'student/consult_contacts.html', {})
@@ -297,6 +331,14 @@ def export_a(request):
         return render(request, 'admin/export.html', {'app_list':[app_list[1]]})
     else: 
         return HttpResponseRedirect(reverse('login'))
+
+
+
+
+
+
+
+
 
 
        

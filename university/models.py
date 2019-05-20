@@ -55,6 +55,7 @@ class PersonalInfo(models.Model):
     id_document = models.CharField(max_length=200, null=True, unique=True)
     vat_number = models.CharField(max_length=200, null=True, unique=True)
 
+
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
 

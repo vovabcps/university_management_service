@@ -10,6 +10,7 @@ urlpatterns = [
 
     path('student/home', views.home_s, name='home_s'), 
     path('student/inscricoes_subject', views.inscricoes_subject_s, name='inscricoes_subject_s'),
+    path('student/choose_lessons', views.choose_lessons_s, name='choose_lessons_s'),
     path('student/consult_contacts', views.consult_contacts_s, name='consult_contacts_s'),
     path('student/consult_details', views.consult_details_s, name='consult_details_s'), 
     path('student/consult_subjects', views.consult_subjects_s, name='consult_subjects_s'),
@@ -23,3 +24,7 @@ urlpatterns = [
     path('teacher/passwordchang', views.password_change, name='password_change_t'),
 ]
 
+#/(?P<bus_number>\w+)
+#/(?P<value>\d+)/ int
+#\s+ str
+#^(?P<num>\d+)|/$
