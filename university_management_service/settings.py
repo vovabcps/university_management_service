@@ -81,7 +81,7 @@ DATABASES = {
         'NAME': 'wyvern',
         'USER': os.getenv('DATABASE_USER'),
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'PORT': '3306'#'2345',
+        'PORT': '3306'
     }
 }
 
