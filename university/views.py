@@ -150,8 +150,11 @@ def home_s(request):
 def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         su= request_user(request)
+        #curso do aluno
         suCourse= SystemUserCourse.objects.get(user=su)
+        #se aquele curso em q o aluno esta tem agum mini curso naquele ano
         MiniC= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
+        #as cadeiras q ele vai ter nesse ano
         course_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
         return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'MiniC':MiniC, 'course_subjs':course_subjs})
     else: 
@@ -169,20 +172,21 @@ def choose_lessons_s(request):
                 SubjObj= Subject.objects.get(name=s) 
                 lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
                 for l in lessons : 
+                    detalhes= l.week_day+", "+l.hour+", "+l.duration+", "+l.subject.name+", "+l.type+", "+l.room.room_number+"|"
                     if l.type in dicTypeTurmaLessons :
                         novaTurma= True
                         for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
                             if turma == l.turma :
                                 print(lstLessons)
                                 oldList= [[t,ls] for [t,ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
-                                dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + [l]]]
+                                dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + detalhes]]
                                 novaTurma= False
                                 break
                         if novaTurma:
-                                dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, [l]]]
+                                dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, detalhes]]
           
                     else:
-                        dicTypeTurmaLessons[l.type] = [[l.turma, [l]]] #nao por tuplos pq eles sao imutaveis
+                        dicTypeTurmaLessons[l.type] = [[l.turma, detalhes]] #nao por tuplos pq eles sao imutaveis
                 dicSubjsTypeTurmaAndLessons[SubjObj]= dicTypeTurmaLessons
             return render(request, 'student/choose_lessons.html', {'subjs':dicSubjsTypeTurmaAndLessons})
 

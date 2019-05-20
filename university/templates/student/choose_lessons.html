@@ -2,6 +2,12 @@
 {% load i18n static %}
 {% load university_mytags %}
 
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+{% endblock %}
+
+
 {% block title %}Turmas{% endblock %}
 
 {% block content_title %}Preencha o formulario:{% endblock %}
@@ -24,56 +30,25 @@
 						<div class="col-md-12">
               
 							<form role="form" id="insert_disciplina">
-            
-                
 
                 {{ subjs }}
+
+
 
                 {% for subj, dicTypeTurmaLessons in subjs.items %}
                   <p>{{subj.name}}</p>
                   {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
                   <p>{{tipo}}</p>
                   {% for turmaLessons in turmasLessons %}
-                  
-                    {% for lesson in turmaLessons|last %}
-                        
-                    {% setvar "w" as w %}
-                        {% setvar lesson.week_day|add:", "|add:lesson.hour as lessonID %}
-                        
-                     
-
-                        {% endfor %}
-                        
-                        <p>{{lessonID}}</p>
-
-                       
-                        
-                        
-
-                      
-                   
-                    
-                    
-               
-                        
+           
+                  <button type="button" onclick="criarHorario('{{turmaLessons|last}}')" >{{turmaLessons|first}}</button>
                  
-               
-                
-                  <button type="button" onclick="criarHorario({{lessonDetalhes}})" >{{turmaLessons|first}}</button>
-                  
+              
                   {% endfor %}
 
                   {% endfor %}
                   <br><br><br><br>
                 {% endfor %}
-
-
-
-
-                
-             
-
-                
 
                 <br><br>
                 
@@ -83,14 +58,50 @@
 							</form>
 						</div>
 					</div>
-				</div><!-- /.panel-->
+        </div><!-- /.panel-->
+        
+        <table id="tabelaSchedule"></table>
+
 			</div><!-- /.col-->
 		</div><!-- /.row -->
 </div>
 
 <script>
-  function criarHorario(w){
-    console.log(w)
+  function criarHorario(detalhes){
+    console.log(detalhes)
+    var lstLessons= detalhes.split("|").slice(0, -1);
+    var scheduleDict= {}
+     
+
+     //todas os botoes das lessons q foram "activados"
+
+     //percorrer o valor desses botoes
+     var lstlesson= []
+     for (var i = 0; i < lstLessons.length; i++) {
+      lstlesson.push(lstLessons[i].split(","))
+    }
+   
+
+    //lstlesson[0][0]= "QUINTA";
+    //lstlesson[0][1]= " 16:00";
+
+    for (var i = 0; i<lstlesson.length; i++){
+      if (lstlesson[i][0] in scheduleDict) {
+        scheduleDict[lstlesson[i][0]].push([[lstlesson[i].slice(1, 6)]])
+      }else{
+        scheduleDict[lstlesson[i][0]]= [[lstlesson[i].slice(1, 6)]]
+      }
+    }
+
+
+    // Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time) 
+    for (var key in scheduleDict) {
+      scheduleDict[key]= scheduleDict[key].sort(function(a,b){return (a[0] > b[0]) ? 1 : -1});
+    }
+    console.log(scheduleDict)
+
+    buildSchedule(scheduleDict);
+   
   }
 </script>
 

@@ -154,3 +154,53 @@ div.system-message p.system-message-title {
   color: #c11;
   background: #ffefef url(../img/icon-no.svg) 5px 5px no-repeat;
 }
+
+
+
+
+
+
+/* -------------------------  criar horario   -------------------------*/
+
+
+#tabelaSchedule{
+    width: 90%;
+    border: 2px solid black;
+    border-collapse: collapse;
+    text-align: center;
+    min-width: 700px;
+}
+
+#tabelaSchedule tr, td, th{
+    border: 1px solid black;
+    padding: 0px;
+    margin: 0px;
+    overflow: scroll;
+}
+
+#tabelaSchedule td{
+    background-color: rgba(225, 225, 225, 0.247);
+    font-size: 13px;
+}
+#tabelaSchedule th, #tabelaSchedule td:first-child{
+    background-color: #999999;
+    font-size: 17px;
+}
+
+#tabelaSchedule td div{
+    padding: 1px;
+    border-collapse: collapse;
+}
+
+.subject{
+    text-decoration: underline;
+}
+
+.inline{
+    float: left;
+    border-right: 1px solid black;    
+}
+
+.empty{
+    border-left: none;
+}
