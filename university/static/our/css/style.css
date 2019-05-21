@@ -171,7 +171,7 @@ div.system-message p.system-message-title {
     min-width: 700px;
 }
 
-#tabelaSchedule tr, td, th{
+#tabelaSchedule tr, #tabelaSchedule td, #tabelaSchedule th{
     border: 1px solid black;
     padding: 0px;
     margin: 0px;

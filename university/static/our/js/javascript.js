@@ -1,9 +1,12 @@
 "use strict";
 
-var weekdays= ['Horas/Dias','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+/* -------------------------------------------------- Criar horaio inscriçoes ------------------------------------------------------------------------------- */
+
+var weekdays= ['Horas/Dias','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO'];
 
 function buildSchedule(horary){
-  buildEmptySchedule("8:00", "20:00");
+    buildEmptySchedule("8:00", "20:00");
     insertClasses(horary);
 }
 
@@ -154,3 +157,24 @@ function addMinutes(hour, minutes){
 //aula -> set of blocks
 //block -> set of divs (>1 div se houver sobreposiçoes), é a td
 //div -> empty or not
+
+
+
+/* -------------------------------------------------- Opçoes de jogo ------------------------------------------------------------------------------- */
+function marcado(obj,id) {
+    obj.style.border= "2px solid black";
+    obj.style.opacity= "0.7";
+    obj.style.background= "blue";
+    obj.style.boxShadow= "none";
+    obj.setAttribute('data-escolhido', true) 
+    var e = document.getElementById(id).children;
+    for (var i= 0; i< e.length; i++){
+        if (e[i] != obj){
+            e[i].style.border= "none";
+            e[i].style.opacity= "1";
+            e[i].style.boxShadow= "1px 2px 6px 1px #1b3680";
+            e[i].style.background= "white";
+            e[i].setAttribute('data-escolhido', false) 
+        }
+    }  
+}

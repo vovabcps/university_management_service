@@ -164,15 +164,21 @@ def inscricoes_subject_s(request):
 def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
-            subjs = request.POST.getlist('subjs')
+            subjsNameSemestre = request.POST.getlist('subjsNameSemestre')
             dicSubjsTypeTurmaAndLessons= {}
+            dic1SemSubjs= {}
+            dic2SemSubjs= {}
             subjsLessonsOBJs= {}
-            for s in subjs : 
+
+            for subjNameSem in subjsNameSemestre : 
                 dicTypeTurmaLessons= {}
-                SubjObj= Subject.objects.get(name=s) 
+                print(subjNameSem)
+                subjName, subjSem= subjNameSem.split("|")
+                print(subjName, subjSem)
+                SubjObj= Subject.objects.get(name=subjName) 
                 lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
                 for l in lessons : 
-                    detalhes= l.week_day+", "+l.hour+", "+l.duration+", "+l.subject.name+", "+l.type+", "+l.room.room_number+"|"
+                    detalhes= l.week_day+","+l.hour+","+l.duration+","+l.subject.name+","+l.type+","+l.room.room_number+"|"
                     if l.type in dicTypeTurmaLessons :
                         novaTurma= True
                         for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
@@ -187,8 +193,14 @@ def choose_lessons_s(request):
           
                     else:
                         dicTypeTurmaLessons[l.type] = [[l.turma, detalhes]] #nao por tuplos pq eles sao imutaveis
-                dicSubjsTypeTurmaAndLessons[SubjObj]= dicTypeTurmaLessons
-            return render(request, 'student/choose_lessons.html', {'subjs':dicSubjsTypeTurmaAndLessons})
+                if subjSem == "1" :
+                    dic1SemSubjs[SubjObj]= dicTypeTurmaLessons
+                else:
+                    dic2SemSubjs[SubjObj]= dicTypeTurmaLessons
+
+            semestre= {"1": dic1SemSubjs, "2": dic2SemSubjs}
+
+            return render(request, 'student/choose_lessons.html', {'subjsSem':semestre})
 
         else:
             return HttpResponseRedirect(reverse('inscricoes_subject_s'))

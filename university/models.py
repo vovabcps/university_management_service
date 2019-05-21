@@ -54,6 +54,7 @@ class PersonalInfo(models.Model):
     nationality = models.CharField(max_length=200, null=True)
     id_document = models.CharField(max_length=200, null=True, unique=True)
     vat_number = models.CharField(max_length=200, null=True, unique=True)
+    profile_pic = models.CharField(max_length=200, null=True)
 
 
     def get_systemUser_user(self):

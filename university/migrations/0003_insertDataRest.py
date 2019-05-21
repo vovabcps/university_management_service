@@ -123,6 +123,10 @@ def makePersonalInfoOBJs():
     with open(settings.MIGRATIONS_DATA_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt", encoding="utf8") as rfile:
         listData = rfile.readlines()
     num= 0
+    m = 0
+    f = 0
+    femList = getDicttOfGenderPics()["female"]
+    maleList = getDicttOfGenderPics()["male"]
     for user in allSystemUsers :
         name, gender, nationality, date_str, address, vat =listData[num].split("||")
         email= name.split()[-1]+str(user.id)+random.choice(["@hotmail.com", "@gmail.com"]) #unique
@@ -130,10 +134,50 @@ def makePersonalInfoOBJs():
         random.seed(user.id)
         idDocument= str(random.randint(00000000,99999999)) #unique
         date = datetime.strptime(date_str, "%d/%m/%Y").date()
+
         newUSER= PersonalInfo(user=user, address=address, birth_date=date, name=name,
                  phone_number=phone, personal_email=email, gender=gender, nationality=nationality, id_document=idDocument, vat_number=vat)
         newUSER.save()
+
+        if newUSER.gender == "male":
+            newUSER.profile_pic = "our/pics/" + maleList[m][:-4]+ ".png"
+            m+=1
+
+        else:
+            newUSER.profile_pic = "our/pics/" + femList[f][:-4]+ ".png"
+            f+=1
+
+
+        newUSER.save()
         num += 1
+
+
+
+def getDicttOfGenderPics():
+    import os
+
+    directory_in_str = settings.STATIC_ROOT + "/our/pics"
+
+    directory = os.fsencode(directory_in_str)
+    maleList = []
+    femaleList = []
+
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".txt"):
+            f = open(settings.STATIC_ROOT + "/our/pics/" + filename, "r")
+            age = f.readline().split(":")[1]
+            gender = f.readline().split(":")[1]
+
+            if gender.__contains__("Female"):
+                femaleList.append(filename)
+            else:
+                maleList.append(filename)
+            f.close()
+            continue
+        else:
+            continue
+    return {"male": maleList, "female": femaleList}
 
 
 @transaction.atomic

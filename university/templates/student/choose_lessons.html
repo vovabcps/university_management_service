@@ -18,7 +18,6 @@
 
 
 {% block content %}
-
 <div id="content-main">
 
 
@@ -28,68 +27,93 @@
 					<div class="panel-heading">Incrições em turmas</div>
 					<div class="panel-body">
 						<div class="col-md-12">
-              
+             
 							<form role="form" id="insert_disciplina">
 
-                {{ subjs }}
+                 <!-- {{ subjsSem }}  -->
 
 
+                {% for semestre, subjs in subjsSem.items %}
+                <button type="button" onclick="chooseSem('{{semestre}}sem')">{{semestre}} semestre</button>
 
-                {% for subj, dicTypeTurmaLessons in subjs.items %}
-                  <p>{{subj.name}}</p>
-                  {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
-                  <p>{{tipo}}</p>
-                  {% for turmaLessons in turmasLessons %}
-           
-                  <button type="button" onclick="criarHorario('{{turmaLessons|last}}')" >{{turmaLessons|first}}</button>
-                 
-              
+                <div id="{{semestre}}sem">
+                  {% for subj, dicTypeTurmaLessons in subjs.items %}
+                    <p>{{subj.name}}</p>
+                    {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
+                    <p>{{tipo}}</p>
+                    <div id="{{subj.name}}|{{tipo}}">
+                    {% for turmaLessons in turmasLessons %}
+
+                    
+                    <button type="button" value="{{turmaLessons|last}}" onclick="marcado(this,'{{subj.name}}|{{tipo}}');criarHorario()" >{{turmaLessons|first}}</button>
+                    
+                
+                    {% endfor %}
+                  </div>
+
+                    {% endfor %}
+                    <br><br><br><br>
                   {% endfor %}
+                </div>
 
-                  {% endfor %}
-                  <br><br><br><br>
                 {% endfor %}
 
                 <br><br>
                 
                 <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" >Submit Button</button>
-                <button type="reset" class="btn btn-default">Reset Button</button>
                 <button type="reset" class="btn btn-default"><a href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
 							</form>
 						</div>
 					</div>
         </div><!-- /.panel-->
-        
-        <table id="tabelaSchedule"></table>
 
 			</div><!-- /.col-->
-		</div><!-- /.row -->
+    </div><!-- /.row -->
+    
+    <table id="tabelaSchedule"></table> 
 </div>
 
 <script>
-  function criarHorario(detalhes){
-    console.log(detalhes)
-    var lstLessons= detalhes.split("|").slice(0, -1);
-    var scheduleDict= {}
-     
 
-     //todas os botoes das lessons q foram "activados"
+  function chooseSem(sem){
+    if (sem == "1sem"){
+      document.getElementById("1sem").style.display = "block";
+      document.getElementById("2sem").style.display = "none";
+    }else{
+      document.getElementById("2sem").style.display = "block";
+      document.getElementById("1sem").style.display = "none";
+    }
+  }
 
-     //percorrer o valor desses botoes
+  chooseSem("1sem");
+
+  function criarHorario(){
+    document.getElementById("tabelaSchedule").innerHTML= "";
+    //reset pq os valores do dic tem q estar ordenados
+
+    //todas os botoes das lessons q foram "activados"
+    allTurmasEscolhidas= document.querySelectorAll("button[data-escolhido=true]");
+    
+    var lstLessons= []
+    for (var i = 0; i < allTurmasEscolhidas.length; i++) {
+      turma= allTurmasEscolhidas[i].value
+      turmaLessons= turma.split("|").slice(0, -1);
+      lstLessons= lstLessons.concat(turmaLessons)
+    }
+
+     //percorrer a lista com todas as lessons
      var lstlesson= []
      for (var i = 0; i < lstLessons.length; i++) {
       lstlesson.push(lstLessons[i].split(","))
     }
    
-
-    //lstlesson[0][0]= "QUINTA";
-    //lstlesson[0][1]= " 16:00";
+    var scheduleDict= {}
 
     for (var i = 0; i<lstlesson.length; i++){
       if (lstlesson[i][0] in scheduleDict) {
-        scheduleDict[lstlesson[i][0]].push([[lstlesson[i].slice(1, 6)]])
+        scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, 6))
       }else{
-        scheduleDict[lstlesson[i][0]]= [[lstlesson[i].slice(1, 6)]]
+        scheduleDict[lstlesson[i][0]]= [lstlesson[i].slice(1, 6)]
       }
     }
 
