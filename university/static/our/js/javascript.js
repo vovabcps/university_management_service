@@ -102,12 +102,25 @@ function insertClassesInWeekday(weekdaySTR, classes, dicSubjectColor, lcolors ){
                 //se a largura de um div foi alterado entao a largura de todos os divs desse block tem q ser alterados
                 for (var d=0; d<blocksInsideTd.length; d++){
                     blocksInsideTd[d].style.width= width; 
+                    
                     //incluindo os divs de outros blocks que pertencem a mesma aula
                     if (d != blocksInsideTd.length-1){ //nao vale apena modificar a aula q estou a inserir agora
                         var BlockClass= blocksInsideTd[d].getAttribute("class").split(" ")[1];
                         var allBlocksWithCass= document.getElementsByClassName(BlockClass); //aula
                         for (var i=0; i<allBlocksWithCass.length; i++){
                             allBlocksWithCass[i].style.width= width;
+                            
+                        }
+                        var blockID= allBlocksWithCass[0].id.split("|")
+                        var blockHaEsquerdaID= blockID[0]+"|"+blockID[1]+"|"+(parseInt(blockID[2])-1)
+                        var blockHaEsquerda= document.getElementById(blockHaEsquerdaID) //retangulo a esquerda
+                        if (blockHaEsquerda != null) {
+                            var BlockClass= blockHaEsquerda.getAttribute("class").split(" ")[1];
+                            var allBlocksWithCass= document.getElementsByClassName(BlockClass);
+                            for (var i=0; i<allBlocksWithCass.length; i++){
+                                allBlocksWithCass[i].style.width= width;
+                                
+                            }
                         }
                     }
                 }
@@ -162,11 +175,13 @@ function addMinutes(hour, minutes){
 
 /* -------------------------------------------------- Opçoes de jogo ------------------------------------------------------------------------------- */
 function marcado(obj,id) {
+    var semestre= id.split("|")[0];
+    console.log(semestre)
     obj.style.border= "2px solid black";
     obj.style.opacity= "0.7";
     obj.style.background= "blue";
     obj.style.boxShadow= "none";
-    obj.setAttribute('data-escolhido', true) 
+    obj.setAttribute('data-'+semestre, true)
     var e = document.getElementById(id).children;
     for (var i= 0; i< e.length; i++){
         if (e[i] != obj){
@@ -174,7 +189,7 @@ function marcado(obj,id) {
             e[i].style.opacity= "1";
             e[i].style.boxShadow= "1px 2px 6px 1px #1b3680";
             e[i].style.background= "white";
-            e[i].setAttribute('data-escolhido', false) 
+            e[i].setAttribute('data-'+semestre, false) 
         }
     }  
 }

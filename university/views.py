@@ -164,11 +164,11 @@ def inscricoes_subject_s(request):
 def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
-            subjsNameSemestre = request.POST.getlist('subjsNameSemestre')
-            dicSubjsTypeTurmaAndLessons= {}
+            subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #as cadeiras q o aluno escolheu
+            #print(subjsNameSemestre)
             dic1SemSubjs= {}
             dic2SemSubjs= {}
-            subjsLessonsOBJs= {}
+        
 
             for subjNameSem in subjsNameSemestre : 
                 dicTypeTurmaLessons= {}
@@ -204,6 +204,26 @@ def choose_lessons_s(request):
 
         else:
             return HttpResponseRedirect(reverse('inscricoes_subject_s'))
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def inscricoes_confirmacao_s(request):
+    #verifica os dados da pag choose_lessons
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        if request.method == 'POST':
+            subjsNameSemestre = json.loads(request.body.decode("utf-8"))
+            print(subjsNameSemestre)
+            semestre1 = subjsNameSemestre['1semLessons']
+            semestre2 = subjsNameSemestre['2semLessons']
+            if True: #se tiver tudo bem
+                return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+            else:
+                return HttpResponse(json.dumps({"message": "fail"}), content_type="application/json")
+
+        else:
+            return HttpResponseRedirect(reverse('inscricoes_subject_s'))
+
     else: 
         return HttpResponseRedirect(reverse('login'))
 

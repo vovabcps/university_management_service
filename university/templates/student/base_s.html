@@ -6,18 +6,20 @@
   <meta charset="utf-8">
   <title>{% block title %}{% endblock %}</title>
 
-	{% block extrahead %}{% endblock %}
+
+
   <link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
   <link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
   <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
-  <link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+	<link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+
 	<link href="{% static 'our/css/style.css' %}" rel="stylesheet">
 	<script src="{% static 'our/js/javascript.js' %}"></script>
 
   <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
   <link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-
+	{% block extrahead %}{% endblock %}
   {% block extrastyle %}{% endblock %}
 
 
@@ -271,7 +273,7 @@ if (pag == "consult_details" || pag == "consult_subjects" || pag == "consult_con
 	pag="consultar";  
 } 
 
-if (pag == "inscricoes_subject") {
+if (pag == "inscricoes_subject" || pag == "choose_lessons") {
 	pag="inscricao";  
 } 
 

@@ -59,8 +59,8 @@
 										<td>
 											<div class="radio">
 												<label>
-
-													<input type="checkbox" name="subjsNameSemestre" value="{{course_subj.get_subject_name}}|{{course_subj.semester}}">
+													
+													<input type="checkbox" name="subjsNameSemestre" id="{{course_subj.get_subject_name}}|{{course_subj.semester}}" value="{{course_subj.get_subject_name}}|{{course_subj.semester}}">
 
 
 												</label>
@@ -111,9 +111,26 @@
 	document.getElementById("ano_lectivo_act").innerHTML = anoLectivo;
 
 
-	$.each($("input[name='subjsNameSemestre']:checked"), function () {
-		console.log($(this).val());
+		//guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
+	if(localStorage.getItem("UserSubjs") != undefined){
+		var userSubjs = JSON.parse(localStorage.getItem("UserSubjs"))
+		for (var i = 0; i<userSubjs.length; i++){
+			$("input[value='"+userSubjs[i]+"']").prop("checked", true );
+		}
+	}
+
+	$(document).ready(function () {
+    $('#submit').click(function(evt) {
+			var cadeirasEscolhidas= [];
+			$.each($("input[name='subjsNameSemestre']:checked"), function () {
+				cadeirasEscolhidas.push($(this).val())
+			});
+			var UserCadeirasEscolh= JSON.stringify(cadeirasEscolhidas);
+			localStorage.setItem("UserSubjs", UserCadeirasEscolh);
 	});
+});
+	
+	
 </script>
 
 {% endblock %}

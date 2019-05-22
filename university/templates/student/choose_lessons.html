@@ -28,7 +28,7 @@
 					<div class="panel-body">
 						<div class="col-md-12">
              
-							<form role="form" id="insert_disciplina">
+                <form role="form" id="insert_disciplina" method="post" onsubmit="return false">
 
                  <!-- {{ subjsSem }}  -->
 
@@ -41,13 +41,12 @@
                     <p>{{subj.name}}</p>
                     {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
                     <p>{{tipo}}</p>
-                    <div id="{{subj.name}}|{{tipo}}">
+                    <div id="{{semestre}}sem|{{subj.name}}|{{tipo}}">
                     {% for turmaLessons in turmasLessons %}
 
                     
-                    <button type="button" value="{{turmaLessons|last}}" onclick="marcado(this,'{{subj.name}}|{{tipo}}');criarHorario()" >{{turmaLessons|first}}</button>
-                    
-                
+                    <button type="button" data-lessons="{{turmaLessons|last}}" onclick="marcado(this,'{{semestre}}sem|{{subj.name}}|{{tipo}}');criarHorario('{{semestre}}sem')" value="{{subj.name}}|{{turmaLessons|first}}|{{tipo}}" >{{turmaLessons|first}}</button>
+
                     {% endfor %}
                   </div>
 
@@ -60,8 +59,8 @@
 
                 <br><br>
                 
-                <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" >Submit Button</button>
-                <button type="reset" class="btn btn-default"><a href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
+                <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" >Confirmar e Finalizar</button>
+                <button type="button" class="btn btn-default"><a href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
 							</form>
 						</div>
 					</div>
@@ -83,20 +82,23 @@
       document.getElementById("2sem").style.display = "block";
       document.getElementById("1sem").style.display = "none";
     }
+    criarHorario(sem)
+    
   }
 
   chooseSem("1sem");
 
-  function criarHorario(){
+  function criarHorario(semestre){
     document.getElementById("tabelaSchedule").innerHTML= "";
     //reset pq os valores do dic tem q estar ordenados
 
-    //todas os botoes das lessons q foram "activados"
-    allTurmasEscolhidas= document.querySelectorAll("button[data-escolhido=true]");
+    //todas os botoes das turmas q foram "activados" num semestre
+    allTurmasEscolhidas= document.querySelectorAll("button[data-"+ semestre +"=true]");
+
     
     var lstLessons= []
     for (var i = 0; i < allTurmasEscolhidas.length; i++) {
-      turma= allTurmasEscolhidas[i].value
+      turma= allTurmasEscolhidas[i].getAttribute("data-lessons")
       turmaLessons= turma.split("|").slice(0, -1);
       lstLessons= lstLessons.concat(turmaLessons)
     }
@@ -104,7 +106,9 @@
      //percorrer a lista com todas as lessons
      var lstlesson= []
      for (var i = 0; i < lstLessons.length; i++) {
-      lstlesson.push(lstLessons[i].split(","))
+       lesson= lstLessons[i].split(",")
+       lesson[3]=  getSigla(lesson[3])
+      lstlesson.push(lesson)
     }
    
     var scheduleDict= {}
@@ -127,6 +131,64 @@
     buildSchedule(scheduleDict);
    
   }
+
+
+  function getSigla (umaString){
+    lista = umaString.split(" ")
+    sigla = ""
+    for (var i = 0; i<lista.length; i++){
+      if (lista[i].length > 3) {
+        sigla = sigla + lista[i][0]
+      }
+    }
+    return sigla
+  }
+
+
+
+  $(document).ready(function () {
+    $('#submit').click(function(evt) {
+      evt.preventDefault(); 
+      var r = confirm('Depois de confirmar nao podera voltar atras!');
+      if (r) {   
+        login()               
+      }  
+    });  
+  });
+
+  function login() {
+    allTurmasEscolhidas1sem= document.querySelectorAll("button[data-1sem=true]");
+    allTurmasEscolhidas2sem= document.querySelectorAll("button[data-2sem=true]");
+
+    txt1sem= "";
+    for(var i=0; i<allTurmasEscolhidas1sem.length; i++){
+      txt1sem = txt1sem + allTurmasEscolhidas1sem[i].value + "||";
+    }
+
+    txt2sem= "";
+    for(var i=0; i<allTurmasEscolhidas2sem.length; i++){
+      txt2sem = txt2sem + allTurmasEscolhidas2sem[i].value + "||";
+    }
+
+
+    $.ajax({
+        type: "POST",
+        url: 'inscricoes_confirmacao',
+        data: JSON.stringify({'1semLessons': txt1sem, '2semLessons': txt2sem}),
+        success: function (data) {
+          if (data['message'] == "success") {
+              alert("Foi inscrito com sucesso")
+              window.location.href = "home";
+          } else if (data['message'] == "inactive") {
+          } else {
+              alert("Ocorreu um problema na sua inscriçao, volte a tentar.")
+          }
+      }
+    });
+
+    
+}
+
 </script>
 
 
