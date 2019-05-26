@@ -76,15 +76,7 @@ def is_authenticated(request, role_name):
     return False
 
 
-# --------------- sigla ---------------
-def getSigla (umaString):
-    lista = umaString.split(" ")
-    sigla = ""
-    for word in lista:
-        if len(word) > 3:
-            sigla = sigla + word[0]
 
-    return sigla
 
 # --------------- login ---------------
 def login_page(request):
@@ -152,11 +144,29 @@ def inscricoes_subject_s(request):
         su= request_user(request)
         #curso do aluno
         suCourse= SystemUserCourse.objects.get(user=su)
-        #se aquele curso em q o aluno esta tem agum mini curso naquele ano
-        MiniC= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
-        #as cadeiras q ele vai ter nesse ano
-        course_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
-        return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'MiniC':MiniC, 'course_subjs':course_subjs})
+
+        #as cadeiras obrigatorias q ele vai ter nesse ano
+        courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
+
+        #quais sao os mini cursos q o aluno vai ter naquele ano
+        miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
+        
+        #as cadeiras dos mini cursos daquele ano
+        miniCursosMinorsSubjs= [] #lista de listas
+        miniCursosOthersSubjs= [] #lista de listas
+        for miniC in miniCs:
+            if len(miniC.semestres) == 1 :
+                miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual, semester=int(miniC.semestres))
+            else:
+                miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual).order_by("semester")
+            if miniC.miniCourse.grau == "Minor" :
+                miniCursosMinorsSubjs.append([miniC, miniCsubjs])
+            else:
+                miniCursosOthersSubjs.append([miniC, miniCsubjs])
+
+        dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minors': miniCursosMinorsSubjs}
+        course_subjs = {'courseObrig_subjs':courseObrig_subjs, 'miniCs_subjs':dicMinorsAndOthers}
+        return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'course_subjs':course_subjs})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -164,43 +174,50 @@ def inscricoes_subject_s(request):
 def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
-            subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #as cadeiras q o aluno escolheu
-            #print(subjsNameSemestre)
-            dic1SemSubjs= {}
-            dic2SemSubjs= {}
-        
+            subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #vai buscar as q foram escolhidas automaticamente!
+            print(subjsNameSemestre)
 
-            for subjNameSem in subjsNameSemestre : 
-                dicTypeTurmaLessons= {}
-                print(subjNameSem)
-                subjName, subjSem= subjNameSem.split("|")
-                print(subjName, subjSem)
-                SubjObj= Subject.objects.get(name=subjName) 
-                lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
-                for l in lessons : 
-                    detalhes= l.week_day+","+l.hour+","+l.duration+","+l.subject.name+","+l.type+","+l.room.room_number+"|"
-                    if l.type in dicTypeTurmaLessons :
-                        novaTurma= True
-                        for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
-                            if turma == l.turma :
-                                print(lstLessons)
-                                oldList= [[t,ls] for [t,ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
-                                dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + detalhes]]
-                                novaTurma= False
-                                break
-                        if novaTurma:
-                                dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, detalhes]]
-          
+            valid= True
+            if valid : #se tiver tudo bem
+                dic1SemSubjs= {}
+                dic2SemSubjs= {}
+            
+
+                for subjNameSem in subjsNameSemestre : 
+                    dicTypeTurmaLessons= {}
+                    print(subjNameSem)
+                    subjName, subjSem= subjNameSem.split("|")
+                    print(subjName, subjSem)
+                    SubjObj= Subject.objects.get(name=subjName) 
+                    lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
+                    for l in lessons : 
+                        detalhes= l.week_day+","+l.hour+","+l.duration+","+l.subject.name+","+l.type+","+l.room.room_number+"|"
+                        if l.type in dicTypeTurmaLessons :
+                            novaTurma= True
+                            for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
+                                if turma == l.turma :
+                                    print(lstLessons)
+                                    oldList= [[t,ls] for [t,ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
+                                    dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + detalhes]]
+                                    novaTurma= False
+                                    break
+                            if novaTurma:
+                                    dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, detalhes]]
+            
+                        else:
+                            dicTypeTurmaLessons[l.type] = [[l.turma, detalhes]] #nao por tuplos pq eles sao imutaveis
+                    if subjSem == "1" :
+                        dic1SemSubjs[SubjObj]= dicTypeTurmaLessons
                     else:
-                        dicTypeTurmaLessons[l.type] = [[l.turma, detalhes]] #nao por tuplos pq eles sao imutaveis
-                if subjSem == "1" :
-                    dic1SemSubjs[SubjObj]= dicTypeTurmaLessons
-                else:
-                    dic2SemSubjs[SubjObj]= dicTypeTurmaLessons
+                        dic2SemSubjs[SubjObj]= dicTypeTurmaLessons
 
-            semestre= {"1": dic1SemSubjs, "2": dic2SemSubjs}
+                semestre= {"1": dic1SemSubjs, "2": dic2SemSubjs}
 
-            return render(request, 'student/choose_lessons.html', {'subjsSem':semestre})
+                return render(request, 'student/choose_lessons.html', {'subjsSem':semestre})
+            else:
+                messages.error(request, "Ocorreu um problema!")
+                messages.error(request, "qual foi? you will never know muahah")
+                return HttpResponseRedirect(reverse('inscricoes_subject_s'))
 
         else:
             return HttpResponseRedirect(reverse('inscricoes_subject_s'))
@@ -256,6 +273,11 @@ def consult_university_s(request):
         return HttpResponseRedirect(reverse('login'))
 
 
+
+
+
+def apagar_s(request):
+    return render(request, 'student/apagar.html', {})
 
 
 # --------------- teacher ---------------

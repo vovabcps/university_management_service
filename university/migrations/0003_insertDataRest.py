@@ -189,34 +189,59 @@ def makeCourseOBJs():
     schoolyearOBJ_17_18= SchoolYear.objects.get(begin=2017)
     
    
+   #-----------------  minors  -----------------
     minors= [(0, "Minor em Biologia"), (1, "Minor em Gestão")]
     minorsOBJ= []
     for (_, minor) in minors:
-        newCourse= Course(name=minor, grau="Minor", credits_number=30, duration=2, timetable="Diurno", coordinator=allTeachers.pop())
+        newCourse= Course(name=minor, grau="Minor", credits_number=30, credits_numberByYear="", duration=2, timetable="Diurno", coordinator=allTeachers.pop())
         newCourse.save()
         minorsOBJ.append(newCourse)
 
 
+    #-----------------  formaçao e optativas  -----------------
     newCourseF= Course(name="450_Formação Cultural Social e Ética", grau="Formação", timetable="Diurno")
     newCourseF.save()
 
-    newCourseTI= Course(name="Licenciatura em Tecnologias de Informação", grau="Licenciatura", credits_number=180, duration=6, timetable="Diurno", coordinator=allTeachers.pop())
+
+    newCourseOEI= Course(name="462_Lic. em Eng. Informática ", grau="Optativas", timetable="Diurno")
+    newCourseOEI.save()
+
+
+    newCourseOTI= Course(name="517_Lic. em TIC/TI", grau="Optativas", timetable="Diurno")
+    newCourseOTI.save()
+
+
+    #-----------------  licenciaturas  -----------------
+    newCourseTI= Course(name="Licenciatura em Tecnologias de Informação", grau="Licenciatura", credits_number=180, credits_numberByYear="1:60|2:60|3:60", duration=6, timetable="Diurno", coordinator=allTeachers.pop())
     newCourseTI.save()
 
-    newCourseEI= Course(name="Licenciatura em Engenharia Informática", grau="Licenciatura", credits_number=180, duration=6, timetable="Diurno", coordinator=allTeachers.pop())
+    newCourseEI= Course(name="Licenciatura em Engenharia Informática", grau="Licenciatura", credits_number=180, credits_numberByYear="1:60|2:60|3:60", duration=6, timetable="Diurno", coordinator=allTeachers.pop())
     newCourseEI.save()
 
-    newCourse_MiniCourse= Course_MiniCourse(course=newCourseEI , miniCourse=newCourseF , credits_number=3, year=2, semester=2)
+
+    #-----------------  couso mini_cursos associaçoes  -----------------
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseEI , miniCourse=newCourseF , credits_number=3, year=2, semestres="2")
     newCourse_MiniCourse.save()
 
-    newCourse_MiniCourse= Course_MiniCourse(course=newCourseEI , miniCourse=newCourseF , credits_number=3, year=1, semester=1)
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseEI , miniCourse=newCourseF , credits_number=3, year=1, semestres="1")
     newCourse_MiniCourse.save()
 
-    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=newCourseF , credits_number=9, year=1, semester=1)
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseEI , miniCourse=newCourseOEI , credits_number=6, year=3, semestres="2")
     newCourse_MiniCourse.save()
 
-    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=minorsOBJ[0] , credits_number=30, year=3, semester=1)
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=newCourseF , credits_number=9, year=1, semestres="1")
     newCourse_MiniCourse.save()
+
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=minorsOBJ[0] , credits_number=30, year=3, semestres="1,2")
+    newCourse_MiniCourse.save()
+
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=minorsOBJ[1] , credits_number=30, year=3, semestres="1,2")
+    newCourse_MiniCourse.save()
+
+    newCourse_MiniCourse= Course_MiniCourse(course=newCourseTI , miniCourse=newCourseOTI , credits_number=6, year=3, semestres="1,2")
+    newCourse_MiniCourse.save()
+
+
      
 
 
@@ -379,15 +404,6 @@ def ordenarPorNumOcorrencias(lstObjs):
     return tuploOrd
 
 
-
-
-        
-
-
-
-    
-
-
 def hourToMinutes(hour):
     lhour= hour.split(":")
     return int(lhour[0])*60 + int(lhour[1])
@@ -395,12 +411,6 @@ def hourToMinutes(hour):
 
 def addMinutes(hour, duration):
     return hourToMinutes(hour) + hourToMinutes(duration)
-
-    
-
-
-
-
 
 
 

@@ -31,10 +31,11 @@ Construção de Sistemas de Software (LTI), 6||Licenciatura em Tecnologias de In
 Planeamento e Gestão de Projeto, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral
 Projeto de Tecnologias de Informação, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral
 Projeto de Tecnologias de Redes, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral
-Princípios de Programação, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 2, 1, Semestral
-Teoria da Computação, 6||Licenciatura em Tecnologias de Informação, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 1, Semestral
-Engenharia do Conhecimento, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 2, Semestral
-Segurança Informática, 6||Licenciatura em Tecnologias de Informação, 3, 2, Semestral (Opção)
+
+Princípios de Programação, 6||517_Lic. em TIC/TI, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 2, 1, Semestral
+Teoria da Computação, 6||517_Lic. em TIC/TI, 3, 1, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 1, Semestral
+Engenharia do Conhecimento, 6||517_Lic. em TIC/TI, 3, 2, Semestral (Opção)!!Licenciatura em Engenharia Informática, 3, 2, Semestral
+Segurança Informática, 6||517_Lic. em TIC/TI, 3, 2, Semestral (Opção)
 
 
 
@@ -63,8 +64,9 @@ Sistemas Distribuídos, 6||Licenciatura em Engenharia Informática, 3, 1, Semest
 Construção de Sistemas de Software, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
 Projeto de Sistemas de Informação, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
 Segurança e Confiabilidade, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral
-Ciências da Linguagem e da Cognição, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral (Opção)
-Ciências da Vida, 6||Licenciatura em Engenharia Informática, 3, 2, Semestral (Opção)
+
+Ciências da Linguagem e da Cognição, 6||462_Lic. em Eng. Informática, 3, 2, Semestral (Opção)
+Ciências da Vida, 6||462_Lic. em Eng. Informática, 3, 2, Semestral (Opção)
 
 
 

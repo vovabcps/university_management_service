@@ -5,139 +5,276 @@
 
 {% block extrahead %}
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
 
 {% block title %}Turmas{% endblock %}
 
-{% block content_title %}Preencha o formulario:{% endblock %}
+{% block content_title %}{% endblock %}
 
 {% block breadcrumbs %}
-        › Inscrição Turmas
+› Inscrição Turmas
 {% endblock %}
 
 
 {% block content %}
 <div id="content-main">
 
+  <style>
+    .tab-content {
+      padding: 0;
+    }
+    .semestres{
+      border-bottom:1px solid #e9ecf2;
+      margin-bottom: 2px;
+      padding: 2px 0px 2px 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    }
 
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="panel panel-default">
-					<div class="panel-heading">Incrições em turmas</div>
-					<div class="panel-body">
-						<div class="col-md-12">
-             
-                <form role="form" id="insert_disciplina" method="post" onsubmit="return false">
+    .semestres ul {
+      padding: 5px;
+    }
 
-                 <!-- {{ subjsSem }}  -->
+    .semestres > .nav-pills li.active a{
+      background-color : dimgrey !important;
+  }
+  </style>
+
+  <br>
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-default">
+
+        <!-- {{ subjsSem }}  -->
+
+        <form role="form" id="insert_disciplina" method="post" onsubmit="return false">
 
 
-                {% for semestre, subjs in subjsSem.items %}
-                <button type="button" onclick="chooseSem('{{semestre}}sem')">{{semestre}} semestre</button>
+<div class="semestres">
+          <ul class="nav nav-pills" role="tablist">
+            <li class="nav-item active">
+              <a class="nav-link active" data-toggle="pill" href="#semestre1" onclick="criarHorario('1sem')">1º Semestre</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="pill" href="#semestre2" onclick="criarHorario('2sem')" >2º Semestre</a>
+            </li>
+          </ul>
+        </div>
 
-                <div id="{{semestre}}sem">
+        <div class="panel-body">
+
+        
+          <div class="w3-row">
+              <div class=" w3-third">
+
+          <div class="tab-content">
+            {% for semestre, subjs in subjsSem.items %}
+
+            {% if semestre == "1" %}
+            <div id="semestre1" class=" tab-pane active">
+
+              {% else %}
+              <div id="semestre2" class=" tab-pane fade">
+                {% endif %}
+
+                <!-- em comum -->
+
+
+                <ul class="nav nav-pills" role="tablist">
+
                   {% for subj, dicTypeTurmaLessons in subjs.items %}
-                    <p>{{subj.name}}</p>
-                    {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
-                    <p>{{tipo}}</p>
-                    <div id="{{semestre}}sem|{{subj.name}}|{{tipo}}">
-                    {% for turmaLessons in turmasLessons %}
 
-                    
-                    <button type="button" data-lessons="{{turmaLessons|last}}" onclick="marcado(this,'{{semestre}}sem|{{subj.name}}|{{tipo}}');criarHorario('{{semestre}}sem')" value="{{subj.name}}|{{turmaLessons|first}}|{{tipo}}" >{{turmaLessons|first}}</button>
+                  {% if forloop.counter == 1 %}
+                  <li class="nav-item active ">
+                    <a class="nav-link active" data-toggle="pill"
+                      href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                    <a class="nav-link " data-toggle="pill" href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+                  </li>
+                  {% endif %}
 
-                    {% endfor %}
-                  </div>
-
-                    {% endfor %}
-                    <br><br><br><br>
                   {% endfor %}
+                </ul>
+
+                    <div class="tab-content">
+                       
+                      {% for subj, dicTypeTurmaLessons in subjs.items %}
+
+                      {% if forloop.counter == 1 %}
+                      <div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane active">
+                        {% else %}
+                        <div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane fade">
+                          {% endif %}
+
+                          {% for tipo, turmasLessons in dicTypeTurmaLessons.items %}
+                          <br>
+                          {% if tipo == "T" %}
+                            <p>TEORICAS</p>
+                          {% elif  tipo == "TP" %}
+                            <p>PRATICAS</p>
+                          {% elif  tipo == "PL" %}
+                            <p>LABORATORIAIS</p>
+                          {% elif  tipo == "O" %}
+                            <p>OUTRA</p>
+                          {% elif  tipo == "S" %}
+                            <p>SINPOSIO</p>
+                          {% else %}
+                            <p>{{tipo}}</p>
+                          {% endif %}
+                      
+                          <div id="{{semestre}}sem|{{subj.name}}|{{tipo}}">
+                            {% for turmaLessons in turmasLessons %}
+
+
+                            <button type="button" class="w3-button-small w3-khaki w3-round"
+                              data-lessons="{{turmaLessons|last}}"
+                              onclick="marcado(this,'{{semestre}}sem|{{subj.name}}|{{tipo}}');criarHorario('{{semestre}}sem')"
+                              value="{{subj.name}}|{{turmaLessons|first}}|{{tipo}}">{{tipo}}{{turmaLessons|first}}</button>
+
+                            {% endfor %}
+                          </div>
+
+                          {% endfor %}
+                        </div>
+
+                        {% endfor %}
+                      </div> <!-- class="tab-content" -->
+                   
                 </div>
-
                 {% endfor %}
+              </div> <!-- class="tab-content" -->
 
-                <br><br>
-                
-                <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" >Confirmar e Finalizar</button>
-                <button type="button" class="btn btn-default"><a href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
-							</form>
-						</div>
-					</div>
-        </div><!-- /.panel-->
+              </div>
+              
+              <div class="w3-twothird">
+                  <table id="tabelaSchedule"></table>
+                </div>
+            
+            </div> <!-- end row -->
 
-			</div><!-- /.col-->
-    </div><!-- /.row -->
-    
-    <table id="tabelaSchedule"></table> 
+          </div>
+       
+
+              <br>
+
+            
+              <br>
+
+              <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary">Confirmar e
+                Finalizar</button>
+              <button type="button" class="btn btn-default"><a
+                  href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
+                  <br>
+
+            
+                  <br>
+
+
+
+        </form>
+
+
+
+
+
+
+
+      </div><!-- /.panel-->
+    </div><!-- /.col-->
+  </div><!-- /.row -->
+
+
+
 </div>
 
 <script>
-
-  function chooseSem(sem){
-    if (sem == "1sem"){
-      document.getElementById("1sem").style.display = "block";
-      document.getElementById("2sem").style.display = "none";
-    }else{
-      document.getElementById("2sem").style.display = "block";
-      document.getElementById("1sem").style.display = "none";
-    }
-    criarHorario(sem)
-    
-  }
-
-  chooseSem("1sem");
-
-  function criarHorario(semestre){
-    document.getElementById("tabelaSchedule").innerHTML= "";
+  document.getElementById("content_titleRow").style.display = "none";
+  criarHorario("1sem")
+  function criarHorario(semestre) {
+    console.log(semestre)
     //reset pq os valores do dic tem q estar ordenados
+    document.getElementById("tabelaSchedule").innerHTML= "";
 
     //todas os botoes das turmas q foram "activados" num semestre
-    allTurmasEscolhidas= document.querySelectorAll("button[data-"+ semestre +"=true]");
+    allTurmasEscolhidas = document.querySelectorAll("button[data-" + semestre + "=true]");
 
-    
-    var lstLessons= []
+
+    var lstLessons = []
     for (var i = 0; i < allTurmasEscolhidas.length; i++) {
-      turma= allTurmasEscolhidas[i].getAttribute("data-lessons")
-      turmaLessons= turma.split("|").slice(0, -1);
-      lstLessons= lstLessons.concat(turmaLessons)
+      turma = allTurmasEscolhidas[i].getAttribute("data-lessons")
+      turmaLessons = turma.split("|").slice(0, -1);
+      lstLessons = lstLessons.concat(turmaLessons)
     }
 
-     //percorrer a lista com todas as lessons
-     var lstlesson= []
-     for (var i = 0; i < lstLessons.length; i++) {
-       lesson= lstLessons[i].split(",")
-       lesson[3]=  getSigla(lesson[3])
+    //percorrer a lista com todas as lessons
+    var lstlesson = []
+    for (var i = 0; i < lstLessons.length; i++) {
+      lesson = lstLessons[i].split(",")
+      lesson[1] = format(lesson[1])
+      lesson[3] = getSigla(lesson[3])
       lstlesson.push(lesson)
     }
-   
-    var scheduleDict= {}
 
-    for (var i = 0; i<lstlesson.length; i++){
+    var scheduleDict = {}
+
+    for (var i = 0; i < lstlesson.length; i++) {
       if (lstlesson[i][0] in scheduleDict) {
         scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, 6))
-      }else{
-        scheduleDict[lstlesson[i][0]]= [lstlesson[i].slice(1, 6)]
+      } else {
+        scheduleDict[lstlesson[i][0]] = [lstlesson[i].slice(1, 6)]
       }
     }
-
+    console.log(scheduleDict)
 
     // Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time) 
     for (var key in scheduleDict) {
-      scheduleDict[key]= scheduleDict[key].sort(function(a,b){return (a[0] > b[0]) ? 1 : -1});
+      scheduleDict[key] = scheduleDict[key].sort(function (a, b) {
+        return maior(a[0], b[0])
+      });
     }
     console.log(scheduleDict)
 
     buildSchedule(scheduleDict);
-   
+
+  }
+
+  function maior(str1, str2){
+    console.log(str1 + " " + str2)
+    var res;
+    if ((str1.length + str2.length) == 9 ){
+    //"10:00" > "9:30"
+    console.log(! (str1 > str2))
+    res= (! (str1 > str2))
+    }
+    else{
+      res= str1 > str2
+    }
+
+    if (res){
+      return 1
+    }else{
+      return -1
+    }
+  }
+
+  function format(hour) {
+    //ex: 08:00 -> 8:00
+    if (hour[0] == "0") {
+      hour = hour.substring(1)
+    }
+    return hour
   }
 
 
-  function getSigla (umaString){
+  function getSigla(umaString) {
     lista = umaString.split(" ")
     sigla = ""
-    for (var i = 0; i<lista.length; i++){
-      if (lista[i].length > 3) {
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
         sigla = sigla + lista[i][0]
       }
     }
@@ -147,50 +284,50 @@
 
 
   $(document).ready(function () {
-    $('#submit').click(function(evt) {
-      evt.preventDefault(); 
+    $('#submit').click(function (evt) {
+      evt.preventDefault();
       var r = confirm('Depois de confirmar nao podera voltar atras!');
-      if (r) {   
-        login()               
-      }  
-    });  
+      if (r) {
+        login()
+      }
+    });
   });
 
   function login() {
-    allTurmasEscolhidas1sem= document.querySelectorAll("button[data-1sem=true]");
-    allTurmasEscolhidas2sem= document.querySelectorAll("button[data-2sem=true]");
+    allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]");
+    allTurmasEscolhidas2sem = document.querySelectorAll("button[data-2sem=true]");
 
-    txt1sem= "";
-    for(var i=0; i<allTurmasEscolhidas1sem.length; i++){
+    txt1sem = "";
+    for (var i = 0; i < allTurmasEscolhidas1sem.length; i++) {
       txt1sem = txt1sem + allTurmasEscolhidas1sem[i].value + "||";
     }
 
-    txt2sem= "";
-    for(var i=0; i<allTurmasEscolhidas2sem.length; i++){
+    txt2sem = "";
+    for (var i = 0; i < allTurmasEscolhidas2sem.length; i++) {
       txt2sem = txt2sem + allTurmasEscolhidas2sem[i].value + "||";
     }
 
 
     $.ajax({
-        type: "POST",
-        url: 'inscricoes_confirmacao',
-        data: JSON.stringify({'1semLessons': txt1sem, '2semLessons': txt2sem}),
-        success: function (data) {
-          if (data['message'] == "success") {
-              alert("Foi inscrito com sucesso")
-              window.location.href = "home";
-          } else if (data['message'] == "inactive") {
-          } else {
-              alert("Ocorreu um problema na sua inscriçao, volte a tentar.")
-          }
+      type: "POST",
+      url: 'inscricoes_confirmacao',
+      data: JSON.stringify({
+        '1semLessons': txt1sem,
+        '2semLessons': txt2sem
+      }),
+      success: function (data) {
+        if (data['message'] == "success") {
+          alert("Foi inscrito com sucesso")
+          window.location.href = "home";
+        } else if (data['message'] == "inactive") {} else {
+          alert("Ocorreu um problema na sua inscriçao, volte a tentar.")
+        }
       }
     });
 
-    
-}
 
+  }
 </script>
 
 
 {% endblock %}
-	

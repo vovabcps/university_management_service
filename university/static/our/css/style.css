@@ -57,6 +57,7 @@ fieldset {
   padding: 10px 15px 10px 15px;
   background: #e9ecf2;
   color: #30a5ff;
+  margin-top: -2%;
 }
 
 .breadcrumbs a {
@@ -70,6 +71,7 @@ fieldset {
 ul.messagelist {
   padding: 0;
   margin: 0;
+  margin-top: 1%;
 }
 
 ul.messagelist li {
@@ -164,7 +166,7 @@ div.system-message p.system-message-title {
 
 
 #tabelaSchedule{
-    width: 90%;
+  width: 100%;
     border: 2px solid black;
     border-collapse: collapse;
     text-align: center;
@@ -180,11 +182,11 @@ div.system-message p.system-message-title {
 
 #tabelaSchedule td{
     background-color: rgba(225, 225, 225, 0.247);
-    font-size: 13px;
+    font-size: 11px;
 }
 #tabelaSchedule th, #tabelaSchedule td:first-child{
     background-color: #999999;
-    font-size: 17px;
+    font-size: 15px;
 }
 
 #tabelaSchedule td div{
@@ -203,4 +205,11 @@ div.system-message p.system-message-title {
 
 .empty{
     border-left: none;
+}
+
+/* -------------------------  inscricoes nas cadeiras   -------------------------*/
+
+
+.cursos {
+  cursor: pointer;
 }

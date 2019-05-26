@@ -9,14 +9,12 @@
 }
 
 
-
-#content{
-   padding: 0px 0px;
-
+.dashboard #content {
+  width: 80%;
 }
 
 #content h1{
-  padding: 0px 4px;
+  padding: 10px 4px;
 
 }
 
@@ -24,9 +22,6 @@ input[type=submit], input[type=button], .submit-row input, a.button {
   background: #30a5ff !important;
 }
 
-#content-main, #container_home{
-  padding: 20px 40px;
-}
 
 #container_home .module{
   background-color: #fff;
@@ -72,6 +67,10 @@ div .breadcrumbs{
 padding: 10px 15px 10px 15px;
 background: #e9ecf2;
 color: #30a5ff;
+position: absolute;
+left: 0px;
+top: 0px;
+width: 100%;
 }
 
 div.breadcrumbs a {
@@ -193,4 +192,9 @@ p a:link, p a:visited {
 }
 #dropForm button:active{
   border:0;
+}
+
+
+ul.messagelist {
+  margin-top: 3%;
 }

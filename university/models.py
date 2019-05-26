@@ -70,6 +70,7 @@ class Course(models.Model):
     grau = models.CharField(max_length=200, null=False, default="Licenciatura")
     #Licenciatura, Minor, ramos, mestrado
     credits_number = models.IntegerField(null=True)
+    credits_numberByYear = models.CharField(max_length=200, null=True) #1:60|2:60|3:60 #exepto minicursos
     duration= models.IntegerField(null=True) #semesters
     timetable= models.CharField(max_length=200, null=True) #Diurno
     coordinator = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)
@@ -79,23 +80,26 @@ class Course(models.Model):
         detalhesOBJ= PersonalInfo.objects.get(user=self.coordinator)
         return detalhesOBJ.name
 
+    def credits_numberByYear_as_list(self):
+        return list(map(lambda x: x.split(":"), self.credits_numberByYear.split('|')))
+
 
 class Course_MiniCourse(models.Model):
     course= models.ForeignKey(Course, on_delete=models.CASCADE)
     miniCourse= models.ForeignKey(Course, related_name="miniCourso", on_delete=models.CASCADE)
     credits_number = models.IntegerField(null=True)
     year= models.IntegerField(default=0) #1,2,3,4..
-    semester = models.IntegerField(default=0) #em q semestre começa, semester + Course duration , 
+    semestres = models.CharField(max_length=200, null=True) #o mini curso tem cadeiras em q semestres?
 
     #pq ha mini cursos em que os seus credits_number variam de semestre para semeste(exemplo minor), 
     #por isso so posso ter uma linnha nesta tabela com o total de credits_number
-    #ex: (Licenciatura em Tecnologias de Informação, Minor em Biologia, 30, 3, 1)
-    #começa no 1º semestre e dura 2 semestres
+    #ex: (Licenciatura em Tecnologias de Informação, Minor em Biologia, 30, 3, "1,2")
     
-    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 2, 2)
-    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 1, 1)
+    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 2, "2")
+    #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 1, "1")
 
-    #ex: (Licenciatura em Tecnologias de Informação, 450_Formação Cultural Social e Ética - FCSE, 9, 1, 1)
+    #ex: (Licenciatura em Tecnologias de Informação, 450_Formação Cultural Social e Ética - FCSE, 9, 1, "1")
+    #ex: (Licenciatura em Tecnologias de Informação, 517_Lic. em TIC/TI, 6, 3, "1,2")
 
     def get_course_name(self):
         return self.course.name
@@ -103,6 +107,12 @@ class Course_MiniCourse(models.Model):
     def get_miniCourse_name(self):
         return self.miniCourse.name
 
+    def formatarSem(self):
+        if len(self.semestres) == 1 :
+            return self.semestres + " semestre"
+        else :
+            lstSem= self.semestres.split(",")
+            return lstSem[0] + " semestre/" + lstSem[1] + " semestre"
 
 class SystemUser_Faculdade(models.Model): #ex: fazer minor em outra faculdade
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
@@ -146,6 +156,16 @@ class Subject(models.Model):
         detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
         return detalhesOBJ.name
         #return self.regente.user
+
+    def getSigla (self):
+        subjName= self.name
+        lista = subjName.split(" ")
+        sigla = ""
+        for word in lista:
+            if len(word) > 3 and "(" not in word:
+                sigla = sigla + word[0]
+
+        return sigla
 
     class Meta:
         ordering = ['name']

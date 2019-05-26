@@ -17,6 +17,7 @@ urlpatterns = [
     path('student/consult_subjects', views.consult_subjects_s, name='consult_subjects_s'),
     path('student/consult_university', views.consult_university_s, name='consult_university_s'),
     path('student/passwordchang', views.password_change, name='password_change_s'),
+    path('student/apagar', views.apagar_s, name='apagar_s'),
     
 
     path('teacher/home', views.home_t, name='home_t'), 
