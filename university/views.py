@@ -20,6 +20,7 @@ from django.core.files.storage import FileSystemStorage
 
 import sys
 
+import re
 
 #password change
 from django.contrib.auth import update_session_auth_hash
@@ -106,7 +107,7 @@ def login_user(request):
     print(creds)
     username = creds['username']
     password = creds['password']
-    print(username, password)
+    #print(username, password)
     user = authenticate(request, username=username, password=password)
     if user is not None:
         if user.is_active:
@@ -142,31 +143,38 @@ def home_s(request):
 def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         su= request_user(request)
-        #curso do aluno
-        suCourse= SystemUserCourse.objects.get(user=su)
 
-        #as cadeiras obrigatorias q ele vai ter nesse ano
-        courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
+        inscrito= SystemUserSubject.objects.filter(user=su).first()
+        #verificar se o aluno ja esta incrito em cadeiras de um curso
+        if not inscrito:
+            #curso do aluno
+            suCourse= SystemUserCourse.objects.get(user=su)
 
-        #quais sao os mini cursos q o aluno vai ter naquele ano
-        miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
-        
-        #as cadeiras dos mini cursos daquele ano
-        miniCursosMinorsSubjs= [] #lista de listas
-        miniCursosOthersSubjs= [] #lista de listas
-        for miniC in miniCs:
-            if len(miniC.semestres) == 1 :
-                miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual, semester=int(miniC.semestres))
-            else:
-                miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual).order_by("semester")
-            if miniC.miniCourse.grau == "Minor" :
-                miniCursosMinorsSubjs.append([miniC, miniCsubjs])
-            else:
-                miniCursosOthersSubjs.append([miniC, miniCsubjs])
+            #as cadeiras obrigatorias q ele vai ter nesse ano
+            courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
 
-        dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minors': miniCursosMinorsSubjs}
-        course_subjs = {'courseObrig_subjs':courseObrig_subjs, 'miniCs_subjs':dicMinorsAndOthers}
-        return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'course_subjs':course_subjs})
+            #quais sao os mini cursos q o aluno vai ter naquele ano
+            miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
+            
+            #as cadeiras dos mini cursos daquele ano
+            miniCursosMinorsSubjs= [] #lista de listas
+            miniCursosOthersSubjs= [] #lista de listas
+            for miniC in miniCs:
+                if len(miniC.semestres) == 1 :
+                    miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual, semester=int(miniC.semestres))
+                else:
+                    miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual).order_by("semester")
+                if miniC.miniCourse.grau == "Minor" :
+                    miniCursosMinorsSubjs.append([miniC, miniCsubjs])
+                else:
+                    miniCursosOthersSubjs.append([miniC, miniCsubjs])
+
+            dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minors': miniCursosMinorsSubjs}
+            course_subjs = {'courseObrig_subjs':courseObrig_subjs, 'miniCs_subjs':dicMinorsAndOthers}
+            return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'course_subjs':course_subjs})
+        else: 
+            messages.error(request, "Ja esta incrita nas cadeiras do seu curso deste ano!")
+            return HttpResponseRedirect(reverse('home_s'))
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -175,7 +183,7 @@ def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
             subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #vai buscar as q foram escolhidas automaticamente!
-            print(subjsNameSemestre)
+            #print(subjsNameSemestre)
 
             valid= True
             if valid : #se tiver tudo bem
@@ -185,9 +193,9 @@ def choose_lessons_s(request):
 
                 for subjNameSem in subjsNameSemestre : 
                     dicTypeTurmaLessons= {}
-                    print(subjNameSem)
+                    #print(subjNameSem)
                     subjName, subjSem= subjNameSem.split("|")
-                    print(subjName, subjSem)
+                    #print(subjName, subjSem)
                     SubjObj= Subject.objects.get(name=subjName) 
                     lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
                     for l in lessons : 
@@ -196,7 +204,7 @@ def choose_lessons_s(request):
                             novaTurma= True
                             for [turma, lstLessons] in dicTypeTurmaLessons[l.type] : 
                                 if turma == l.turma :
-                                    print(lstLessons)
+                                    #print(lstLessons)
                                     oldList= [[t,ls] for [t,ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
                                     dicTypeTurmaLessons[l.type]= oldList + [[l.turma, lstLessons + detalhes]]
                                     novaTurma= False
@@ -230,10 +238,40 @@ def inscricoes_confirmacao_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
             subjsNameSemestre = json.loads(request.body.decode("utf-8"))
-            print(subjsNameSemestre)
+            #print(subjsNameSemestre)
             semestre1 = subjsNameSemestre['1semLessons']
             semestre2 = subjsNameSemestre['2semLessons']
-            if True: #se tiver tudo bem
+            totalLessons= subjsNameSemestre['totalLessons']
+            print(semestre1)
+            #ex: Produção de Documentos Técnicos|14|TP||Produção de Documentos Técnicos|16|PL||Programação I (LTI)|17|PL||Programação I (LTI)|14|TP||
+            #Elementos de Matemática II|21|TP||Introdução às Probabilidades e Estatística|21|T||Introdução às Probabilidades e Estatística|23|TP||
+            print(semestre2)
+            print(totalLessons)
+            subjLessonsSem1= semestre1.split("||")[:-1]
+            subjLessonsSem2= semestre2.split("||")[:-1]
+
+            if (len(subjLessonsSem1) + len(subjLessonsSem2)) != totalLessons :
+                valid = False
+            else:
+                valid= True
+            
+            if valid: #se tiver tudo bem
+                sysUser= request_user(request)
+                subjLessons= subjLessonsSem1 + subjLessonsSem2
+                #inscrever nas cadeiras
+                subjNameBefor= None
+                for subjLess in subjLessons:
+                    subjNameLesson= subjLess.split("|")
+                    subjName, turma, type = subjNameLesson
+                    if subjName != subjNameBefor :
+                        SubjObj= Subject.objects.get(name=subjName) 
+                        newSysUSubj= SystemUserSubject(user=sysUser, subject=SubjObj, state=0)
+                        newSysUSubj.save()
+                        subjNameBefor= subjName
+
+                    lessonObj= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma).first() 
+                    newSysUSubj.lessons.add(lessonObj)
+
                 return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
             else:
                 return HttpResponse(json.dumps({"message": "fail"}), content_type="application/json")
@@ -315,7 +353,7 @@ def consult_a(request):
     if is_authenticated(request, university.models.ADMIN_ROLE) :
         admin_index = admin.site.index(request)
         app_list = admin_index.context_data['app_list']
-        print(app_list)
+        #print(app_list)
         return render(request, 'admin/consult.html', {'app_list':app_list})
     else: 
         return HttpResponseRedirect(reverse('login'))

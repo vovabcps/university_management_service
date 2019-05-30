@@ -1,15 +1,16 @@
+DROP TABLE IF EXISTS university_systemusersubject_lessons;
+DROP TABLE IF EXISTS university_systemusersubject;
 DROP TABLE IF EXISTS university_systemuser_role;
+DROP TABLE IF EXISTS university_lessonsystemuser;
 DROP TABLE IF EXISTS university_lesson_users;
+DROP TABLE IF EXISTS university_systemuser_rooms; 
+DROP TABLE IF EXISTS university_systemuser_faculdade;
+DROP TABLE IF EXISTS university_systemuser_schoolyear;
+DROP TABLE IF EXISTS university_systemusercourse;
+
 DROP TABLE IF EXISTS university_course_minicourse;
 DROP TABLE IF EXISTS university_course_faculdade;
-DROP TABLE IF EXISTS university_systemuser_faculdade;
-DROP TABLE IF EXISTS university_systemuser_rooms; 
 DROP TABLE IF EXISTS university_course_schoolyear;
-DROP TABLE IF EXISTS university_systemuser_schoolyear;
-DROP TABLE IF EXISTS university_systemuser_schoolyear;
-DROP TABLE IF EXISTS university_lessonsystemuser;
-DROP TABLE IF EXISTS university_systemusersubject;
-DROP TABLE IF EXISTS university_systemusercourse;
 DROP TABLE IF EXISTS university_coursesubject;
 
 DROP TABLE IF EXISTS university_personalinfo;

@@ -133,6 +133,7 @@ class SystemUserCourse(models.Model):
     estadoActual = models.CharField(max_length=200, null=True) #ex: matriculado
     anoLectivoDeInício = models.CharField(max_length=200, null=True) #ex: 2016/2017
     anoActual = models.IntegerField(null=True) #1ºano, 2ºano, ...
+    #minor = models.ForeignKey(Course, on_delete=models.CASCADE, null=True) 
 
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
@@ -150,7 +151,9 @@ class Subject(models.Model):
     #id -> codigo
     name = models.CharField(max_length=200, unique=True)
     credits_number = models.IntegerField(default=6) 
-    regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)  #o regente da cadeira tem q dar aulas dessa cadeira
+    regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)  
+    #o regente da cadeira tem q dar aulas dessa cadeira 
+    #um professor pode ser regente em mais de uma cadeira
 
     def get_regente_name(self):
         detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
@@ -161,9 +164,13 @@ class Subject(models.Model):
         subjName= self.name
         lista = subjName.split(" ")
         sigla = ""
+        print(lista)
         for word in lista:
             if len(word) > 3 and "(" not in word:
                 sigla = sigla + word[0]
+                
+            if "I" in word and "(" not in word: #(LTI) / PII
+                sigla = sigla + word
 
         return sigla
 
@@ -187,22 +194,6 @@ class CourseSubject(models.Model):
 
     def get_subject_credits(self):
         return self.subject.credits_number 
-
-
-class SystemUserSubject(models.Model):
-    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    # 0 - pending, 1 - approved, 2 - not approved
-    state = models.IntegerField(null=True)
-    grade = models.FloatField(null=True)
-
-    def get_systemUser_user(self):
-        return self.user.user #ex: fc1085
-
-    def get_subject_name(self):
-        return self.subject.name 
-
-
 
 
 class Lesson(models.Model):
@@ -238,8 +229,28 @@ class Lesson(models.Model):
 
 
 
+class SystemUserSubject(models.Model):
+    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    # 0 - pending, 1 - approved, 2 - not approved
+    state = models.IntegerField(null=True)
+    grade = models.FloatField(null=True) #nao arredondar
+    lessons = models.ManyToManyField(Lesson) #esta em q turmas numa cadeira
+
+    def get_systemUser_user(self):
+        return self.user.user #ex: fc1085
+
+    def get_subject_name(self):
+        return self.subject.name 
+
+    def allLessons(self):
+        return [lesson.type+lesson.turma for lesson in self.lessons.all()]
+
+
+
 
 class LessonSystemUser(models.Model):
+    #nao era necessario, mas é mais eficaz para ver todas as aulas que um aluno foi
     lesson= models.ForeignKey(Lesson, on_delete=models.CASCADE)
     systemUser= models.ForeignKey(SystemUser, on_delete=models.CASCADE) #so alunos xd
     presente= models.BooleanField()
@@ -250,7 +261,7 @@ class LessonSystemUser(models.Model):
         return self.systemUser.user #ex: fc1085
 
     def get_lesson_information(self):
-        return self.lesson.get_lesson_detalhes(self)
+        return self.lesson.get_lesson_detalhes()
 
 
 

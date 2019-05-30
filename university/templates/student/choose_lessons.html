@@ -80,8 +80,6 @@
                 {% endif %}
 
                 <!-- em comum -->
-
-
                 <ul class="nav nav-pills" role="tablist">
 
                   {% for subj, dicTypeTurmaLessons in subjs.items %}
@@ -126,7 +124,7 @@
                             <p>{{tipo}}</p>
                           {% endif %}
                       
-                          <div id="{{semestre}}sem|{{subj.name}}|{{tipo}}">
+                          <div class="turmas" id="{{semestre}}sem|{{subj.name}}|{{tipo}}">
                             {% for turmaLessons in turmasLessons %}
 
 
@@ -160,8 +158,6 @@
        
 
               <br>
-
-            
               <br>
 
               <button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary">Confirmar e
@@ -169,19 +165,8 @@
               <button type="button" class="btn btn-default"><a
                   href="{% url 'inscricoes_subject_s' %}">Voltar</a></button>
                   <br>
-
-            
                   <br>
-
-
-
         </form>
-
-
-
-
-
-
 
       </div><!-- /.panel-->
     </div><!-- /.col-->
@@ -277,6 +262,9 @@
       if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
         sigla = sigla + lista[i][0]
       }
+      if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
+                sigla = sigla + lista[i]
+      }
     }
     return sigla
   }
@@ -294,6 +282,7 @@
   });
 
   function login() {
+    totalAllLessons = document.getElementsByClassName("turmas").length
     allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]");
     allTurmasEscolhidas2sem = document.querySelectorAll("button[data-2sem=true]");
 
@@ -313,7 +302,8 @@
       url: 'inscricoes_confirmacao',
       data: JSON.stringify({
         '1semLessons': txt1sem,
-        '2semLessons': txt2sem
+        '2semLessons': txt2sem,
+        'totalLessons' : totalAllLessons
       }),
       success: function (data) {
         if (data['message'] == "success") {

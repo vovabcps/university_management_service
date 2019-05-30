@@ -71,7 +71,7 @@ admin.site.register(CourseSubject,  CourseSubjectAdmin)
 class SystemUserSubjectAdmin(admin.ModelAdmin):
   search_fields = ["user__user__username", "grade"]
   list_filter = ["subject__name", "state"]
-  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade"]
+  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade", "allLessons"]
 admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):

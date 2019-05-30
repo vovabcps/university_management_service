@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from django.shortcuts import get_object_or_404
 import collections
+import re
+import ast
 
 
 
@@ -274,22 +276,68 @@ def makeSystemUserCourseOBJs():
     #allSystemUsers= SystemUser.objects.exclude(id__in= table2.objects.filter(roles=["Admin"]).values_list('id', flat=True))
     allStudents= SystemUser.objects.filter(role__role="Aluno")
     allLicenciaturas= Course.objects.filter(grau="Licenciatura")
-
+    casosPossiveis= [["2016/2017", "1"], ["2016/2017", "2"], ["2016/2017", "3"], ["2017/2018", "1"], ["2017/2018", "2"]]
     for user in allStudents :
-        newSystemUserCourse= SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício=random.choice(["2016/2017", "2017/2018", "2018/2019"]), anoActual=random.randint(1,3))
+        anoInicio, anoAtual= random.choice(casosPossiveis)
+        newSystemUserCourse= SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício=anoInicio, anoActual=int(anoAtual))
         newSystemUserCourse.save()
 
 
 
 @transaction.atomic         
-def makeSystemUserSubjectOBJs():
-    pass
+def makeSystemUserSubjectAndLessonSystemUserOBJs():
+    with open(settings.MIGRATIONS_DATA_ROOT + "/userSubjectsLessonsData.txt", encoding="utf8") as rfile:
+        for line in rfile.readlines():
+            if "SystemUserSubject" in line:
+                algoritmo= "SystemUserSubject"
+            elif "LessonSystemUser" in line :
+                algoritmo= "LessonSystemUser"
+            
+            else:
+                if "#" not in line and "||" in line: 
+                    line= line[:-1] #remover o '\n' do final
+                    #se nao for um comentario nem uma linha vazia
+                    if algoritmo == "SystemUserSubject":
+                        #ex: fc122||Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I,1,12.2,T11,TP13,PL13...
+                        fc, subjLessons = line.split("||")
+                        user= User.objects.get(username=fc)
+                        sysUser= SystemUser.objects.get(user=user)
+                        for subjLesson in subjLessons.split("!!") :
+                            subjName, state, grade, *lstTypeTurma =subjLesson.split(",")
+                            #print(subjName)
+                            SubjObj= Subject.objects.get(name=subjName) 
+                            newSystemUserSubject = SystemUserSubject(user= sysUser, subject=SubjObj, state=state, grade=grade)
+                            newSystemUserSubject.save()
+                            #lstTypeTurma: ["T11","TP13","PL13"]
+                            for typeTurma in lstTypeTurma : 
+                                type, turma= separateLettersNumb(typeTurma)
+                                lessonObj= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma).first() 
+                                newSystemUserSubject.lessons.add(lessonObj)
+                    else :
+                        #fc800||Curso de Competências Sociais e Desenvolvimento Pessoal,TP11++True,21/09/2017!!True,28/09/2017!!True,12/10/2017!!True,19/10/2017!!True,26/10/2017!!True,02/11/2017!!True,09/11/2017!!True,16/11/2017!!True,23/11/2017!!True,30/11/2017!!True,07/12/2017!!True,14/12/2017
+                        fc, subjLessonsPresencas = line.split("||")
+                        user= User.objects.get(username=fc)
+                        sysUser= SystemUser.objects.get(user=user)
+                        subjNameTypeTurma, presencas= subjLessonsPresencas.split("++")
+                        subjName, typeTurma= subjNameTypeTurma.split(",")
+                        SubjObj= Subject.objects.get(name=subjName) 
+                        type, turma= separateLettersNumb(typeTurma)
+                        lessonObj= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma).first() 
+                      
+                        for presData in presencas.split("!!") :
+                            presenca, date_str = presData.split(",")
+                            #print(date_str)
+                            dataFormat= datetime.strptime(date_str, "%d/%m/%Y").date()
+                            newLessonSystemUser = LessonSystemUser(systemUser=sysUser, lesson=lessonObj, presente=ast.literal_eval(presenca), date=dataFormat)
+                            newLessonSystemUser.save()
 
 
 
-@transaction.atomic         
-def makeLessonSystemUserOBJs():
-    pass
+
+def separateLettersNumb(string):
+    #"TP13" fica ['TP', '13']
+    return re.split('(\d+)',string)[:-1]
+
 
 
 @transaction.atomic         
@@ -438,8 +486,7 @@ def mainInsertData(apps, schema_editor):
     makeSubjectAndCourseSubjectOBJs()
     makeSystemUserCourseOBJs() #falta
     makeLessonOBJs() #falta
-    makeSystemUserSubjectOBJs() #falta
-    makeLessonSystemUserOBJs() #falta
+    makeSystemUserSubjectAndLessonSystemUserOBJs() #falta
 
 
 
