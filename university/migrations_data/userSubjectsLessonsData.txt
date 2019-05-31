@@ -1,46 +1,29 @@
+#um aluno pode estar inscrito em mais que um curso (desde q nao seja ao mesmo tempo e que tenha terminado/desistido do curso em q começou)
+
+#tenho q por o semestre pq o semestre nao depende só da cadeira, depende tb do curso/mini curso em q a cadeira esta
+#ex: para saber o semestre do "Curso de Competências Sociais e Desenvolvimento Pessoal"
+#tenho q saber o mini-curso : 450_Formação Cultural Social e Ética, e para saber isto tinha
+#que ir a todas as cadeiras de lti e a todas as cadeiras dos mini-cursos de lti ate encontrar a
+#cadeira pretendida. Depois disto ainda tinha que saber o ano da cadeira para encontar o semestre correto
+
+#ex: 450_Formação Cultural Social e Ética, Empreendedorismo em Ciências, 1 ano, 1 sem, Semestral (Opção)
+#    450_Formação Cultural Social e Ética, Empreendedorismo em Ciências, 2 ano, 2 sem, Semestral (Opção)
+    
+
 # ---------------------- fc122 ----------------------
-#SystemUserCourse: fc122	Licenciatura em Tecnologias de Informação	Matriculado	2016/2017	1(ano)
+#SystemUserCourse: fc122	Licenciatura em Tecnologias de Informação	Matriculado	2016/2017(para saber qd ele começou a ir as aulas)	1(ano, para saber o numero de cred. realizados)
 
 
 #SystemUserSubject ex: (User-fcxx || subject-nameSubj, state-(0:pending | 1:approved | 2:not approved), grade-nota de 0-20 float, lessons- tipoTurma ) !! ...
-fc122||Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13!!Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21
+fc122||2016/2017??1sem++Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13|  |2sem++Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21
 #24 ECTCS Realizados
-
-#LessonSystemUser ex: (User-fcxx || lesson-nameSubj, tipoTurma ++ presente-(True|False), date-(dia/mês/ano é o dia da aula) !! ...
-fc122||Produção de Documentos Técnicos,TP13++True,21/09/2016!!True,28/09/2016!!False,12/10/2016!!True,19/10/2016!!True,26/10/2016!!True,02/11/2016!!True,09/11/2016!!False,16/11/2016!!True,23/11/2016!!True,30/11/2016!!False,07/11/2016!!True,14/12/2016!!True,21/12/2016
-fc122||Programação I (LTI),T11++True,22/09/2016!!True,29/09/2016!!False,06/10/2016!!False,13/10/2016!!True,20/10/2016!!True,27/10/2016!!True,03/11/2016!!False,10/11/2016!!False,17/11/2016!!False,24/11/2016!!False,15/12/2016!!True,20/09/2016!!True,27/09/2016!!False,04/10/2016!!True,11/10/2016!!True,18/10/2016!!False,25/10/2016!!True,08/11/2016!!False,15/11/2016!!True,22/11/2016!!True,29/11/2016!!False,06/12/2016!!False,13/12/2016!!False,20/12/2016
-fc122||Programação I (LTI),TP13++True,21/09/2016!!True,28/09/2016!!False,12/10/2016!!True,19/10/2016!!True,26/10/2016!!True,02/11/2016!!True,09/11/2016!!True,16/11/2016!!True,23/11/2016!!True,30/11/2016!!True,07/12/2016!!True,14/12/2016!!False,21/12/2016
-fc122||Programação I (LTI),PL13++True,23/09/2016!!True,30/09/2016!!False,07/10/2016!!True,14/10/2016!!True,21/10/2016!!True,28/10/2016!!True,04/11/2016!!True,11/11/2016!!True,18/11/2016!!True,25/11/2016!!True,02/12/2016!!True,09/12/2016!!True,16/12/2016
-fc122||Curso de Competências Sociais e Desenvolvimento Pessoal,TP11++True,22/09/2016!!True,29/09/2016!!True,06/10/2016!!True,13/10/2016!!True,20/10/2016!!True,27/10/2016!!True,03/11/2016!!True,10/11/2016!!True,17/11/2016!!True,24/11/2016!!True,15/12/2016
-fc122||Introdução às Tecnologias Web,T21++True,19/02/2018!!True,26/02/2018!!True,05/03/2018!!True,12/03/2018!!True,19/03/2018!!True,26/03/2018!!True,09/04/2018!!True,16/04/2018!!True,23/04/2018!!True,30/04/2018!!True,07/05/2018!!True,14/05/2018!!True,21/05/2018!!False,28/05/2018
-fc122||Introdução às Tecnologias Web,TP21++True,21/02/2018!!True,28/02/2018!!True,07/03/2018!!True,14/03/2018!!False,21/03/2018!!True,04/04/2018!!True,11/04/2018!!True,18/04/2018!!True,02/05/2018!!True,09/05/2018!!True,16/05/2018!!True,23/05/2018!!True,30/05/2018
-fc122||Introdução às Tecnologias Web,PL21++False,22/02/2018!!True,01/03/2018!!True,08/03/2018!!True,15/03/2018!!True,22/03/2018!!True,05/04/2018!!True,12/04/2018!!True,19/04/2018!!True,26/04/2018!!True,03/05/2018!!True,10/05/2018!!True,17/05/2018!!False,24/05/2018
-fc122||Programação II (LTI),T21++True,19/02/2018!!True,26/02/2018!!True,05/03/2018!!True,12/03/2018!!True,19/03/2018!!True,26/03/2018!!True,09/04/2018!!True,16/04/2018!!True,23/04/2018!!True,30/04/2018!!True,07/05/2018!!True,14/05/2018!!True,21/05/2018!!True,28/05/2018!!False,20/02/2018!!False,27/02/2018!!False,06/03/2018!!True,13/03/2018!!True,20/03/2018!!False,27/03/2018!!True,10/04/2018!!False,17/04/2018!!True,24/04/2018!!True,08/05/2018!!False,15/05/2018!!True,22/05/2018!!False,29/05/2018
-fc122||Programação II (LTI),TP21++True,20/02/2018!!True,27/02/2018!!True,06/03/2018!!True,13/03/2018!!False,20/03/2018!!True,27/03/2018!!True,10/04/2018!!True,17/04/2018!!True,24/04/2018!!True,08/05/2018!!True,15/05/2018!!True,22/05/2018!!False,29/05/2018
-fc122||Programação II (LTI),PL21++False,22/02/2018!!True,01/03/2018!!True,08/03/2018!!True,15/03/2018!!True,22/03/2018!!True,05/04/2018!!True,12/04/2018!!True,19/04/2018!!True,26/04/2018!!False,03/05/2018!!True,10/05/2018!!True,17/05/2018!!True,24/05/2018
-
-
 
 # ---------------------- fc800 ----------------------
 #SystemUserCourse: fc800	Licenciatura em Engenharia Informática	Matriculado	2017/2018	2(ano)
 
 #SystemUserSubject
-fc800||Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais, 1, 14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13!!Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
+fc800||2017/2018??1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais, 1, 14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13|  |2sem++Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
 #42 ECTCS Realizados
-
-#LessonSystemUser 
-fc800||Curso de Competências Sociais e Desenvolvimento Pessoal,TP11++True,21/09/2017!!True,28/09/2017!!True,12/10/2017!!True,19/10/2017!!True,26/10/2017!!True,02/11/2017!!True,09/11/2017!!True,16/11/2017!!True,23/11/2017!!True,30/11/2017!!True,07/12/2017!!True,14/12/2017
-fc800||Arquiteturas de Sistemas Computacionais,T11++True,18/09/2017!!True,25/09/2017!!True,02/10/2017!!True,19/10/2017!!True,16/10/2017!!False,23/10/2017!!True,30/10/2017!!True,06/11/2017!!True,13/11/2017!!True,20/11/2017!!True,27/11/2017!!True,04/12/2017!!True,18/12/2017!!True,20/09/2017!!True,27/09/2017!!True,04/10/2017!!True,11/10/2017!!True,18/10/2017!!True,25/10/2017!!False,08/11/2017!!True,15/11/2017!!True,22/11/2017!!True,29/11/2017!!True,06/12/2017!!True,13/12/2017!!True,20/12/2017
-fc800||Arquiteturas de Sistemas Computacionais,TP13++True,20/09/2017!!True,27/09/2017!!True,04/10/2017!!True,11/10/2017!!True,18/10/2017!!True,25/10/2017!!True,08/11/2017!!True,15/11/2017!!True,22/11/2017!!True,29/11/2017!!True,06/12/2017!!True,13/12/2017!!True,20/12/2017!!True,21/09/2017!!True,28/09/2017!!True,12/10/2017!!True,19/10/2017!!True,26/10/2017!!True,02/11/2017!!True,09/11/2017!!True,16/11/2017!!False,23/11/2017!!True,30/11/2017!!True,07/12/2017!!True,14/12/2017!!True,21/12/2017
-fc800||Cálculo,T11++True,19/09/2017!!True,26/09/2017!!True,03/10/2017!!True,10/10/2017!!True,17/10/2017!!True,24/10/2017!!True,31/10/2017!!True,07/11/2017!!False,14/11/2017!!True,21/11/2017!!True,28/11/2017!!True,05/12/2017!!True,12/12/2017!!True,19/12/2017!!True,21/09/2017!!True,28/09/2017!!True,03/10/2017!!True,12/10/2017!!True,19/10/2017!!False,26/10/2017!!True,02/11/2017!!True,09/11/2017!!True,16/11/2017!!True,23/11/2017!!True,30/11/2017!!True,07/12/2017!!True,14/12/2017
-fc800||Cálculo,TP12++True,18/09/2017!!True,25/09/2017!!True,02/10/2017!!True,19/10/2017!!True,16/10/2017!!True,23/10/2017!!True,30/10/2017!!False,06/11/2017!!True,13/11/2017!!True,20/11/2017!!True,27/11/2017!!True,04/12/2017!!True,18/12/2017!!True,21/09/2017!!True,28/09/2017!!True,03/10/2017!!True,12/10/2017!!True,19/10/2017!!True,26/10/2017!!True,02/11/2017!!True,09/11/2017!!True,16/11/2017!!True,23/11/2017!!True,30/11/2017!!True,07/12/2017!!False,14/12/2017
-fc800||Introdução à Programação,T11++True,18/09/2017!!True,25/09/2017!!True,02/10/2017!!True,19/10/2017!!True,16/10/2017!!True,23/10/2017!!True,30/10/2017!!False,06/11/2017!!True,13/11/2017!!True,20/11/2017!!True,27/11/2017!!True,04/12/2017!!True,18/12/2017!!True,22/09/2017!!True,29/09/2017!!True,06/10/2017!!True,13/10/2017!!False,20/10/2017!!True,27/10/2017!!True,03/11/2017!!True,10/11/2017!!True,17/11/2017!!True,24/11/2017!!True,15/12/2017
-fc800||Introdução à Programação,TP13++True,19/09/2017!!True,26/09/2017!!False,03/10/2017!!True,10/10/2017!!True,17/10/2017!!True,24/10/2017!!True,31/10/2017!!True,07/11/2017!!True,14/11/2017!!True,21/11/2017!!True,28/11/2017!!True,05/12/2017!!True,12/12/2017!!False,19/12/2017!!False,22/09/2017!!True,29/09/2017!!True,06/10/2017!!True,13/10/2017!!True,20/10/2017!!True,27/10/2017!!True,03/11/2017!!True,10/11/2017!!True,17/11/2017!!False,24/11/2017!!True,15/12/2017
-fc800||Algoritmos e Estruturas de Dados,T21++True,19/02/2018!!True,26/02/2018!!True,05/03/2018!!True,12/03/2018!!True,19/03/2018!!True,26/03/2018!!True,09/04/2018!!True,16/04/2018!!True,23/04/2018!!True,30/04/2018!!True,07/05/2018!!True,14/05/2018!!True,21/05/2018!!True,28/05/2018!!True,20/02/2018!!True,27/02/2018!!True,06/03/2018!!True,13/03/2018!!True,20/03/2018!!True,27/03/2018!!True,10/04/2018!!True,17/04/2018!!True,24/04/2018!!True,08/05/2018!!True,15/05/2018!!True,22/05/2018!!True,29/05/2018
-fc800||Algoritmos e Estruturas de Dados,TP21++True,22/02/2018!!True,01/03/2018!!True,08/03/2018!!True,15/03/2018!!True,22/03/2018!!True,05/04/2018!!True,12/04/2018!!True,19/04/2018!!True,26/04/2018!!True,03/05/2018!!True,19/05/2018!!True,17/05/2018!!True,24/05/2018!!True,30/05/2018
-fc800||Física A,T21++True,21/02/2018!!False,28/02/2018!!True,07/03/2018!!True,14/03/2018!!True,21/03/2018!!True,04/04/2018!!True,11/04/2018!!False,18/04/2018!!True,02/05/2018!!True,09/05/2018!!True,16/05/2018!!True,23/05/2018!!True,30/05/2018!!True,22/02/2018!!True,01/03/2018!!True,08/03/2018!!True,15/03/2018!!True,22/03/2018!!True,05/04/2018!!True,12/04/2018!!True,19/04/2018!!True,26/04/2018!!False,03/05/2018!!True,19/05/2018!!True,17/05/2018!!True,24/05/2018!!False,30/05/2018
-fc800||Física A,TP21++True,23/02/2018!!True,03/03/2018!!True,09/03/2018!!True,16/03/2018!!True,23/03/2018!!True,06/04/2018!!False,13/04/2018!!True,20/04/2018!!True,27/04/2018!!True,04/05/2018!!True,11/05/2018!!True,18/05/2018!!True,25/05/2018
-fc800||Laboratórios de Programação,PL21++True,20/02/2018!!True,27/02/2018!!True,06/03/2018!!True,13/03/2018!!True,20/03/2018!!True,27/03/2018!!True,10/04/2018!!True,17/04/2018!!True,24/04/2018!!True,08/05/2018!!True,15/05/2018!!True,22/05/2018!!True,29/05/2018
 
 
 # ---------------------- fc795 ----------------------

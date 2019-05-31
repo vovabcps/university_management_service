@@ -50,8 +50,8 @@ admin.site.register(Course_MiniCourse,  Course_MiniCourseAdmin)
 
 class SystemUserCourseAdmin(admin.ModelAdmin):
   search_fields = ["user__user__username"]
-  list_filter = ["estadoActual", "anoLectivoDeInício", "anoActual"]
-  list_display = ["id", "get_systemUser_user", "get_course_name", "estadoActual", "anoLectivoDeInício", "anoActual"]
+  list_filter = ["estadoActual", "anoLectivoDeInício", "anoActual", "minor"]
+  list_display = ["id", "get_systemUser_user", "get_course_name", "estadoActual", "anoLectivoDeInício", "anoActual", "minor"]
 admin.site.register(SystemUserCourse,  SystemUserCourseAdmin)
 
 
@@ -71,13 +71,13 @@ admin.site.register(CourseSubject,  CourseSubjectAdmin)
 class SystemUserSubjectAdmin(admin.ModelAdmin):
   search_fields = ["user__user__username", "grade"]
   list_filter = ["subject__name", "state"]
-  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade", "allLessons"]
+  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade", "turmas"]
 admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):
   search_fields = ["subject__name", "professor__user__username", "room__room_number", "turma"]
-  list_filter = ["type", "week_day", "hour", "duration", "presencas"]
-  list_display = ["id", "get_subject_name", "type", "turma", "week_day", "hour", "duration", "professor_fc", "room_number", "presencas"]
+  list_filter = ["type", "week_day", "hour", "duration"]
+  list_display = ["id", "get_subject_name", "type", "turma", "week_day", "hour", "duration", "professor_fc", "room_number"]
 admin.site.register(Lesson,  LessonAdmin)
 
 class LessonSystemUserAdmin(admin.ModelAdmin):

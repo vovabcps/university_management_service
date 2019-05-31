@@ -1,4 +1,3 @@
-DROP TABLE IF EXISTS university_systemusersubject_lessons;
 DROP TABLE IF EXISTS university_systemusersubject;
 DROP TABLE IF EXISTS university_systemuser_role;
 DROP TABLE IF EXISTS university_lessonsystemuser;

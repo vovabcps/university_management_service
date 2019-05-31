@@ -267,10 +267,12 @@ def inscricoes_confirmacao_s(request):
                         SubjObj= Subject.objects.get(name=subjName) 
                         newSysUSubj= SystemUserSubject(user=sysUser, subject=SubjObj, state=0)
                         newSysUSubj.save()
+                        turmas= " "
                         subjNameBefor= subjName
 
-                    lessonObj= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma).first() 
-                    newSysUSubj.lessons.add(lessonObj)
+                    turmas= turmas + type + turma + " "
+                    newSysUSubj.lessons= turmas
+                    newSysUSubj.save()
 
                 return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
             else:

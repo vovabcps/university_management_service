@@ -18,6 +18,7 @@ class SchoolYear(models.Model):
 
 
 class Room(models.Model):
+    #para ser unico: room_number
     room_number = models.CharField(max_length=200, unique=True)
     can_give_class = models.BooleanField()
 
@@ -32,6 +33,7 @@ class Role(models.Model):
 #1 aluno pode pertece a mais que uma faculdade (so se for minor)
 
 class SystemUser(models.Model):
+    #para ser unico: user
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, null=True,  on_delete=models.CASCADE)
     rooms = models.ManyToManyField(Room) #gabinete
@@ -44,6 +46,7 @@ class SystemUser(models.Model):
 
 
 class PersonalInfo(models.Model):
+    #para ser unico: user
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     address = models.CharField(max_length=200, null=True)
     birth_date = models.DateField(null=True)
@@ -66,6 +69,7 @@ class Faculdade(models.Model):
 
 
 class Course(models.Model):
+    #para ser unico: name
     name = models.CharField(max_length=200, unique=True)
     grau = models.CharField(max_length=200, null=False, default="Licenciatura")
     #Licenciatura, Minor, ramos, mestrado
@@ -85,6 +89,7 @@ class Course(models.Model):
 
 
 class Course_MiniCourse(models.Model):
+    #para ser unico: course, miniCourse, year
     course= models.ForeignKey(Course, on_delete=models.CASCADE)
     miniCourse= models.ForeignKey(Course, related_name="miniCourso", on_delete=models.CASCADE)
     credits_number = models.IntegerField(null=True)
@@ -127,13 +132,14 @@ class Course_SchoolYear(models.Model):
     course= models.ForeignKey(Course, on_delete=models.CASCADE)
 
 class SystemUserCourse(models.Model):
+    #para ser unico: user, course
     #users que estao inscritos em cursos
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     estadoActual = models.CharField(max_length=200, null=True) #ex: matriculado
     anoLectivoDeInício = models.CharField(max_length=200, null=True) #ex: 2016/2017
     anoActual = models.IntegerField(null=True) #1ºano, 2ºano, ...
-    #minor = models.ForeignKey(Course, on_delete=models.CASCADE, null=True) 
+    minor = models.CharField(max_length=200, null=True) #nao admitido, minor de biologia 
 
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
@@ -148,6 +154,7 @@ class SystemUser_SchoolYear(models.Model):
 
 
 class Subject(models.Model):
+    #para ser unico: name
     #id -> codigo
     name = models.CharField(max_length=200, unique=True)
     credits_number = models.IntegerField(default=6) 
@@ -180,12 +187,13 @@ class Subject(models.Model):
 
 
 class CourseSubject(models.Model):
+    #para ser unico: course, subject, year
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     year= models.IntegerField(default=0) #1,2,3,4..
     semester = models.IntegerField(default=0) # 1 or 2 
     type= models.CharField(max_length=200, null=False, default="Semestral") #Semestral, Semestral (Opção), Anual
-
+    
     def get_course_name(self):
         return self.course.name
 
@@ -197,6 +205,8 @@ class CourseSubject(models.Model):
 
 
 class Lesson(models.Model):
+    #para ser unico: subject, type, turma, week_day
+    #um bloco no horario que repetesse todas as semanas
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # T, TP, PL, O ...
     type = models.CharField(max_length=200, null=False, default="T")
@@ -206,7 +216,6 @@ class Lesson(models.Model):
     duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
-    presencas = models.IntegerField(null=True)
 
 
     def get_lesson_detalhes(self):
@@ -235,7 +244,8 @@ class SystemUserSubject(models.Model):
     # 0 - pending, 1 - approved, 2 - not approved
     state = models.IntegerField(null=True)
     grade = models.FloatField(null=True) #nao arredondar
-    lessons = models.ManyToManyField(Lesson) #esta em q turmas numa cadeira
+    turmas= models.CharField(max_length=200, null=True) #T11, PL13
+    #nao pode ser lessons pq ex: T11 terça, T11 quinta (2 lessons diferentes)
 
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
@@ -243,14 +253,10 @@ class SystemUserSubject(models.Model):
     def get_subject_name(self):
         return self.subject.name 
 
-    def allLessons(self):
-        return [lesson.type+lesson.turma for lesson in self.lessons.all()]
-
 
 
 
 class LessonSystemUser(models.Model):
-    #nao era necessario, mas é mais eficaz para ver todas as aulas que um aluno foi
     lesson= models.ForeignKey(Lesson, on_delete=models.CASCADE)
     systemUser= models.ForeignKey(SystemUser, on_delete=models.CASCADE) #so alunos xd
     presente= models.BooleanField()
