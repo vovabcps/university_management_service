@@ -141,13 +141,13 @@
 				<em class="fa fa-navicon">&nbsp;</em> Disciplinas <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-2">
-					<li><a class="" href="">
+					<li><a class="" href="{% url 'consult_turmas_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Consulta Turmas
 					</a></li>
-                    <li><a class="" href="">
+                    <li><a class="" href="{% url 'resposta_pedidos_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Envio de Pedido
 					</a></li>
-                    <li><a class="" href="">
+                    <li><a class="" href="{% url 'resposta_pedidos_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Resposta a Pedidos
 					</a></li>
                     <li><a class="" href="">
@@ -159,10 +159,10 @@
 				<em class="fa fa-navicon">&nbsp;</em> Presenças <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-3">
-					<li><a class="" href="">
+					<li><a class="" href="{% url 'presencas_registar_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Registo
 					</a></li>
-					<li><a class="" href="">
+					<li><a class="" href="{% url 'presencas_consultar_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Consulta
 					</a></li>
 				</ul>

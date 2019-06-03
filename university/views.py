@@ -206,12 +206,13 @@ def inscricoes_subject_s(request):
                     #se naquele curso e naquele ano houver minor e ele foi admitdo
                     elif miniC.miniCourse.name == suCourse.minor : 
                             minor= [[miniC, miniCsubjs]]
-
-
-
+   
                 dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minor': minor}
                 course_subjs = {'courseObrig_subjs':courseObrig_subjsPorFazer, 'miniCs_subjs':dicMinorsAndOthers}
-                dicAnoSubjs[ano + "º ano"] = {'ceditos': cred, 'course_subjs': course_subjs}
+
+                # se ele ainda tiver cadeiras para fazer neste ano:
+                if len(minor) != 0 or len(miniCursosOthersSubjs) != 0 or len(courseObrig_subjsPorFazer) != 0 :
+                    dicAnoSubjs[ano + "º ano"] = {'ceditos': cred, 'course_subjs': course_subjs}
 
             return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'dicAnoSubjs':dicAnoSubjs})
         else: 
@@ -357,8 +358,11 @@ def consult_university_s(request):
         return HttpResponseRedirect(reverse('login'))
 
 
-
-
+def request_change_lesson_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/request_change_lesson.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 def apagar_s(request):
     return render(request, 'student/apagar.html', {})
@@ -383,9 +387,35 @@ def consult_details_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
         consult_details_post(request)
         return render(request, 'teacher/consult_details.html', {})
-
-
     else:
+        return HttpResponseRedirect(reverse('login'))
+
+
+def consult_turmas_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/consult_turmas_D.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def resposta_pedidos_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/envio_resposta_pedidos_D.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def presencas_consultar_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/presenças_consulta.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
+def presencas_registar_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/presenças_registo.html', {})
+    else: 
         return HttpResponseRedirect(reverse('login'))
 
 

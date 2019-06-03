@@ -1,0 +1,101 @@
+{% extends "teacher/base_t.html" %}
+{% load i18n static %}
+
+{% block title %}Responder pedidos{% endblock %}
+
+{% block content_title %}Responder pedidos{% endblock %}
+
+{% block breadcrumbs %}
+        › Responder pedidos
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+		
+		<div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Disciplinas</div>
+                        <div class="panel-body">
+                            <button type="button">Projeto Tecnologias de Informação</button>
+							<button type="button">Projeto Tecnologias de Redes</button>
+                        </div>
+                    </div>
+                </div>
+        </div>
+            
+            
+
+		<style>
+		
+
+			#box3 {
+
+			 }
+			
+			.dropdown {
+			  position: relative;
+			  display: inline-block;
+			}
+
+			.dropdown-content {
+			  display: none;
+			  position: absolute;
+			  background-color: #f9f9f9;
+			  min-width: 160px;
+			  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+			  padding: 12px 16px;
+			  z-index: 1;
+			}
+
+			.dropdown:hover .dropdown-content {
+			  display: block;
+			}
+			
+			
+			.but {
+			align: center;
+			}
+			
+			#conf {
+			margin-left: 35%;
+			}
+			
+
+			
+			
+		</style>
+		
+
+		
+		<div class="row" id='box2'>
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Pedidos Recebidos</div>
+						<div class="panel-body">
+							<p>*Colocar um novo div com o pedido cada vez que é recebebido um pedido de um aluno*<p>
+						</div>
+						<div id = "conf">
+						<button id = "but1" type="button">Rejeitar Pedido</button>
+						<button id = "but2" type="button">Aceitar Pedido</button>
+						</div>
+                    </div>
+                </div>
+        </div>
+            
+ 		<div class="row" id='box3'>
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Pedidos Respondidos</div>
+                        <div class="panel-body">
+                            <p>*Colocar um novo div com uma resposta cada vez que é respondido um dos pedidos da tabela a cima*<p>
+							
+                        </div>
+                    </div>
+                </div>
+        </div>
+		
+	</div><!--/.main-->
+
+	{% endblock %}

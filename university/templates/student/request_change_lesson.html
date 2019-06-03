@@ -1,0 +1,97 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+{% load university_mytags %}
+
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}
+
+
+{% block title %}Pedidos Mudança Turma{% endblock %}
+
+{% block content_title %}{% endblock %}
+
+{% block breadcrumbs %}
+› Mudança de Turma
+{% endblock %}
+
+
+{% block content %}
+
+
+<style>
+
+ #ta, #th, #l2, #l3{
+ 	visibility: hidden;
+ }
+
+</style>
+
+
+
+<script>
+
+	$(document).ready(function(){
+		$("#f1").click(function(){
+			$("#ta").css("visibility", "visible");
+			$("#th").css("visibility", "visible");
+			$("#l2").css("visibility", "visible");
+			$("#l3").css("visibility", "visible");
+		});
+	});
+
+</script>
+
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">Pedido de Mudança de Turma</div>
+    <form role="form" id="insert_disciplina" method="post" action="{% url 'request_change_lesson_s' %}">
+      <div class="panel-body">
+        <div >
+          <label for="disciplina">Escolha a Disciplina</label>
+          <fieldset>
+              <input type="radio" name="subject" value="m1"> Matemática I<br>
+              <input type="radio" name="subject" value="AC"> Arquitetura de Computadores<br>
+              <input type="radio" name="subject" value="m2"> Matemática II<br>
+              <input id="f1" type="radio" name="subject" value="f1"> Fisica I<br>
+              <input type="radio" name="subject" value="itw"> ITW<br>
+              <input type="radio" name="subject" value="pg1"> Prog I<br>
+          </fieldset>
+        </div>
+      </div><!-- /.panel1-->
+
+      <div class="panel-body">
+        <div style="float: left; width: 50%;">
+          <label id="l2" for="turma_atual">Escolha Turma Atual:</label>
+          <fieldset id='ta'>
+              <input type="radio" name="turma" value="T11"> T11<br>
+              <input type="radio" name="turma" value="TP12"> TP12<br>
+              <input type="radio" name="turma" value="PL12"> TP12<br>
+          </fieldset>
+        </div>
+
+        <div style="float: right; width: 50%;">
+          <label id="l3" for="turma_novas">Escolha Nova Turma:</label>
+          <fieldset id="th">
+          <input type="radio" name="turmaNova" value="T12"> T12<br>
+          <input type="radio" name="turmaNova" value="T13"> T13<br>
+          <input type="radio" name="turmaNova" value="T14"> T14<br>
+          <input type="radio" name="turmaNova" value="T15"> T15<br>
+          <input type="radio" name="turmaNova" value="T16"> T11<br>
+          <fieldset>
+        </div>
+    </div><!-- /.panel2-->
+
+    <div class="panel-body">
+      <button id="submit" type="submit" style="float: left" class="btn btn btn-primary">Solicitar Alteração</button>
+      <button id="clear" type="button" class="btn btn" style="background-color: grey; color: white" onclick="location.reload()">Limpar Seleção</button>
+    </div
+    </div><!-- /.panel3-->
+
+  </form>
+</div><!-- /.col-->
+
+{% endblock %}

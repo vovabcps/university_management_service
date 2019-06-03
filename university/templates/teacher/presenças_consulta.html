@@ -1,0 +1,101 @@
+{% extends "teacher/base_t.html" %}
+{% load i18n static %}
+
+{% block title %}Presenças consulta{% endblock %}
+
+{% block content_title %}Consultar presenças{% endblock %}
+
+{% block breadcrumbs %}
+        › Consultar presenças
+{% endblock %}
+
+{% block content %}
+		
+		<div class="row">
+                <div class="col-lg-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">Turma</div>
+                            <div id="option2" class="panel-body">
+                                <h2>Day: <span id="dateDay"></span></h2>
+                                <div class="form-group" style="margin-left: 10%">
+                                    <label>Monday</label>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="turmas" value="T20" checked>T20, Seg, 9:00-10:00, 3.2.14
+                                        </label>
+                                    </div>
+                                    <label>Tuesday</label>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="turmas" value="TP22">TP22, Ter, 9:00-10:00, 3.2.14
+                                        </label>
+                                    </div>
+                                    <label>Friday</label>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="turmas" value="PL21">PL21, Qua, 9:00-10:00, 3.2.14
+                                        </label>
+                                    </div>
+                                    <div class="radio">
+                                        <label>
+                                            <input type="radio" name="turmas" value="PL22">PL22, Qui, 9:00-10:00, 3.2.14
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div><!-- /.panel-->
+                    </div><!-- /.col-->
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">Alunos</div>
+					<div id="option3" class="panel-body">
+						<h2>Turma: <span id="turma">T20</span></h2>
+                        <table id="students_table" class="table">
+                            <thead>
+                                <tr>
+                                    <th>Número/ID</th>
+                                    <th>Nome</th>
+                                    <th>29/abr</th>
+                                    <th>6/mai</th>
+                                    <th>13/mai</th>
+                                    <th>20/mai</th>
+                                    <th>27/mai</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>50036</td>
+                                    <td>Mariana Costa Leites</td>
+                                    <td></td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>50476</td>
+                                    <td>Raquel Matias</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                </tr>
+                                <tr>
+                                    <td>7715</td>
+                                    <td>Mafalda Alexandra Dias</td>
+                                    <td></td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                    <td>x</td>
+                                </tr>
+                            </tbody>
+						</table>
+						<button style="float: right" class="btn btn-lg btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div><!--/.row-->
+
+{% endblock %}
