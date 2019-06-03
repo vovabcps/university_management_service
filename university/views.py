@@ -337,6 +337,7 @@ def consult_contacts_s(request):
 
 def consult_details_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
+        consult_details_post(request)
         return render(request, 'student/consult_details.html', {})
     else: 
         return HttpResponseRedirect(reverse('login'))
@@ -380,55 +381,7 @@ def consult_contacts_t(request):
     
 def consult_details_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        if request.method == 'POST':
-            su = request_user(request)
-            PIObject = PersonalInfo.objects.get(user=su)
-            keyName = list(request.POST.keys())[0]
-            print("." + keyName + ".")
-
-            if keyName == "Nome: ":
-                valor = request.POST.get(keyName)
-                PIObject.name = valor
-
-            if keyName == "Email Pessoal: ":
-                valor = request.POST.get(keyName)
-
-                try:
-                    validate_email(valor)
-                    PIObject.personal_email = valor
-
-                except Exception:
-                    messages.error(request, "O email que inseriu está errado!")
-
-
-            if keyName == "Número Telefone: ":
-                valor = request.POST.get(keyName)
-                PIObject.phone_number = valor
-
-            if keyName == "Morada: ":
-                valor = request.POST.get(keyName)
-                PIObject.address = valor
-
-            if keyName == "Data de nascimento: ":
-                valor = request.POST.get(keyName)
-                PIObject.birth_date = valor
-
-            if keyName == "Género: ":
-                valor = request.POST.get(keyName)
-                PIObject.gender = valor
-
-            if keyName == "Nacionalidade: ":
-                valor = request.POST.get(keyName)
-                PIObject.nationality = valor
-
-            if keyName == "Número de Identificação: ":
-                valor = request.POST.get(keyName)
-                PIObject.id_document = valor
-
-            if keyName == "NIF/VAT: ":
-                valor = request.POST.get(keyName)
-                PIObject.vat_number = valor
-            PIObject.save()
+        consult_details_post(request)
         return render(request, 'teacher/consult_details.html', {})
 
 
@@ -523,6 +476,60 @@ def export_a(request):
         return render(request, 'admin/export.html', {'app_list':[app_list[1]]})
     else: 
         return HttpResponseRedirect(reverse('login'))
+
+
+# --------------- teacher and student ---------------
+
+def consult_details_post(request) :
+    if request.method == 'POST':
+            su = request_user(request)
+            PIObject = PersonalInfo.objects.get(user=su)
+            keyName = list(request.POST.keys())[0]
+            print("." + keyName + ".")
+
+            if keyName == "Nome: ":
+                valor = request.POST.get(keyName)
+                PIObject.name = valor
+
+            if keyName == "Email Pessoal: ":
+                valor = request.POST.get(keyName)
+
+                try:
+                    validate_email(valor)
+                    PIObject.personal_email = valor
+
+                except Exception:
+                    messages.error(request, "O email que inseriu está errado!")
+
+
+            if keyName == "Número Telefone: ":
+                valor = request.POST.get(keyName)
+                PIObject.phone_number = valor
+
+            if keyName == "Morada: ":
+                valor = request.POST.get(keyName)
+                PIObject.address = valor
+
+            if keyName == "Data de nascimento: ":
+                valor = request.POST.get(keyName)
+                PIObject.birth_date = valor
+
+            if keyName == "Género: ":
+                valor = request.POST.get(keyName)
+                PIObject.gender = valor
+
+            if keyName == "Nacionalidade: ":
+                valor = request.POST.get(keyName)
+                PIObject.nationality = valor
+
+            if keyName == "Número de Identificação: ":
+                valor = request.POST.get(keyName)
+                PIObject.id_document = valor
+
+            if keyName == "NIF/VAT: ":
+                valor = request.POST.get(keyName)
+                PIObject.vat_number = valor
+            PIObject.save()
 
 
 
