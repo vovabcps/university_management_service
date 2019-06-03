@@ -25,7 +25,7 @@
     .tab-content {
       padding: 0;
     }
-    .semestres{
+    .box_semestres_bar{
       border-bottom:1px solid #e9ecf2;
       margin-bottom: 2px;
       padding: 2px 0px 2px 1px;
@@ -40,6 +40,33 @@
     .semestres > .nav-pills li.active a{
       background-color : dimgrey !important;
   }
+
+  #myProgress {
+    width: 100%;
+    background-color: #ddd;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+  }
+  
+  #myBar {
+    width: 0%;
+    height: 20px;
+    background-color: rgba(68, 192, 250, 0.596);
+    text-align: center;
+    line-height: 20px;
+    color: black;
+  }
+  
+  #percent{
+    padding-left: 4px;
+  }
+
+  .prog_bar{
+    width: 80%;
+    margin: 5px auto;
+  }
   </style>
 
   <br>
@@ -52,16 +79,31 @@
         <form role="form" id="insert_disciplina" method="post" onsubmit="return false">
 
 
-<div class="semestres">
-          <ul class="nav nav-pills" role="tablist">
-            <li class="nav-item active">
-              <a class="nav-link active" data-toggle="pill" href="#semestre1" onclick="criarHorario('1sem')">1º Semestre</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" data-toggle="pill" href="#semestre2" onclick="criarHorario('2sem')" >2º Semestre</a>
-            </li>
-          </ul>
-        </div>
+        
+      <div class="w3-row box_semestres_bar">
+          <div class=" w3-third">
+              <div class="semestres">
+                  <ul class="nav nav-pills" role="tablist">
+                      <li class="nav-item active">
+                        <a class="nav-link active" data-toggle="pill" href="#semestre1" onclick="criarHorario('1sem')">1º Semestre</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#semestre2" onclick="criarHorario('2sem')" >2º Semestre</a>
+                      </li>
+                    </ul>
+              </div>
+          </div>
+
+          <div class="w3-twothird">
+            <div class="prog_bar">
+              <div id="myProgress">
+                  <div id="myBar"><span id="percent">0</span>%</div>
+                </div>
+              </div>
+          </div>
+
+      </div> <!-- end row-->
+          
 
         <div class="panel-body">
 
@@ -130,8 +172,9 @@
 
                             <button type="button" class="w3-button-small w3-khaki w3-round"
                               data-lessons="{{turmaLessons|last}}"
-                              onclick="marcado(this,'{{semestre}}sem|{{subj.name}}|{{tipo}}');criarHorario('{{semestre}}sem')"
-                              value="{{subj.name}}|{{turmaLessons|first}}|{{tipo}}">{{tipo}}{{turmaLessons|first}}</button>
+                              onclick="marcado(this,'{{semestre}}sem|{{subj.name}}|{{tipo}}');criarHorario('{{semestre}}sem');move()"
+                              value="{{subj.name}}|{{turmaLessons|first}}|{{tipo}}">{{tipo}}{{turmaLessons|first}}
+                            </button>
 
                             {% endfor %}
                           </div>
@@ -281,6 +324,31 @@
     });
   });
 
+  function move() {
+    var totalAllLessons = document.getElementsByClassName("turmas").length;
+    var allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]").length;
+    var allTurmasEscolhidas2sem = document.querySelectorAll("button[data-2sem=true]").length;
+
+    var escolhidos= allTurmasEscolhidas1sem + allTurmasEscolhidas2sem
+    var aumento= 100/totalAllLessons;
+    console.log(totalAllLessons)
+    console.log(escolhidos)
+
+    var elem = document.getElementById("myBar");   
+    var prog = document.getElementById("percent");
+    var width= prog.innerHTML; 
+
+    width = escolhidos * aumento; 
+    elem.style.width = width + '%'; 
+    prog.innerHTML = width;
+    if (width >= 100) {
+      elem.style.backgroundColor= "green";
+      elem.style.color= "white";
+      elem.innerHTML= "Finalize a inscriçao! ";
+    }
+
+  }
+
   function login() {
     totalAllLessons = document.getElementsByClassName("turmas").length
     allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]");
@@ -314,9 +382,8 @@
         }
       }
     });
-
-
   }
+
 </script>
 
 

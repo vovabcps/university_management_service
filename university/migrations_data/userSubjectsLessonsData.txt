@@ -10,23 +10,34 @@
 #    450_Formação Cultural Social e Ética, Empreendedorismo em Ciências, 2 ano, 2 sem, Semestral (Opção)
     
 
-# ---------------------- fc122 ----------------------
-#SystemUserCourse: fc122	Licenciatura em Tecnologias de Informação	Matriculado	2016/2017(para saber qd ele começou a ir as aulas)	1(ano, para saber o numero de cred. realizados)
+#Estrutura SystemUserCourse: 
+#nome_do_curso estado anoLetivoDeInicio(para saber qd ele começou a ir as aulas) ano(para saber o numero de cred. realizados)
 
 
-#SystemUserSubject ex: (User-fcxx || subject-nameSubj, state-(0:pending | 1:approved | 2:not approved), grade-nota de 0-20 float, lessons- tipoTurma ) !! ...
-fc122||2016/2017??1sem++Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13|  |2sem++Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21
-#24 ECTCS Realizados
+#Estrutura SystemUserSubject: 
+#1esm++ subject-nameSubj, state-(0:pending | 1:approved | 2:not approved), grade-nota de 0-20 float, lessons- tipoTurma !! ...  |  |2sem++ ... !! ...
 
-# ---------------------- fc800 ----------------------
-#SystemUserCourse: fc800	Licenciatura em Engenharia Informática	Matriculado	2017/2018	2(ano)
+# --------------------------------------------
+#SystemUserCourse: 
+Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,1
 
-#SystemUserSubject
-fc800||2017/2018??1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais, 1, 14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13|  |2sem++Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
-#42 ECTCS Realizados
+#SystemUserSubject      24 ECTCS Realizados
+1sem++Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13|  |2sem++Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21
 
 
-# ---------------------- fc795 ----------------------
-#SystemUserCourse: fc795	Licenciatura em Tecnologias de Informação	Matriculado	2016/2017	3(ano)
+# --------------------------------------------
+#SystemUserCourse:  
+Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,3
 
-#SystemUserSubject
+#SystemUserSubject      108 ECTCS Realizados
+1sem++Arquiteturas de Computadores,1,17.2,T11,TP11,PL11!!Elementos de Matemática I,1,12.3,T11,TP12!!Programação I (LTI),1,12.2,T11,TP13,PL14!!Produção de Documentos Técnicos,1,19.0,TP16!!Controvérsias Científicas,1,14.3,T11,TP12!!Informática na Ótica do Utilizador,1,20.0,TP19!!Bases de Dados,1,16.7,T11,TP12!!Fundamentos e Técnicas de Visualização,1, 17.2,T11,TP13!!Interação com Computadores,1,16.4,T11,TP12,PL12!!Sistemas Operativos,1,15.7,T11,TP12|  |2sem++Elementos de Matemática II,1,20.0,T21,TP23!!Introdução às Probabilidades e Estatística,1,19.4,T21,TP25!!Introdução às Tecnologias Web,1,14.1,T21,TP24,PL24!!Programação II (LTI),1,13.7,T21,TP22,PL22!!Redes de Computadores,1,12.3,T21,TP23!!Análise e Desenho de Software,1,16.4,T21,TP21!!Aplicações Distribuídas,1,15.4,T21,TP23,PL23!!Aplicações e Serviços na Web,1,14.3,T21,TP23,PL24!!Conceção de Produto,1,14.6,T21,TP22
+
+
+# --------------------------------------------
+#SystemUserCourse:	
+Licenciatura em Engenharia Informática,Matriculado,2017/2018,2
+
+#SystemUserSubject      42 ECTCS Realizados
+1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais, 1, 14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13|  |2sem++Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
+
+

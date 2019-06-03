@@ -22,16 +22,21 @@
 				<div class="panel-body">
 					<div class="col-md-12">
 						<div>
+
 									<p><strong>Curso em que se Encontra Inscrito:</strong> {{suCourse.course.name}}</p>
+									<p><strong>Ano Lectivo de inicio:</strong> {{suCourse.anoLectivoDeInício}}</p>
+									<p><strong>Ano Lectivo atual:</strong> <span id="ano_lectivo_act"></span></p>
 									<p><strong>Ano Curricular:</strong> {{suCourse.anoActual}}º ano</p>
-									<p><strong>Ano Lectivo:</strong> <span id="ano_lectivo_act"></span></p>
-									<p><strong>Total de créditos que ja tem:</strong><span> 0.0 </span>ECTS</p>
+									<p><strong>Total de créditos que ja tem:</strong><span> {{suCourse.totalCred}}.0 </span>ECTS</p>
 									<p><strong>Total de créditos a que se está a inscrever neste momento:</strong><span> 0.0 </span>/ 72.0 ECTS</p>
-									<p><strong>Total de créditos para fazer o curso:</strong><span id="credAprov"></span></p>
+									<p><strong>Total de créditos para fazer o curso: </strong>{{suCourse.course.credits_number}}.0 ECTS</p>
 						</div>
 					</div>
 				</div>
 			</div><!-- /.panel-->
+
+
+			<!--{{dicAnoSubjs}}-->
 
 
 			<div class="panel panel-default">
@@ -54,84 +59,89 @@
 								<tbody>
 
 										
+								{% for ano, dicCredSubjs in dicAnoSubjs.items %}
+								<!-- {1ºano: {'ceditos': .., 'course_subjs':... }, ... }-->
+
+								<tr class="cursos" bgcolor="whitesmoke" onclick="minicToggleAno('{{ano}}')" >
+									<td><em class="fa fa-align-justify">&nbsp;</em> </td>
+									<td><strong>{{ano}}</strong></td>
+									<td><strong>1 semestre/2 semestre</strong></td>
+									<td><strong>Créd. necessarios: {{dicCredSubjs.ceditos}}.0 </strong></td>
+								</tr>
 									
-										<tr class="cursos" bgcolor="yellow" onclick="minicToggle(this, 'principais')">
-												<td><em class="fa fa-align-justify">&nbsp;</em> </td>
-												<td><strong>Tronco Comum (cadeiras obrigatorias)</strong></td>
-												<td><strong>1 semestre/2 semestre</strong></td>
-												<td><strong>Créd. necessarios: <span id="credNecessPrinc"></span>.0 </strong></td>
-											</tr>
+												<tr data-ano="{{ano}}toggle" class="cursos" value="{{ano}}principais" bgcolor="yellow" onclick="minicToggle('{{ano}}principais')">
+														<td><em class="fa fa-align-justify">&nbsp;</em> </td>
+														<td><strong>Tronco Comum (cadeiras obrigatorias)</strong></td>
+														<td><strong>1 semestre/2 semestre</strong></td>
+														<td><strong>Créd. necessarios: <span id="{{ano}}credNecessPrinc"></span>.0 </strong></td>
+													</tr>
 
-									{% for subjs in course_subjs.courseObrig_subjs %}
+											{% for subjs in dicCredSubjs.course_subjs.courseObrig_subjs %}
 
-											<tr data-mcName="principais" >
-											<td style="width:10%">
-											<div class="radio">
-											<label>
-											<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
-											</label>
-											</div>
-											</td>
-											<td>
-											<h5>{{subjs.get_subject_name}}</h5>
-											<p>{{subjs.year}} ano, {{subjs.semester}} semestre</p>
-											</td>
-											<td>{{subjs.type}}</td>
-											<td value="{{subjs.get_subject_credits}}">{{subjs.get_subject_credits}}.0 Créd.</td>
-											</tr>
+													<tr data-mcName="{{ano}}principais" >
+													<td style="width:10%">
+													<div class="radio">
+													<label>
+													<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
+													
+												</label>
+													</div>
+													</td>
+													<td>
+													<h5>{{subjs.get_subject_name}}</h5>
+													<p>{{subjs.year}} ano, {{subjs.semester}} semestre</p>
+													</td>
+													<td>{{subjs.type}}</td>
+													<td value="{{subjs.get_subject_credits}}">{{subjs.get_subject_credits}}.0 Créd.</td>
+													</tr>
 
-									{% endfor %}
+											{% endfor %}
 
-									
-									{% for minorsOthers, lstLstMcSubjs  in course_subjs.miniCs_subjs.items %}
-
-									{% if minorsOthers == "minors" and dict.minors %} <!-- se houver minors-->
-									<tr style="visibility:hidden"><td colspan="4" > </td></tr>
-									<tr style="visibility:hidden"><td colspan="4" > </td></tr>
-									<tr class="cursos" bgcolor="yellow" onclick="minicToggleMinor(this, 'minors')">
-											<td><em class="fa fa-align-justify">&nbsp;</em> </td>
-											<td colspan="3"><strong>Escolha 1 minor:</strong></td>
-										</tr>
-
-										{% endif %}
-												{% for mc, lstMcSubjs  in lstLstMcSubjs %}
-
-												{% if minorsOthers == "minors" %}
-													<tr data-minor="minors" class="cursos" bgcolor="whitesmoke" value="{{mc.get_miniCourse_name}}" onclick="minicToggle(this, '{{mc.get_miniCourse_name}}')" >
-												{% else %}
-												<tr class="cursos" bgcolor="yellow" onclick="minicToggle(this, '{{mc.get_miniCourse_name}}')">
-												{% endif %}
-																<td><em class="fa fa-align-justify">&nbsp;</em> </td>
-																<td><strong>{{mc.get_miniCourse_name}}</strong></td>
-																<td><strong>{{mc.formatarSem}}</strong></td>
-																<td><strong>Créd. necessarios: {{mc.credits_number}}.0 </strong></td>													
-															</tr>
-														
+												
 											
+											{% for minorsOthers, lstLstMcSubjs  in dicCredSubjs.course_subjs.miniCs_subjs.items %}
 
-														{% for subjs  in lstMcSubjs %}
-															<tr data-mcName="{{mc.get_miniCourse_name}}" style="display:none">
-																<td style="width:10%">
-																<div class="radio">
-																<label>
+														{% for mc, lstMcSubjs  in lstLstMcSubjs %}
+
+														{% if minorsOthers == "minor" and dicCredSubjs.course_subjs.miniCs_subjs.minor %} <!-- se houver minor-->
+															<tr data-ano="{{ano}}toggle" class="cursos" bgcolor="beige" onclick="minicToggle('{{ano}}{{mc.get_miniCourse_name}}')" value="{{ano}}{{mc.get_miniCourse_name}}">
+														{% else %}
+														<tr data-ano="{{ano}}toggle" class="cursos" bgcolor="yellow" onclick="minicToggle('{{ano}}{{mc.get_miniCourse_name}}')" value="{{ano}}{{mc.get_miniCourse_name}}">
+														{% endif %}
+																		<td><em class="fa fa-align-justify">&nbsp;</em> </td>
+																		<td><strong>{{mc.get_miniCourse_name}}</strong></td>
+																		<td><strong>{{mc.formatarSem}}</strong></td>
+																		<td><strong>Créd. necessarios: {{mc.credits_number}}.0 </strong></td>													
+																	</tr>
 																
-																<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
-																	
-																	
-																</label>
-																</div>
-																</td>
-																<td>
-																<h5>{{subjs.get_subject_name}}</h5>
-																<p>{{subjs.year}} ano, {{subjs.semester}} semestre</p>
-																</td>
-																<td>{{subjs.type}}</td>
-																<td>{{subjs.get_subject_credits}}.0 Créd.</td>
-																</tr>
-														{% endfor %}
+													
 
-												{% endfor %}
-									{% endfor %}
+																{% for subjs  in lstMcSubjs %}
+																	<tr data-mcName="{{ano}}{{mc.get_miniCourse_name}}" style="display:none">
+																		<td style="width:10%">
+																		<div class="radio">
+																		<label>
+																		
+																		<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
+																			
+																			
+																		</label>
+																		</div>
+																		</td>
+																		<td>
+																		<h5>{{subjs.get_subject_name}}</h5>
+																		<p>{{subjs.year}} ano, {{subjs.semester}} semestre</p>
+																		</td>
+																		<td>{{subjs.type}}</td>
+																		<td>{{subjs.get_subject_credits}}.0 Créd.</td>
+																		</tr>
+																{% endfor %}
+
+														{% endfor %}
+											{% endfor %}
+
+											<script>prepareTRs('{{ano}}')</script>
+								{% endfor %}
 
 								
 
@@ -175,7 +185,7 @@
 	if(localStorage.getItem("UserSubjs") != undefined){
 		var userSubjs = JSON.parse(localStorage.getItem("UserSubjs"))
 		for (var i = 0; i<userSubjs.length; i++){
-			$("input[value='"+userSubjs[i]+"']").prop("checked", true );
+			$("input[id='"+userSubjs[i]+"']").prop("checked", true );
 		}
 	}
 
@@ -183,7 +193,7 @@
     $('#submit').click(function(evt) {
 			var cadeirasEscolhidas= [];
 			$.each($("input[name='subjsNameSemestre']:checked"), function () {
-				cadeirasEscolhidas.push($(this).val())
+				cadeirasEscolhidas.push($(this).attr('id'))
 			});
 			var UserCadeirasEscolh= JSON.stringify(cadeirasEscolhidas);
 			localStorage.setItem("UserSubjs", UserCadeirasEscolh);
@@ -191,39 +201,10 @@
 });
 
 
-function minicToggle(obj, mcName){
-	$.each($("tr[data-mcName='"+mcName+"']"), function () {
-		$(this).toggle();
-	});
-}
 
-function minicToggleMinor(obj, mcName){
-	$.each($("tr[data-minor='"+mcName+"']"), function () {
-		if ($(this).is(":visible")){
-			$(this).hide();
-			var val= $(this)[0].getAttribute('value')
-			$.each($("tr[data-mcName='"+val+"']"), function () {
-				$(this).hide();
-			});
-		}else{
-			$(this).show();
-		}
-	});
-}
+//var anosCred= {{suCourse.course.credits_numberByYear_as_list|safe}};
+//document.getElementById("credAprov").innerHTML = " " + anosCred[{{suCourse.anoActual}}-1][1] + ".0";
 
-var anosCred= {{suCourse.course.credits_numberByYear_as_list|safe}};
-document.getElementById("credAprov").innerHTML = " " + anosCred[{{suCourse.anoActual}}-1][1] + ".0";
-
-
-
-
-//nao pode haver cadeiras opcionais no tronco comum 
-soma= 0
-$.each($("tr[data-mcName='principais']"), function () {
-	//soma += $(this)
-	soma += parseInt($(this).children()[3].getAttribute('value'))
-});
-document.getElementById("credNecessPrinc").innerHTML= soma
 </script>
 
 {% endblock %}

@@ -15,6 +15,9 @@ class SchoolYear(models.Model):
     begin = models.IntegerField(unique=True)
     end = models.IntegerField(unique=True)
 
+    def formatSchoolYear(self):
+        return str(self.begin) + "/" + str(self.end)
+
 
 
 class Room(models.Model):
@@ -99,12 +102,11 @@ class Course_MiniCourse(models.Model):
     #pq ha mini cursos em que os seus credits_number variam de semestre para semeste(exemplo minor), 
     #por isso so posso ter uma linnha nesta tabela com o total de credits_number
     #ex: (Licenciatura em Tecnologias de Informação, Minor em Biologia, 30, 3, "1,2")
+    #ex: (Licenciatura em Tecnologias de Informação, 450_Formação Cultural Social e Ética - FCSE, 9, 1, "1")
+    #ex: (Licenciatura em Tecnologias de Informação, 517_Lic. em TIC/TI, 6, 3, "1,2")
     
     #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 2, "2")
     #ex: (Licenciatura em Engenharia Informática, 450_Formação Cultural Social e Ética - FCSE, 3, 1, "1")
-
-    #ex: (Licenciatura em Tecnologias de Informação, 450_Formação Cultural Social e Ética - FCSE, 9, 1, "1")
-    #ex: (Licenciatura em Tecnologias de Informação, 517_Lic. em TIC/TI, 6, 3, "1,2")
 
     def get_course_name(self):
         return self.course.name
@@ -132,14 +134,15 @@ class Course_SchoolYear(models.Model):
     course= models.ForeignKey(Course, on_delete=models.CASCADE)
 
 class SystemUserCourse(models.Model):
-    #para ser unico: user, course
+    #para ser unico: user, course ou user, anoLectivoDeInício
     #users que estao inscritos em cursos
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     estadoActual = models.CharField(max_length=200, null=True) #ex: matriculado
     anoLectivoDeInício = models.CharField(max_length=200, null=True) #ex: 2016/2017
     anoActual = models.IntegerField(null=True) #1ºano, 2ºano, ...
-    minor = models.CharField(max_length=200, null=True) #nao admitido, minor de biologia 
+    totalCred= models.IntegerField(null=False, default=0)
+    minor = models.CharField(max_length=200, null=False, default="Nao admitido") #Nao incluido, nao admitido, Minor de biologia (mini course name)
 
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
@@ -246,12 +249,16 @@ class SystemUserSubject(models.Model):
     grade = models.FloatField(null=True) #nao arredondar
     turmas= models.CharField(max_length=200, null=True) #T11, PL13
     #nao pode ser lessons pq ex: T11 terça, T11 quinta (2 lessons diferentes)
+    anoLetivo= models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
 
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
 
     def get_subject_name(self):
         return self.subject.name 
+
+    def get_anoLetivo(self):
+        return self.anoLetivo.formatSchoolYear()
 
 
 

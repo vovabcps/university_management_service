@@ -213,3 +213,39 @@ div.system-message p.system-message-title {
 .cursos {
   cursor: pointer;
 }
+
+
+/* -------------------------  PERSONAL DATA SHEET   -------------------------*/
+#t_consult_details_pic{
+  border-radius: 50%;
+}
+
+.edit_but{
+
+margin-top:9px;
+}
+
+.edit_div_right{
+ float: left;
+ display: inline !important;
+ width: auto;
+ height:100%;
+
+}
+
+.edit_div_left{
+float:left;
+width: 20%;
+height:100%;
+display: inline !important;
+}
+
+.alineinthepersonaldata{
+ width : 70%;
+ height : 100px;
+}
+
+.modal{
+  top:30% !important;
+
+}

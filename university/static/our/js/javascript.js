@@ -178,9 +178,10 @@ function marcado(obj,id) {
     var semestre= id.split("|")[0];
     console.log(semestre)
     obj.style.border= "2px solid black";
-    obj.style.opacity= "0.7";
-    obj.style.background= "blue";
+    obj.style.opacity= "0.8";
+    obj.classList.remove("w3-khaki");
     obj.style.boxShadow= "none";
+    obj.style.backgroundColor = "beige";
     obj.setAttribute('data-'+semestre, true)
     var e = document.getElementById(id).children;
     for (var i= 0; i< e.length; i++){
@@ -188,8 +189,54 @@ function marcado(obj,id) {
             e[i].style.border= "none";
             e[i].style.opacity= "1";
             e[i].style.boxShadow= "1px 2px 6px 1px #1b3680";
-            e[i].style.background= "white";
+            e[i].classList.add("w3-khaki");
             e[i].setAttribute('data-'+semestre, false) 
         }
     }  
+}
+
+
+/* -------------------------------------------------- inscriçoes subject ------------------------------------------------------------------------------- */
+
+function prepareTRs(ano){
+	minicToggleAno(ano)
+	somCredTroncoComum(ano)
+}
+
+
+function minicToggleAno(ano){
+	$.each($("tr[data-ano='"+ano+"toggle']"), function () {
+		if ($(this).is(":visible")){
+			$(this).hide();
+			var val= $(this)[0].getAttribute('value')
+			$.each($("tr[data-mcName='"+val+"']"), function () {
+				$(this).hide();
+			});
+		}else{
+            console.log(121)
+			$(this).show();
+		}
+	});
+}
+
+
+
+//nao pode haver cadeiras opcionais no tronco comum 
+function somCredTroncoComum(ano){
+    var soma= 0
+    console.log("tr[data-mcName='"+ano+"principais']")
+	$.each($("tr[data-mcName='"+ano+"principais']"), function () {
+        console.log($(this))
+		//soma += $(this)
+		soma += parseInt($(this).children()[3].getAttribute('value'))
+	});
+	document.getElementById(ano+"credNecessPrinc").innerHTML= soma
+}
+
+
+
+function minicToggle(mcName){
+	$.each($("tr[data-mcName='"+mcName+"']"), function () {
+		$(this).toggle();
+	});
 }

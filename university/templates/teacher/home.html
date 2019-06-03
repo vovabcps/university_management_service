@@ -8,114 +8,64 @@
 {% block breadcrumbs %}{% endblock %}
 
 {% block content %}
-
 <div id="content-main">
 
 		
 		<div class="row">
-			<div class="col-md-6">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						Lista de Disciplinas:
-						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
-					<div class="panel-body">
-						<ul class="list">
-							<li class="list-item">
-								<div class="checkbox">
-									<label for="checkbox-1">PTI - Licenciatura de Tecnologias de Informação</label>
-								</div>
-							</li>
-							<li class="list-item">
-								<div class="checkbox">
-									<label for="checkbox-2">Prog2 - Engenharia Informática</label>
-								</div>
-                            </li>
-						</ul>
-					</div>
-				</div>
-			</div><!--/.col-->
-			
-			
-			<div class="col-md-6">
-				<div class="panel panel-default ">
-					<div class="panel-heading">
-						Alertas
-						<ul class="pull-right panel-settings panel-button-tab-right">
-							<li class="dropdown"><a class="pull-right dropdown-toggle" data-toggle="dropdown" href="">
-								<em class="fa fa-cogs"></em>
-							</a>
-								<ul class="dropdown-menu dropdown-menu-right">
-									<li>
-										<ul class="dropdown-settings">
-											<li><a href="">
-												<em class="fa fa-cog"></em> Settings 1
-											</a></li>
-											<li class="divider"></li>
-											<li><a href="">
-												<em class="fa fa-cog"></em> Settings 2
-											</a></li>
-											<li class="divider"></li>
-											<li><a href="">
-												<em class="fa fa-cog"></em> Settings 3
-											</a></li>
-										</ul>
-									</li>
-								</ul>
-							</li>
-						</ul>
-						<span class="pull-right clickable panel-toggle panel-button-tab-left"><em class="fa fa-toggle-up"></em></span></div>
-					<div class="panel-body timeline-container">
-						<ul class="timeline">
-							<li>
-								<div class="timeline-badge"><em class="glyphicon glyphicon-pushpin"></em></div>
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">18h30</h4>
-									</div>
-									<div class="timeline-body">
-										<p>Pedido de alteração de turma</p>
-                                        <p>José Dinis</p>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="timeline-badge primary"><em class="glyphicon glyphicon-link"></em></div>
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">17h09</h4>
-									</div>
-									<div class="timeline-body">
-                                        <p>Pedido de alteração de turma</p>
-										<p>Rute Palmeiro</p>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="timeline-badge"><em class="glyphicon glyphicon-camera"></em></div>
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">17h00</h4>
-									</div>
-									<div class="timeline-body">
-                                        <p>RE: Pedido de alteração de turma</p>
-										<p>Maria Cruz</p>
-									</div>
-								</div>
-							</li>
-							<li>
-								<div class="timeline-badge"><em class="glyphicon glyphicon-paperclip"></em></div>
-								<div class="timeline-panel">
-									<div class="timeline-heading">
-										<h4 class="timeline-title">16h45</h4>
-									</div>
-									<div class="timeline-body">
-                                        <p>Pedido de alteração de turma</p>
-										<p>Sérgio Mendes</p>
-									</div>
-								</div>
-							</li>
-						</ul>
-					</div>
+			<div class="col-md-12">
+				<div class="panel panel-default articles">
+                                <div class="panel-heading">Disciplinas</div>
+
+                                <div class="panel-body articles-container">
+                                    <div class="article border-bottom">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26752</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Sistemas Inteligentes</a></h4>
+                                                    <p>João Balsa (Regente) | Gabinete: 6.3.38A | Email: fc102@professor.fc.ul.pt</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+
+                                    <div class="article border-bottom">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26709</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Aplicações Distribuídas</a></h4>
+                                                    <p>Alysson Bessani | Gabinete: 6.3.23 | Email: fc134@professor.fc.ul.pt</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+
+                                    <div class="article">
+                                        <div class="col-xs-12">
+                                            <div class="row">
+                                                <div class="col-xs-2 col-md-2 date">
+                                                    <div class="large">26719</div>
+                                                    <div class="text-muted">S2</div>
+                                                </div>
+                                                <div class="col-xs-10 col-md-10">
+                                                    <h4><a href="">Projeto de Tecnologias de Informação</a></h4>
+                                                    <p>António Ferreira (PTI) | Gabinete: </p>
+                                                    <p>Fernando Ramos (PTR) | Gabinete: </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </div><!--End .article-->
+                                </div>
 				</div>
 			</div><!--/.col-->
 		</div><!--/.row-->

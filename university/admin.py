@@ -51,7 +51,7 @@ admin.site.register(Course_MiniCourse,  Course_MiniCourseAdmin)
 class SystemUserCourseAdmin(admin.ModelAdmin):
   search_fields = ["user__user__username"]
   list_filter = ["estadoActual", "anoLectivoDeInício", "anoActual", "minor"]
-  list_display = ["id", "get_systemUser_user", "get_course_name", "estadoActual", "anoLectivoDeInício", "anoActual", "minor"]
+  list_display = ["id", "get_systemUser_user", "get_course_name", "estadoActual", "anoLectivoDeInício", "anoActual", "totalCred", "minor"]
 admin.site.register(SystemUserCourse,  SystemUserCourseAdmin)
 
 
@@ -69,9 +69,9 @@ class CourseSubjectAdmin(admin.ModelAdmin):
 admin.site.register(CourseSubject,  CourseSubjectAdmin)
 
 class SystemUserSubjectAdmin(admin.ModelAdmin):
-  search_fields = ["user__user__username", "grade"]
-  list_filter = ["subject__name", "state"]
-  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade", "turmas"]
+  search_fields = ["user__user__username", "subject__name", "grade"]
+  list_filter = ["state", "anoLetivo__begin"]
+  list_display = ["id", "get_systemUser_user", "get_subject_name", "state", "grade", "turmas", "get_anoLetivo"]
 admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):

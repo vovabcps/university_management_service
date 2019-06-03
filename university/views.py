@@ -27,6 +27,9 @@ from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
 from django.shortcuts import render, redirect
 
+#consult details
+from django.core.validators import validate_email
+
 
 #--------------------- all in common -----------------------
 
@@ -144,36 +147,75 @@ def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         su= request_user(request)
 
-        inscrito= SystemUserSubject.objects.filter(user=su).first()
+        schoolYearObj= SchoolYear.objects.get(begin=2018)
+        inscrito= SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj).first()
         #verificar se o aluno ja esta incrito em cadeiras de um curso
         if not inscrito:
+            #cadeiras que ele nao se pode inscrever pq ja foi aprovado
+            SystemUserSubjectObjs= SystemUserSubject.objects.filter(user=su, state=1) #qd se esta a increver nao a pending(ou foi aprovado ou reprovou)
+            subjsAprov= []
+            for SystemUSubjectObj in SystemUserSubjectObjs :
+                subjsAprov.append(SystemUSubjectObj.subject)
+
+
             #curso do aluno
             suCourse= SystemUserCourse.objects.get(user=su)
-
-            #as cadeiras obrigatorias q ele vai ter nesse ano
-            courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=suCourse.anoActual).order_by("semester")
-
-            #quais sao os mini cursos q o aluno vai ter naquele ano
-            miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=suCourse.anoActual)
             
-            #as cadeiras dos mini cursos daquele ano
-            miniCursosMinorsSubjs= [] #lista de listas
-            miniCursosOthersSubjs= [] #lista de listas
-            for miniC in miniCs:
-                if len(miniC.semestres) == 1 :
-                    miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual, semester=int(miniC.semestres))
-                else:
-                    miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=suCourse.anoActual).order_by("semester")
-                if miniC.miniCourse.grau == "Minor" :
-                    miniCursosMinorsSubjs.append([miniC, miniCsubjs])
-                else:
-                    miniCursosOthersSubjs.append([miniC, miniCsubjs])
+            anosCreditos= suCourse.course.credits_numberByYear #1:60|2:60|3:60
+            lstAnoCred= anosCreditos.split("|")
+            dicAnoSubjs= {}
 
-            dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minors': miniCursosMinorsSubjs}
-            course_subjs = {'courseObrig_subjs':courseObrig_subjs, 'miniCs_subjs':dicMinorsAndOthers}
-            return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'course_subjs':course_subjs})
+            for anoCred in lstAnoCred:
+                ano, cred = anoCred.split(":")
+
+                #as cadeiras obrigatorias q ele vai ter nesse ano
+                courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=int(ano)).order_by("semester")
+
+                #as cadeiras obrigatorias que ele ainda n foi aprovado
+                courseObrig_subjsPorFazer= []
+                for courseObrig_subj in courseObrig_subjs:
+                    if courseObrig_subj.subject not in subjsAprov :
+                        courseObrig_subjsPorFazer.append(courseObrig_subj)
+
+                #quais sao os mini cursos q o aluno vai ter naquele ano
+                miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=int(ano))
+
+                #as cadeiras dos mini cursos daquele ano
+                miniCursosOthersSubjs= [] #lista de listas, todos os mini cursos exepto minors
+                minor= []
+                for miniC in miniCs:
+                    credNecessarios= miniC.credits_number
+                    contCred=0
+                    if miniC.miniCourse.grau != "Minor":
+                        if len(miniC.semestres) == 1 :
+                            miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano, semester=int(miniC.semestres))
+                        else:
+                            miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano).order_by("semester")
+
+                        #remover as cadeiras em q o aluno ja foi aprovado
+                        miniCsubjsPorFazer= []
+                        for miniCsubj in miniCsubjs:
+                            if miniCsubj.subject not in subjsAprov :
+                                miniCsubjsPorFazer.append(miniCsubj)
+                            else:
+                                contCred += miniCsubj.subject.credits_number
+
+                        if contCred < credNecessarios :
+                            miniCursosOthersSubjs.append([miniC, miniCsubjsPorFazer])
+
+                    #se naquele curso e naquele ano houver minor e ele foi admitdo
+                    elif miniC.miniCourse.name == suCourse.minor : 
+                            minor= [[miniC, miniCsubjs]]
+
+
+
+                dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minor': minor}
+                course_subjs = {'courseObrig_subjs':courseObrig_subjsPorFazer, 'miniCs_subjs':dicMinorsAndOthers}
+                dicAnoSubjs[ano + "º ano"] = {'ceditos': cred, 'course_subjs': course_subjs}
+
+            return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'dicAnoSubjs':dicAnoSubjs})
         else: 
-            messages.error(request, "Ja esta incrita nas cadeiras do seu curso deste ano!")
+            messages.error(request, "Ja esta inscrito/a nas cadeiras do seu curso deste ano!")
             return HttpResponseRedirect(reverse('home_s'))
     else: 
         return HttpResponseRedirect(reverse('login'))
@@ -258,6 +300,7 @@ def inscricoes_confirmacao_s(request):
             if valid: #se tiver tudo bem
                 sysUser= request_user(request)
                 subjLessons= subjLessonsSem1 + subjLessonsSem2
+                schoolYearObj= SchoolYear.objects.get(begin=2018)
                 #inscrever nas cadeiras
                 subjNameBefor= None
                 for subjLess in subjLessons:
@@ -265,13 +308,13 @@ def inscricoes_confirmacao_s(request):
                     subjName, turma, type = subjNameLesson
                     if subjName != subjNameBefor :
                         SubjObj= Subject.objects.get(name=subjName) 
-                        newSysUSubj= SystemUserSubject(user=sysUser, subject=SubjObj, state=0)
+                        newSysUSubj= SystemUserSubject(user=sysUser, subject=SubjObj, state=0, anoLetivo=schoolYearObj)
                         newSysUSubj.save()
                         turmas= " "
                         subjNameBefor= subjName
 
                     turmas= turmas + type + turma + " "
-                    newSysUSubj.lessons= turmas
+                    newSysUSubj.turmas= turmas
                     newSysUSubj.save()
 
                 return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
@@ -337,8 +380,59 @@ def consult_contacts_t(request):
     
 def consult_details_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
+        if request.method == 'POST':
+            su = request_user(request)
+            PIObject = PersonalInfo.objects.get(user=su)
+            keyName = list(request.POST.keys())[0]
+            print("." + keyName + ".")
+
+            if keyName == "Nome: ":
+                valor = request.POST.get(keyName)
+                PIObject.name = valor
+
+            if keyName == "Email Pessoal: ":
+                valor = request.POST.get(keyName)
+
+                try:
+                    validate_email(valor)
+                    PIObject.personal_email = valor
+
+                except Exception:
+                    messages.error(request, "O email que inseriu está errado!")
+
+
+            if keyName == "Número Telefone: ":
+                valor = request.POST.get(keyName)
+                PIObject.phone_number = valor
+
+            if keyName == "Morada: ":
+                valor = request.POST.get(keyName)
+                PIObject.address = valor
+
+            if keyName == "Data de nascimento: ":
+                valor = request.POST.get(keyName)
+                PIObject.birth_date = valor
+
+            if keyName == "Género: ":
+                valor = request.POST.get(keyName)
+                PIObject.gender = valor
+
+            if keyName == "Nacionalidade: ":
+                valor = request.POST.get(keyName)
+                PIObject.nationality = valor
+
+            if keyName == "Número de Identificação: ":
+                valor = request.POST.get(keyName)
+                PIObject.id_document = valor
+
+            if keyName == "NIF/VAT: ":
+                valor = request.POST.get(keyName)
+                PIObject.vat_number = valor
+            PIObject.save()
         return render(request, 'teacher/consult_details.html', {})
-    else: 
+
+
+    else:
         return HttpResponseRedirect(reverse('login'))
 
 

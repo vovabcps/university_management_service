@@ -210,7 +210,7 @@ def makeCourseOBJs():
     newCourseOEI.save()
 
 
-    newCourseOTI= Course(name="517_Lic. em TIC/TI", grau="Optativas", timetable="Diurno")
+    newCourseOTI= Course(name="517_Lic. em TIC/TI", grau="Optativas", timetable="Diurno", )
     newCourseOTI.save()
 
 
@@ -284,7 +284,10 @@ def makeSystemUserCourseOBJs():
     casosPossiveis= [["2016/2017", "1"], ["2016/2017", "2"], ["2016/2017", "3"], ["2017/2018", "1"], ["2017/2018", "2"], ["2018/2019", "1"]]
     for user in allStudents :
         anoInicio, anoAtual= random.choice(casosPossiveis)
-        newSystemUserCourse= SystemUserCourse(user=user, course=random.choice(allLicenciaturas), estadoActual="Matriculado", anoLectivoDeInício=anoInicio, anoActual=int(anoAtual))
+        course= random.choice(allLicenciaturas)
+        newSystemUserCourse= SystemUserCourse(user=user, course=course, estadoActual="Matriculado", anoLectivoDeInício=anoInicio, anoActual=int(anoAtual))
+        if course.name == "Licenciatura em Engenharia Informática":
+            newSystemUserCourse.minor= "Nao incluido"
         newSystemUserCourse.save()
 
 
@@ -293,84 +296,104 @@ def makeSystemUserCourseOBJs():
 def makeSystemUserSubjectAndLessonSystemUserOBJs():
     with open(settings.MIGRATIONS_DATA_ROOT + "/userSubjectsLessonsData.txt", encoding="utf8") as rfile:
         for line in rfile.readlines():
+            if "SystemUserCourse" in line:
+                algoritmo= "SystemUserCourse"
+            elif "SystemUserSubject" in line :
+                algoritmo= "SystemUserSubject"
+            
+            else:
+                if "#" not in line and "," in line: 
+                    line= line[:-1] #remover o '\n' do final
+                    #se nao for um comentario nem uma linha vazia
+                    print(algoritmo)
+                    if algoritmo == "SystemUserCourse":
+                        #Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,1
+                        nameCourse, estado, anoLetivoInicio, ano = line.split(",")
+                        CourseObj= Course.objects.get(name=nameCourse)
+                        lstSystemUserCourseObj= SystemUserCourse.objects.filter(course=CourseObj, estadoActual=estado, anoLectivoDeInício=anoLetivoInicio, anoActual=ano)
 
-            if "#" not in line and "||" in line: 
-                line= line[:-1] #remover o '\n' do final
-                #se nao for um comentario nem uma linha vazia
-                #ex: fc122||2016/2017??1sem++Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13|  |2sem++Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21
-                fcAnoLetivoDeIni, semestresSubjLessons = line.split("??")
-                fc, anoLetivoInicio = fcAnoLetivoDeIni.split("||")
-                user= User.objects.get(username=fc)
-                sysUser= SystemUser.objects.get(user=user)
-                
-                #-----------------------------------
-                for semSubjLessons in semestresSubjLessons.split("|  |") :
-                    #para cada semestre
-                    semestre, subjLessons= semSubjLessons.split("++")
-                    for subjLesson in subjLessons.split("!!"):
-                        #para cada cadeira desse semestre
-                        subjName, state, grade, *lstTypeTurma =subjLesson.split(",")
-                        #print(subjName)
-                        SubjObj= Subject.objects.get(name=subjName) 
-                        turmas_str=  " ".join(lstTypeTurma)
-                        newSystemUserSubject = SystemUserSubject(user= sysUser, subject=SubjObj, state=state, grade=grade, turmas=turmas_str)
-                        newSystemUserSubject.save()
-                        
-                        #---------- LessonSystemUser objects ----------
-                        if anoLetivoInicio == "2016/2017" :
-                            if semestre == "1sem" :
-                                opcoes= "2016||2017"
-                            elif semestre == "2sem" :
-                                opcoes= "2017||2018"
-                            else:
-                                return "semestre desconhecido"
-                        elif anoLetivoInicio == "2017/2018" :
-                            if semestre == "1sem" :
-                                opcoes= "2017"
-                            elif semestre == "2sem" :
-                                opcoes= "2018"
-                            else:
-                                return "semestre desconhecido"
-                        else : 
-                            return "ano lectivo de inicio desconhecido"
+                    else :
+                        #ex:1sem++Produção de Documentos Técnicos,1,15.0,TP13!!Curso de Competências Sociais e Desenvolvimento Pessoal,1,18.3,TP11!!Programação I (LTI),1,12.2,T11,TP13,PL13|  |2sem++Introdução às Tecnologias Web,1,14.1,T21,TP21,PL21!!Programação II (LTI),1,13.7,T21,TP21,PL21     
+                        for SystemUserCourseObj in lstSystemUserCourseObj:
+                            sysUser= SystemUserCourseObj.user
+                            somaCredUser= 0
 
-                        anoAprov= random.choice(opcoes.split("||")) #ano em q foi aprovado a cadeira
+                            #---------- LessonSystemUser objects ----------
+                            if anoLetivoInicio == "2016/2017" :
+                                    opcoes= "2016/2017||2017/2018"
+                            else: # anoLetivoInicio == "2017/2018" :
+                                    opcoes= "2017/2018"
+                            
+                            #-----------------------------------
+                            for semSubjLessons in line.split("|  |") :
+                                #para cada semestre
+                                semestre, subjLessons= semSubjLessons.split("++")
+                                for subjLesson in subjLessons.split("!!"):
+                                    #para cada cadeira desse semestre
+                                    subjName, state, grade, *lstTypeTurma =subjLesson.split(",")
+                                    #print(subjName)
+                                    SubjObj= Subject.objects.get(name=subjName) 
+                                    somaCredUser = somaCredUser + SubjObj.credits_number
+                                    turmas_str=  " ".join(lstTypeTurma)
+                                    
+                                    #---------- LessonSystemUser objects ----------
+                                    anoLetivoAprov= random.choice(opcoes.split("||")) #ano letivo em q foi aprovado a cadeira
 
-                        #lstTypeTurma: ["T11","TP13","PL13"]
-                        for typeTurma in lstTypeTurma : 
-                            type, turma= separateLettersNumb(typeTurma)
-                            lessonObjs= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma)
-                            diasDaSemana= ""
-                            for lessonObj in lessonObjs : #ex: T11 terça, T11 quinta
-                                diasDaSemana = lessonObj.week_day
+                                    schoolYearObj= SchoolYear.objects.get(begin=int(anoLetivoAprov.split("/")[0]))
+                                    newSystemUserSubject = SystemUserSubject(user= sysUser, subject=SubjObj, state=state, grade=grade, turmas=turmas_str, anoLetivo=schoolYearObj)
+                                    newSystemUserSubject.save()
 
-                                allCorrectDates= lessonSystemUser(anoAprov, semestre, diasDaSemana)
-                                presDate_str= presenca_in_date(allCorrectDates)
+                                    #lstTypeTurma: ["T11","TP13","PL13"]
+                                    for typeTurma in lstTypeTurma : 
+                                        type, turma= separateLettersNumb(typeTurma)
+                                        lessonObjs= Lesson.objects.filter(subject=SubjObj, type=type, turma=turma)
+                                        diasDaSemana= ""
+                                        for lessonObj in lessonObjs : #ex: T11 terça, T11 quinta
+                                            diasDaSemana = lessonObj.week_day
 
-                                for presData in presDate_str.split("!!") :
-                                    presenca, date_str = presData.split(",")
-                                    #print(presData)
-                                    dataFormat= datetime.strptime(date_str, "%d/%m/%Y").date()
-                                    newLessonSystemUser = LessonSystemUser(systemUser=sysUser, lesson=lessonObj, presente=ast.literal_eval(presenca), date=dataFormat)
-                                    newLessonSystemUser.save()
+                                            allCorrectDates= lessonSystemUser(anoLetivoAprov, semestre, diasDaSemana)
+                                            presDate_str= presenca_in_date(allCorrectDates)
+
+                                            for presData in presDate_str.split("!!") :
+                                                presenca, date_str = presData.split(",")
+                                                #print(presData)
+                                                dataFormat= datetime.strptime(date_str, "%d/%m/%Y").date()
+                                                newLessonSystemUser = LessonSystemUser(systemUser=sysUser, lesson=lessonObj, presente=ast.literal_eval(presenca), date=dataFormat)
+                                                newLessonSystemUser.save()
+
+                            if SystemUserCourseObj.minor != "Nao incluido":
+                                #lti
+                                courseDoUser= SystemUserCourseObj.course
+                                C_miniCursos= Course_MiniCourse.objects.filter(course=courseDoUser)
+                                minors= [] #get todos os minors daquele curso
+                                for C_miniCurso in C_miniCursos:
+                                    if C_miniCurso.miniCourse.grau == "Minor" :
+                                        minors.append(C_miniCurso.miniCourse)
+
+                                if somaCredUser >= 108 :
+                                    minorEscolhido= random.choice(minors)
+                                    SystemUserCourseObj.minor= minorEscolhido.name
+
+                            SystemUserCourseObj.totalCred= somaCredUser
+                            SystemUserCourseObj.save()
 
 
 
 
 # -- variaveis --
-dic = {  "2016": {'1sem': ["20/09/2016", "21/12/2016"]}, 
-         "2017": {'1sem': ["18/09/2017", "21/12/2017"], '2sem': ["20/02/2017", "31/05/2017"]}, 
-         "2018": {'2sem': ["19/02/2018", "30/05/2018"]}
-      }
+dic = {  "2016/2017": {'1sem': ["20/09/2016", "21/12/2016"], '2sem': ["20/02/2017", "31/05/2017"]},  
+         "2017/2018": {'1sem': ["18/09/2017", "21/12/2017"], '2sem': ["19/02/2018", "30/05/2018"]}}
+
 lstDiasDaSemana= ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"]
 feriados= ['01/11/2016', '01/12/2016', '08/12/2016'] #incompleto
 ferias= [["04/03", "06/03"], #carnaval
          ["17/04", "23/04"]] #pascoa
 
 
-def lessonSystemUser(anoAprov, semestre, diasDaSemana):
-    dataInicio, dataFinal= dic[anoAprov][semestre]
-    joinFerias= allFeriasDate(ferias, anoAprov)
+def lessonSystemUser(anoLetivoAprov, semestre, diasDaSemana):
+    dataInicio, dataFinal= dic[anoLetivoAprov][semestre]
+    ano= dataInicio.split("/")[2]
+    joinFerias= allFeriasDate(ferias, ano)
     joinFeriasAndFeriados= joinFerias + feriados
     return getDatesBetween2Dates(dataInicio, dataFinal, joinFeriasAndFeriados, diasDaSemana)
 
@@ -581,7 +604,7 @@ def mainInsertData(apps, schema_editor):
     LessonSystemUser.objects.all().delete()
 
     makeRoleOBJs()
-    makeSchoolYearOBJs(2017,2019)
+    makeSchoolYearOBJs(2016,2019)
     makeRoomOBJs(200,42)
     makeSystemUserOBJs()
     makePersonalInfoOBJs()
