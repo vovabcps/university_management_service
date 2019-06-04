@@ -204,7 +204,8 @@ def inscricoes_subject_s(request):
                             miniCursosOthersSubjs.append([miniC, miniCsubjsPorFazer])
 
                     #se naquele curso e naquele ano houver minor e ele foi admitdo
-                    elif miniC.miniCourse.name == suCourse.minor : 
+                    elif miniC.miniCourse.name == suCourse.minor :
+                            miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano).order_by("semester") 
                             minor= [[miniC, miniCsubjs]]
    
                 dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minor': minor}
@@ -226,9 +227,9 @@ def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
             subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #vai buscar as q foram escolhidas automaticamente!
-            #print(subjsNameSemestre)
+            print(subjsNameSemestre)
 
-            valid= True
+            valid= False
             if valid : #se tiver tudo bem
                 dic1SemSubjs= {}
                 dic2SemSubjs= {}

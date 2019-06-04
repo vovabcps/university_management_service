@@ -28,7 +28,7 @@
 									<p><strong>Ano Lectivo atual:</strong> <span id="ano_lectivo_act"></span></p>
 									<p><strong>Ano Curricular:</strong> {{suCourse.anoActual}}º ano</p>
 									<p><strong>Total de créditos que ja tem:</strong><span> {{suCourse.totalCred}}.0 </span>ECTS</p>
-									<p><strong>Total de créditos a que se está a inscrever neste momento:</strong><span> 0.0 </span>/ 72.0 ECTS</p>
+									<p><strong>Total de créditos a que se está a inscrever neste momento: </strong><span id="totalCredEscolhidos">0.0</span>/ 72.0 ECTS</p>
 									<p><strong>Total de créditos para fazer o curso: </strong>{{suCourse.course.credits_number}}.0 ECTS</p>
 						</div>
 					</div>
@@ -82,7 +82,7 @@
 													<td style="width:10%">
 													<div class="radio">
 													<label>
-													<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
+													<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
 													
 												</label>
 													</div>
@@ -122,7 +122,7 @@
 																		<div class="radio">
 																		<label>
 																		
-																		<input type="checkbox" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
+																		<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}">
 																			
 																			
 																		</label>
@@ -200,7 +200,23 @@
 	});
 });
 
+function somarCred(inputCred, inputObj){
+	var oldCred= document.getElementById("totalCredEscolhidos").innerHTML;
+	console.log(inputObj.checked)
+	if (inputObj.checked) { //se activou
+		var newCred= parseInt(oldCred) + inputCred
+	}else{ // se desactivou
+		var newCred= parseInt(oldCred) - inputCred
+	}
+	
+	if (newCred > 72) {
+		alert("No pode ultrapassar os 72 creditos! Neste momento tem: " + oldCred + " creditos.")
+		inputObj.checked = false
 
+	}else{
+		document.getElementById("totalCredEscolhidos").innerHTML = newCred + ".0"
+	}
+}
 
 //var anosCred= {{suCourse.course.credits_numberByYear_as_list|safe}};
 //document.getElementById("credAprov").innerHTML = " " + anosCred[{{suCourse.anoActual}}-1][1] + ".0";
