@@ -228,12 +228,13 @@ def choose_lessons_s(request):
         if request.method == 'POST':
             subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #vai buscar as q foram escolhidas automaticamente!
             print(subjsNameSemestre)
+            #for subjNameSem in subjsNameSemestre : 
+
 
             valid= False
             if valid : #se tiver tudo bem
                 dic1SemSubjs= {}
                 dic2SemSubjs= {}
-            
 
                 for subjNameSem in subjsNameSemestre : 
                     dicTypeTurmaLessons= {}

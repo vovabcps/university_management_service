@@ -66,7 +66,7 @@ fieldset {
 }
 
 
-/* MESSAGES & ERRORS */
+/* -------------------------  mensagens e erros   -------------------------*/
 
 ul.messagelist {
   padding: 0;
@@ -213,6 +213,7 @@ div.system-message p.system-message-title {
 .cursos {
   cursor: pointer;
 }
+
 
 
 /* -------------------------  PERSONAL DATA SHEET   -------------------------*/
