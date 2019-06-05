@@ -167,6 +167,8 @@ def inscricoes_subject_s(request):
 
             for anoCred in lstAnoCred:
                 ano, cred = anoCred.split(":")
+                credFeitosSubjsObrig= 0
+                credTotalTroncoComum= 0
 
                 #as cadeiras obrigatorias q ele vai ter nesse ano
                 courseObrig_subjs= CourseSubject.objects.filter(course=suCourse.course, year=int(ano)).order_by("semester")
@@ -174,8 +176,13 @@ def inscricoes_subject_s(request):
                 #as cadeiras obrigatorias que ele ainda n foi aprovado
                 courseObrig_subjsPorFazer= []
                 for courseObrig_subj in courseObrig_subjs:
+                    credTotalTroncoComum += courseObrig_subj.subject.credits_number
                     if courseObrig_subj.subject not in subjsAprov :
                         courseObrig_subjsPorFazer.append(courseObrig_subj)
+                    else: #se ele ja fez a cadeira
+                        credFeitosSubjsObrig += courseObrig_subj.subject.credits_number
+
+                subjsObrig= [credTotalTroncoComum, credFeitosSubjsObrig, courseObrig_subjsPorFazer]
 
                 #quais sao os mini cursos q o aluno vai ter naquele ano
                 miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=int(ano))
@@ -185,7 +192,7 @@ def inscricoes_subject_s(request):
                 minor= []
                 for miniC in miniCs:
                     credNecessarios= miniC.credits_number
-                    contCred=0
+                    credFeitos=0
                     if miniC.miniCourse.grau != "Minor":
                         if len(miniC.semestres) == 1 :
                             miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano, semester=int(miniC.semestres))
@@ -198,18 +205,18 @@ def inscricoes_subject_s(request):
                             if miniCsubj.subject not in subjsAprov :
                                 miniCsubjsPorFazer.append(miniCsubj)
                             else:
-                                contCred += miniCsubj.subject.credits_number
+                                credFeitos += miniCsubj.subject.credits_number
 
-                        if contCred < credNecessarios :
-                            miniCursosOthersSubjs.append([miniC, miniCsubjsPorFazer])
+                        if credFeitos < credNecessarios :
+                            miniCursosOthersSubjs.append([miniC, credFeitos, miniCsubjsPorFazer])
 
                     #se naquele curso e naquele ano houver minor e ele foi admitdo
                     elif miniC.miniCourse.name == suCourse.minor :
                             miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano).order_by("semester") 
-                            minor= [[miniC, miniCsubjs]]
+                            minor= [[miniC, credFeitos, miniCsubjs]]
    
                 dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minor': minor}
-                course_subjs = {'courseObrig_subjs':courseObrig_subjsPorFazer, 'miniCs_subjs':dicMinorsAndOthers}
+                course_subjs = {'courseObrig_subjs':subjsObrig, 'miniCs_subjs':dicMinorsAndOthers}
 
                 # se ele ainda tiver cadeiras para fazer neste ano:
                 if len(minor) != 0 or len(miniCursosOthersSubjs) != 0 or len(courseObrig_subjsPorFazer) != 0 :
@@ -226,20 +233,38 @@ def inscricoes_subject_s(request):
 def choose_lessons_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         if request.method == 'POST':
-            subjsNameSemestre = request.POST.getlist('subjsNameSemestre') #vai buscar as q foram escolhidas automaticamente!
-            print(subjsNameSemestre)
-            #for subjNameSem in subjsNameSemestre : 
+            valid= True
+            #print(request.POST)  #so vai buscar as q foram escolhidas!
+            subjsEscolhidas= []
+            credTotaisEscolhidos= 0
+            for anoCourseCredTotalCredFeitos in list(request.POST.keys()) : 
+                ano, course, credTotais, credFeitos= anoCourseCredTotalCredFeitos.split("|")
+                credTotaisSubj= 0
+                for subjSemCred in request.POST.getlist(anoCourseCredTotalCredFeitos) :
+                    #print(anoCourseCredTotalCredFeitos + ": " + subjSemCred)
+                    subjsEscolhidas.append(subjSemCred)
+                    subj, sem, cred= subjSemCred.split("|")
+                    credTotaisEscolhidos += int(cred)
+                    credTotaisSubj += int(cred)
+                
+                if  credTotaisSubj + int(credFeitos) > int(credTotais) :
+                    valid= False
+                    messages.error(request, "Não pode ultrapassar os " + credTotais + " cred. de " + course + " do " + ano)
+                    
 
-
-            valid= False
+            if credTotaisEscolhidos > 72 :
+                valid= False
+                messages.error(request, "Não pode ultrapassar os 72 creditos!!!")
+            
+            
             if valid : #se tiver tudo bem
                 dic1SemSubjs= {}
                 dic2SemSubjs= {}
 
-                for subjNameSem in subjsNameSemestre : 
+                for subjNameSem in subjsEscolhidas : 
                     dicTypeTurmaLessons= {}
                     #print(subjNameSem)
-                    subjName, subjSem= subjNameSem.split("|")
+                    subjName, subjSem, subCred= subjNameSem.split("|")
                     #print(subjName, subjSem)
                     SubjObj= Subject.objects.get(name=subjName) 
                     lessons= Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
@@ -268,8 +293,6 @@ def choose_lessons_s(request):
 
                 return render(request, 'student/choose_lessons.html', {'subjsSem':semestre})
             else:
-                messages.error(request, "Ocorreu um problema!")
-                messages.error(request, "qual foi? you will never know muahah")
                 return HttpResponseRedirect(reverse('inscricoes_subject_s'))
 
         else:

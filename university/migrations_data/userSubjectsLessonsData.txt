@@ -32,6 +32,7 @@ Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,3
 #SystemUserSubject      108 ECTCS Realizados
 1sem++Arquiteturas de Computadores,1,17.2,T11,TP11,PL11!!Elementos de Matemática I,1,12.3,T11,TP12!!Programação I (LTI),1,12.2,T11,TP13,PL14!!Produção de Documentos Técnicos,1,19.0,TP16!!Controvérsias Científicas,1,14.3,T11,TP12!!Informática na Ótica do Utilizador,1,20.0,TP19!!Bases de Dados,1,16.7,T11,TP12!!Fundamentos e Técnicas de Visualização,1, 17.2,T11,TP13!!Interação com Computadores,1,16.4,T11,TP12,PL12!!Sistemas Operativos,1,15.7,T11,TP12|  |2sem++Elementos de Matemática II,1,20.0,T21,TP23!!Introdução às Probabilidades e Estatística,1,19.4,T21,TP25!!Introdução às Tecnologias Web,1,14.1,T21,TP24,PL24!!Programação II (LTI),1,13.7,T21,TP22,PL22!!Redes de Computadores,1,12.3,T21,TP23!!Análise e Desenho de Software,1,16.4,T21,TP21!!Aplicações Distribuídas,1,15.4,T21,TP23,PL23!!Aplicações e Serviços na Web,1,14.3,T21,TP23,PL24!!Conceção de Produto,1,14.6,T21,TP22
 
+#variantes: fazer o primeiro ano todo, fazer apenas uma das opcionais 
 
 # --------------------------------------------
 #SystemUserCourse:	

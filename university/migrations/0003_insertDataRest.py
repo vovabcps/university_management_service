@@ -385,16 +385,17 @@ dic = {  "2016/2017": {'1sem': ["20/09/2016", "21/12/2016"], '2sem': ["20/02/201
          "2017/2018": {'1sem': ["18/09/2017", "21/12/2017"], '2sem': ["19/02/2018", "30/05/2018"]}}
 
 lstDiasDaSemana= ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"]
-feriados= ['01/11/2016', '01/12/2016', '08/12/2016'] #incompleto
+feriados = ['01/01', '19/04', '21/04', '25/04', '01/05', '10/06', '20/06', '15/08', '05/10', '01/11', '01/12', '08/12', '25/12'] #completo
 ferias= [["04/03", "06/03"], #carnaval
          ["17/04", "23/04"]] #pascoa
 
 
 def lessonSystemUser(anoLetivoAprov, semestre, diasDaSemana):
     dataInicio, dataFinal= dic[anoLetivoAprov][semestre]
-    ano= dataInicio.split("/")[2]
+    ano= dataInicio.split("/")[2] #201*
     joinFerias= allFeriasDate(ferias, ano)
-    joinFeriasAndFeriados= joinFerias + feriados
+    formatFeriados= convertFeriados(feriados, ano)
+    joinFeriasAndFeriados= joinFerias + formatFeriados
     return getDatesBetween2Dates(dataInicio, dataFinal, joinFeriasAndFeriados, diasDaSemana)
 
 
@@ -430,12 +431,16 @@ def getDatesBetween2Dates(dataInicio, dataFinal, lazyDays=None, diasDaSemana=lst
 
 
 def convertFerias(ferias, ano):
-  #ex: [['04/03/2018', '06/03/2018'], ['17/04/2018', '23/04/2018']]
+  #retorna ex: [['04/03/201*', '06/03/201*'], ['17/04/201*', '23/04/201*']]
   return list(map(lambda lst: list(map(lambda dm: dm + "/" + ano, lst)), ferias))
+
+def convertFeriados(feriados, ano):
+  #retorna ex: feriados = ['01/01/201*', '19/04/201*', '21/04/201*', ...]
+  return list(map(lambda dm: dm + "/" + ano, feriados))
 
 
 def allFeriasDate(ferias, ano):
-  #ex: ['04/03/2018', '05/03/2018', '06/03/2018', '17/04/2018', '18/04/2018', ... , '23/04/2018']
+  #retorna ex: ['04/03/2018', '05/03/2018', '06/03/2018', '17/04/2018', '18/04/2018', ... , '23/04/2018']
   newFerias= convertFerias(ferias, ano)
   newFerias_str= []
   for f in newFerias:

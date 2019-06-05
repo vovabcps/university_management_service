@@ -62,27 +62,28 @@
 								{% for ano, dicCredSubjs in dicAnoSubjs.items %}
 								<!-- {1ºano: {'ceditos': .., 'course_subjs':... }, ... }-->
 
-								<tr class="cursos" bgcolor="whitesmoke" onclick="minicToggleAno('{{ano}}')" >
+								<tr class="cursos" bgcolor="1F2BE1" onclick="minicToggleAno('{{ano}}')" >
 									<td><em class="fa fa-align-justify">&nbsp;</em> </td>
 									<td><strong>{{ano}}</strong></td>
 									<td><strong>1 semestre/2 semestre</strong></td>
 									<td><strong>Créd. necessarios: {{dicCredSubjs.ceditos}}.0 </strong></td>
 								</tr>
 									
+								
 												<tr data-ano="{{ano}}toggle" class="cursos" value="{{ano}}principais" bgcolor="yellow" onclick="minicToggle('{{ano}}principais')">
 														<td><em class="fa fa-align-justify">&nbsp;</em> </td>
 														<td><strong>Tronco Comum (cadeiras obrigatorias)</strong></td>
 														<td><strong>1 semestre/2 semestre</strong></td>
-														<td><strong>Créd. necessarios: <span id="{{ano}}credNecessPrinc"></span>.0 </strong></td>
+														<td><strong>{{dicCredSubjs.course_subjs.courseObrig_subjs.1}}.0(completados) / {{dicCredSubjs.course_subjs.courseObrig_subjs.0}}.0(necessarios) </strong></td>
 													</tr>
 
-											{% for subjs in dicCredSubjs.course_subjs.courseObrig_subjs %}
+											{% for subjs in dicCredSubjs.course_subjs.courseObrig_subjs.2 %}
 
-													<tr data-mcName="{{ano}}principais" >
+													<tr data-mcName="{{ano}}principais">
 													<td>
 													<div class="radio">
 													<label>
-													<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}|{{subjs.get_subject_credits}}">
+													<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="{{ano}}|Tronco Comum|{{dicCredSubjs.course_subjs.courseObrig_subjs.0}}|{{dicCredSubjs.course_subjs.courseObrig_subjs.1}}" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}|{{subjs.get_subject_credits}}">
 												</label>
 													</div>
 													</td>
@@ -91,16 +92,17 @@
 													<p>{{subjs.year}} ano, {{subjs.semester}} semestre</p>
 													</td>
 													<td>{{subjs.type}}</td>
-													<td value="{{subjs.get_subject_credits}}">{{subjs.get_subject_credits}}.0 Créd.</td>
+													<td>{{subjs.get_subject_credits}}.0 Créd.</td>
 													</tr>
 
 											{% endfor %}
+										
 
 												
 											
 											{% for minorsOthers, lstLstMcSubjs  in dicCredSubjs.course_subjs.miniCs_subjs.items %}
 
-														{% for mc, lstMcSubjs  in lstLstMcSubjs %}
+														{% for mc, credFeitos, lstMcSubjs  in lstLstMcSubjs %}
 
 														{% if minorsOthers == "minor" and dicCredSubjs.course_subjs.miniCs_subjs.minor %} <!-- se houver minor-->
 															<tr data-ano="{{ano}}toggle" class="cursos" bgcolor="beige" onclick="minicToggle('{{ano}}{{mc.get_miniCourse_name}}')" value="{{ano}}{{mc.get_miniCourse_name}}">
@@ -110,7 +112,7 @@
 																		<td><em class="fa fa-align-justify">&nbsp;</em> </td>
 																		<td><strong>{{mc.get_miniCourse_name}}</strong></td>
 																		<td><strong>{{mc.formatarSem}}</strong></td>
-																		<td><strong>Créd. necessarios: {{mc.credits_number}}.0 </strong></td>													
+																		<td><strong>{{credFeitos}}.0(completados) / {{mc.credits_number}}.0(necessarios) </strong></td>													
 																	</tr>
 																
 													
@@ -121,7 +123,7 @@
 																		<div class="radio">
 																		<label>
 																		
-																		<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="subjsNameSemestre" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}|{{subjs.get_subject_credits}}">
+																		<input type="checkbox" onclick="somarCred({{subjs.get_subject_credits}}, this)" name="{{ano}}|{{mc.get_miniCourse_name}}|{{mc.credits_number}}|{{credFeitos}}" id="{{subjs.get_subject_name}}|{{subjs.semester}}" value="{{subjs.get_subject_name}}|{{subjs.semester}}|{{subjs.get_subject_credits}}">
 																			
 																			
 																		</label>
@@ -166,6 +168,20 @@
 </div><!-- /.row -->
 </div>
 
+{% if not messages %}
+<script>
+			//guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
+			if(localStorage.getItem("UserSubjs") != undefined){
+				var userSubjs = JSON.parse(localStorage.getItem("UserSubjs"))
+				for (var i = 0; i<userSubjs.length; i++){
+					$("input[id='"+userSubjs[i]+"']").prop("checked", true );
+				}
+				document.getElementById("totalCredEscolhidos").innerHTML= localStorage.getItem("UserCred")
+			}
+</script>
+{% endif %}
+
+
 <script>
 	var today = new Date();
 	var anoAct = today.getFullYear();
@@ -179,20 +195,10 @@
 	}
 	document.getElementById("ano_lectivo_act").innerHTML = anoLectivo;
 
-
-		//guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
-	if(localStorage.getItem("UserSubjs") != undefined){
-		var userSubjs = JSON.parse(localStorage.getItem("UserSubjs"))
-		for (var i = 0; i<userSubjs.length; i++){
-			$("input[id='"+userSubjs[i]+"']").prop("checked", true );
-		}
-		document.getElementById("totalCredEscolhidos").innerHTML= localStorage.getItem("UserCred")
-	}
-
 	$(document).ready(function () {
     $('#submit').click(function(evt) {
 			var cadeirasEscolhidas= [];
-			$.each($("input[name='subjsNameSemestre']:checked"), function () {
+			$.each($("input[type='checkbox']:checked"), function () {
 				cadeirasEscolhidas.push($(this).attr('id'))
 			});
 			var UserCadeirasEscolh= JSON.stringify(cadeirasEscolhidas);
@@ -211,7 +217,7 @@ function somarCred(inputCred, inputObj){
 	}
 	
 	if (newCred > 72) {
-		alert("No pode ultrapassar os 72 creditos! Neste momento tem: " + oldCred + " creditos.")
+		alert("Não pode ultrapassar os 72 creditos! Neste momento tem: " + oldCred + " creditos.")
 		inputObj.checked = false
 
 	}else{

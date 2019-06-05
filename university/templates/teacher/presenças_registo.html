@@ -99,5 +99,38 @@
                 </div>
             </div>
         </div><!--/.row-->
-	
+    
+        
+<script>
+    function deleteCalendar() {
+        $("#calendar").remove();
+        //$("#option1").append(newCalendarBtn);
+    };
+    
+
+    $(document).ready(function () {
+        $("#option1 #calendar .datepicker-days td").click(function(){
+            console.log(53534)
+            var day = $(this).text();
+            var month = $("#calendar .datepicker-days .datepicker-switch").text();
+            console.log(day);
+            $("#option2 #dateDay").text(day + ", " + month);
+            $("#option2, #option3").css("display", "block");
+            checkedClass();
+            deleteCalendar();
+        });
+
+        $("#option2 input[name='turmas']").click(function(){
+            checkedClass();
+        });
+    });
+    
+    function checkedClass() {
+        var turma = $("#option2 input[name='turmas']:checked").val();
+        $("#turma").text(turma);
+    };
+    
+
+
+</script>
 {% endblock %}

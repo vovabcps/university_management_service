@@ -81,7 +81,7 @@ class LessonAdmin(admin.ModelAdmin):
 admin.site.register(Lesson,  LessonAdmin)
 
 class LessonSystemUserAdmin(admin.ModelAdmin):
-  search_fields = ["user__user__username", "date"]
+  search_fields = ["systemUser__user__username", "date"]
   list_filter = ["presente"]
   list_display = ["id", "get_lesson_information", "get_systemUser_user", "presente", "date"]
 admin.site.register(LessonSystemUser,  LessonSystemUserAdmin)

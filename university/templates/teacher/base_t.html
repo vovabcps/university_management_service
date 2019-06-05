@@ -137,7 +137,7 @@
 					</a></li>
 				</ul>
 			</li>
-            <li class="parent "><a data-toggle="collapse" href="#sub-item-2">
+            <li id="disciplinas" class="parent "><a data-toggle="collapse" href="#sub-item-2">
 				<em class="fa fa-navicon">&nbsp;</em> Disciplinas <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-2">
@@ -155,7 +155,7 @@
 					</a></li>
 				</ul>
 			</li>
-            <li class="parent "><a data-toggle="collapse" href="#sub-item-3">
+            <li id="presenças" class="parent "><a data-toggle="collapse" href="#sub-item-3">
 				<em class="fa fa-navicon">&nbsp;</em> Presenças <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
 				</a>
 				<ul class="children collapse" id="sub-item-3">
@@ -265,6 +265,10 @@ if (pageArray[pageArray.length - 1] == ""){
 if (pag == "consult_details" || pag == "consult_contacts"){
 	pag="consultar";  
 } 
+
+if (pag= "presencas_registar"){
+	pag="presenças";
+}
 
 li= document.getElementById(pag);
 li.classList.add("active");

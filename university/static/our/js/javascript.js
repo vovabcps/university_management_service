@@ -200,7 +200,6 @@ function marcado(obj,id) {
 
 function prepareTRs(ano){
 	minicToggleAno(ano)
-	somCredTroncoComum(ano)
 }
 
 
@@ -221,17 +220,6 @@ function minicToggleAno(ano){
 
 
 
-//nao pode haver cadeiras opcionais no tronco comum 
-function somCredTroncoComum(ano){
-    var soma= 0
-    console.log("tr[data-mcName='"+ano+"principais']")
-	$.each($("tr[data-mcName='"+ano+"principais']"), function () {
-        console.log($(this))
-		//soma += $(this)
-		soma += parseInt($(this).children()[3].getAttribute('value'))
-	});
-	document.getElementById(ano+"credNecessPrinc").innerHTML= soma
-}
 
 
 
