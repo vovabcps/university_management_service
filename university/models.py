@@ -179,7 +179,7 @@ class Subject(models.Model):
             if len(word) > 3 and "(" not in word:
                 sigla = sigla + word[0]
                 
-            if "I" in word and "(" not in word: #(LTI) / PII
+            elif "I" in word and "(" not in word: #(LTI) / PII
                 sigla = sigla + word
 
         return sigla

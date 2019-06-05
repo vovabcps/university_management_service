@@ -299,16 +299,18 @@
 
 
   function getSigla(umaString) {
+    console.log(umaString)
     lista = umaString.split(" ")
     sigla = ""
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
         sigla = sigla + lista[i][0]
       }
-      if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
+      else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
                 sigla = sigla + lista[i]
       }
     }
+    console.log(sigla)
     return sigla
   }
 
@@ -332,15 +334,17 @@
     var escolhidos= allTurmasEscolhidas1sem + allTurmasEscolhidas2sem
     var aumento= 100/totalAllLessons;
     console.log(totalAllLessons)
-    console.log(escolhidos)
 
     var elem = document.getElementById("myBar");   
     var prog = document.getElementById("percent");
     var width= prog.innerHTML; 
 
+    console.log(aumento)
+    console.log(escolhidos)
     width = escolhidos * aumento; 
+    console.log(width)
     elem.style.width = width + '%'; 
-    prog.innerHTML = width;
+    prog.innerHTML = width.toFixed(2);
     if (width >= 100) {
       elem.style.backgroundColor= "green";
       elem.style.color= "white";

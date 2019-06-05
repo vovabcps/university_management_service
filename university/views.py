@@ -146,9 +146,9 @@ def home_s(request):
 def inscricoes_subject_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         su= request_user(request)
-
         schoolYearObj= SchoolYear.objects.get(begin=2018)
         inscrito= SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj).first()
+
         #verificar se o aluno ja esta incrito em cadeiras de um curso
         if not inscrito:
             #cadeiras que ele nao se pode inscrever pq ja foi aprovado
@@ -156,7 +156,7 @@ def inscricoes_subject_s(request):
             subjsAprov= []
             for SystemUSubjectObj in SystemUserSubjectObjs :
                 subjsAprov.append(SystemUSubjectObj.subject)
-
+            print(len(subjsAprov))
 
             #curso do aluno
             suCourse= SystemUserCourse.objects.get(user=su)
@@ -167,6 +167,7 @@ def inscricoes_subject_s(request):
 
             for anoCred in lstAnoCred:
                 ano, cred = anoCred.split(":")
+                credFeitosAno= 0
                 credFeitosSubjsObrig= 0
                 credTotalTroncoComum= 0
 
@@ -180,9 +181,11 @@ def inscricoes_subject_s(request):
                     if courseObrig_subj.subject not in subjsAprov :
                         courseObrig_subjsPorFazer.append(courseObrig_subj)
                     else: #se ele ja fez a cadeira
+                        print(courseObrig_subj.subject.name)
                         credFeitosSubjsObrig += courseObrig_subj.subject.credits_number
 
                 subjsObrig= [credTotalTroncoComum, credFeitosSubjsObrig, courseObrig_subjsPorFazer]
+                credFeitosAno += credFeitosSubjsObrig
 
                 #quais sao os mini cursos q o aluno vai ter naquele ano
                 miniCs= Course_MiniCourse.objects.filter(course=suCourse.course, year=int(ano))
@@ -205,22 +208,27 @@ def inscricoes_subject_s(request):
                             if miniCsubj.subject not in subjsAprov :
                                 miniCsubjsPorFazer.append(miniCsubj)
                             else:
+                                print(miniCsubj.subject.name)
                                 credFeitos += miniCsubj.subject.credits_number
 
-                        if credFeitos < credNecessarios :
+                        if credFeitos < credNecessarios : #se ele ainda tem cred para fazer do mini curso
                             miniCursosOthersSubjs.append([miniC, credFeitos, miniCsubjsPorFazer])
+                        else: #se ele ja completou o minicurso
+                            miniCursosOthersSubjs.append([miniC, credFeitos, []])
 
                     #se naquele curso e naquele ano houver minor e ele foi admitdo
                     elif miniC.miniCourse.name == suCourse.minor :
                             miniCsubjs= CourseSubject.objects.filter(course=miniC.miniCourse, year=ano).order_by("semester") 
                             minor= [[miniC, credFeitos, miniCsubjs]]
+                    
+                    credFeitosAno += credFeitos
    
                 dicMinorsAndOthers = {'others': miniCursosOthersSubjs, 'minor': minor}
                 course_subjs = {'courseObrig_subjs':subjsObrig, 'miniCs_subjs':dicMinorsAndOthers}
 
                 # se ele ainda tiver cadeiras para fazer neste ano:
-                if len(minor) != 0 or len(miniCursosOthersSubjs) != 0 or len(courseObrig_subjsPorFazer) != 0 :
-                    dicAnoSubjs[ano + "º ano"] = {'ceditos': cred, 'course_subjs': course_subjs}
+                #if len(minor) != 0 or len(miniCursosOthersSubjs) != 0 or len(courseObrig_subjsPorFazer) != 0 :
+                dicAnoSubjs[ano + "º ano"] = {'ceditos': [credFeitosAno, cred] , 'course_subjs': course_subjs}
 
             return render(request, 'student/inscricoes_subject.html', {'suCourse': suCourse, 'dicAnoSubjs':dicAnoSubjs})
         else: 

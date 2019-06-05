@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     #override django's admin
     'university',
-    'django.contrib.admin'
+    'django.contrib.admin',
+    'daterange_filter'
 ]
 
 MIDDLEWARE = [

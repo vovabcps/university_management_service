@@ -213,6 +213,12 @@ div.system-message p.system-message-title {
 .cursos {
   cursor: pointer;
 }
+.cursos > td {
+  color: black !important;
+}
+.cursos > td > em{
+  color: black !important;
+}
 
 
 
