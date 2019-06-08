@@ -47,51 +47,85 @@
 
 
 <div class="panel panel-default">
-  <div class="panel-heading">Pedido de Mudança de Turma</div>
-    <form role="form" id="insert_disciplina" method="post" action="{% url 'request_change_lesson_s' %}">
-      <div class="panel-body">
-        <div >
-          <label for="disciplina">Escolha a Disciplina</label>
-          <fieldset>
-              <input type="radio" name="subject" value="m1"> Matemática I<br>
-              <input type="radio" name="subject" value="AC"> Arquitetura de Computadores<br>
-              <input type="radio" name="subject" value="m2"> Matemática II<br>
-              <input id="f1" type="radio" name="subject" value="f1"> Fisica I<br>
-              <input type="radio" name="subject" value="itw"> ITW<br>
-              <input type="radio" name="subject" value="pg1"> Prog I<br>
-          </fieldset>
+    <div class="panel-body tabs">
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab">Arquitetura de Computadores</a></li>
+            <li><a href="#tab2" data-toggle="tab">Fisica I</a></li>
+            <li><a href="#tab3" data-toggle="tab">Programação I</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane fade in active" id="tab1">
+                <h4>Arquitetura de Computadores</h4>
+                <div class="tabs">
+                    <ul class="nav nav-pills">
+                        <li class="active"><a href="#subtab1" data-toggle="tab">Teórica</a></li>
+                        <li><a href="#subtab2" data-toggle="tab">Prática</a></li>
+                        <li><a href="#subtab3" data-toggle="tab">Laboratorial</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade in active" id="subtab1">
+                            <h4>Teórica</h4>
+                            <p>Turma Atual: T11</p>
+
+                            <p>Escolhe a turma para onde pretendes ir:</p>
+                            <div class="form-group" style="margin-left: 10%">
+                                <label>Monday</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>T12, 9:00-10:00, 3.2.14
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="subtab2">
+                            <h4>Prática</h4>
+                            <p>Turma Atual: TP22</p>
+                            <p>Escolhe a turma para onde pretendes ir:</p>
+                            <div class="form-group" style="margin-left: 10%">
+                                <label>Tuesday</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>TP23, 9:00-10:00, 3.2.14
+                                    </label>
+                                </div>
+                                <label>Friday</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>TP21, 9:00-10:00, 3.2.14
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="subtab3">
+                            <h4>Laboratorial</h4>
+                            <p>Turma Atual: PL23</p>
+                            <p>Escolhe a turma para onde pretendes ir:</p>
+                            <div class="form-group" style="margin-left: 10%">
+                                <label>Friday</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>PL21, 9:00-10:00, 3.2.14
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" checked>PL22, 9:00-10:00, 3.2.14
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="tab2">
+                <h4>Fisica I</h4>
+            </div>
+            <div class="tab-pane fade" id="tab3">
+                <h4>Programação I</h4>
+            </div>
         </div>
-      </div><!-- /.panel1-->
-
-      <div class="panel-body">
-        <div style="float: left; width: 50%;">
-          <label id="l2" for="turma_atual">Escolha Turma Atual:</label>
-          <fieldset id='ta'>
-              <input type="radio" name="turma" value="T11"> T11<br>
-              <input type="radio" name="turma" value="TP12"> TP12<br>
-              <input type="radio" name="turma" value="PL12"> TP12<br>
-          </fieldset>
-        </div>
-
-        <div style="float: right; width: 50%;">
-          <label id="l3" for="turma_novas">Escolha Nova Turma:</label>
-          <fieldset id="th">
-          <input type="radio" name="turmaNova" value="T12"> T12<br>
-          <input type="radio" name="turmaNova" value="T13"> T13<br>
-          <input type="radio" name="turmaNova" value="T14"> T14<br>
-          <input type="radio" name="turmaNova" value="T15"> T15<br>
-          <input type="radio" name="turmaNova" value="T16"> T11<br>
-          <fieldset>
-        </div>
-    </div><!-- /.panel2-->
-
-    <div class="panel-body">
-      <button id="submit" type="submit" style="float: left" class="btn btn btn-primary">Solicitar Alteração</button>
-      <button id="clear" type="button" class="btn btn" style="background-color: grey; color: white" onclick="location.reload()">Limpar Seleção</button>
-    </div
-    </div><!-- /.panel3-->
-
-  </form>
-</div><!-- /.col-->
+        <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
+    </div>
+</div>
 
 {% endblock %}
