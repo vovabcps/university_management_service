@@ -12,90 +12,125 @@
 {% block content %}
 
 <div id="content-main">
-		
 		<div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Disciplinas</div>
-                        <div class="panel-body">
-                            <button type="button">Projeto Tecnologias de Informação</button>
-							<button type="button">Projeto Tecnologias de Redes</button>
-                        </div>
-                    </div>
-                </div>
-        </div>
-            
-            
-
-		<style>
-		
-
-			#box3 {
-
-			 }
-			
-			.dropdown {
-			  position: relative;
-			  display: inline-block;
-			}
-
-			.dropdown-content {
-			  display: none;
-			  position: absolute;
-			  background-color: #f9f9f9;
-			  min-width: 160px;
-			  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-			  padding: 12px 16px;
-			  z-index: 1;
-			}
-
-			.dropdown:hover .dropdown-content {
-			  display: block;
-			}
-			
-			
-			.but {
-			align: center;
-			}
-			
-			#conf {
-			margin-left: 35%;
-			}
-			
-
-			
-			
-		</style>
-		
-
-		
-		<div class="row" id='box2'>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Pedidos Recebidos</div>
+				<div class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-body tabs">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#tab1" data-toggle="tab">Projeto Tecnologias de Informação</a></li>
+								<li><a href="#tab2" data-toggle="tab">Projeto Tecnologias de Redes</a></li>
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane fade in active" id="tab1">
+									<h4>Projeto Tecnologias de Informação</h4>
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="5">Mudança de Turma</th>
+											</tr>
+											<tr>
+												<th>Número</th>
+												<th>Nome</th>
+												<th>Origem</th>
+												<th>Mudança</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>11111</td>
+												<td>Ana Lúcia</td>
+												<td>TP23</td>
+												<td>TP24</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+											<tr>
+												<td>22222</td>
+												<td>Claudia Pascoal</td>
+												<td>TP24</td>
+												<td>TP23</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tab2">
+									<h4>Projeto Tecnologias de Redes</h4>
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="5">Mudança de Turma</th>
+											</tr>
+											<tr>
+												<th>Número</th>
+												<th>Nome</th>
+												<th>Origem</th>
+												<th>Mudança</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>33333</td>
+												<td>Carlos Andrade</td>
+												<td>PL21</td>
+												<td>PL22</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div><!--/.panel-->
+				</div><!--/.col-->
+	
+				<div class="col-md-6">
+					<div class="panel panel-default">
 						<div class="panel-body">
-							<p>*Colocar um novo div com o pedido cada vez que é recebebido um pedido de um aluno*<p>
+							<table class="table">
+								<thead>
+									<tr>
+										<th colspan="5">Mudança de Turma</th>
+									</tr>
+									<tr>
+										<th>Número</th>
+										<th>Nome</th>
+										<th>Origem</th>
+										<th>Mudança</th>
+										<th>Ação Tomada</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>11111</td>
+										<td>Ana Lúcia</td>
+										<td>TP23</td>
+										<td>TP24</td>
+										<td>Aceite</td>
+									</tr>
+									<tr>
+										<td>22222</td>
+										<td>Claudia Pascoal</td>
+										<td>TP24</td>
+										<td>TP23</td>
+										<td>Rejeitado</td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
-						<div id = "conf">
-						<button id = "but1" type="button">Rejeitar Pedido</button>
-						<button id = "but2" type="button">Aceitar Pedido</button>
-						</div>
-                    </div>
-                </div>
-        </div>
-            
- 		<div class="row" id='box3'>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Pedidos Respondidos</div>
-                        <div class="panel-body">
-                            <p>*Colocar um novo div com uma resposta cada vez que é respondido um dos pedidos da tabela a cima*<p>
-							
-                        </div>
-                    </div>
-                </div>
-        </div>
-		
-	</div><!--/.main-->
+					</div><!--/.panel-->
+				</div><!--/.col-->
+			</div><!--/.row-->
+</div><!--/.main-->
 
-	{% endblock %}
+{% endblock %}
