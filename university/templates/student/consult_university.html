@@ -1,0 +1,87 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Consultar universidade{% endblock %}
+
+{% block content_title %}Pesquisar Universidade:{% endblock %}
+
+{% block breadcrumbs %}
+        › Pesquisar Universidade
+{% endblock %}
+
+
+{% block content %}
+
+<div id="content-main">
+
+            
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Procurar Universidade</div>
+                        <div class="panel-body">
+                            <form role="form" id="" onsubmit="return false">
+                                <div class="form-group">
+                                    <label>Nome da Universidade</label>
+                                    <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 0);">
+                                </div>
+                            </form>
+
+                            <br><hr><br>
+
+                            <table id="resultTable" class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th>Sigla</th>
+                                            <th>Website</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    {% for facline in listaFaculdades %}
+                                        <tr>
+                                            <td>{{facline.name}}</td>
+                                            <td>{{facline.sigla}}</td>
+                                            <td><a href=http://www.{{facline.link}}>{{facline.link}}</a></td>
+
+                                        </tr>
+                                    {% endfor%}
+
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                </div>
+            </div><!--/.row-->
+    
+            
+	</div><!--/.main-->
+	
+
+<script>
+            function DoSearch(id_input, id_table, n_column) {
+                var input, filter, table, tr, td, i;
+                
+                input = document.getElementById(id_input);
+                filter = input.value.toUpperCase();
+                
+                table = document.getElementById(id_table);
+                tr = table.getElementsByTagName("tr");
+                
+                for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[n_column];
+                
+                if (td) {
+                    if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    } else {
+                    tr[i].style.display = "none";
+                    }
+                }
+                }
+            };
+</script>
+
+{% endblock %}
