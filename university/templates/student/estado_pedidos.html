@@ -8,6 +8,8 @@
 {% block breadcrumbs %}
         › Responder pedidos
 {% endblock %}
+<!-- › Consulta e Resposta a Pedidos de Mudança de Turma-->
+
 
 {% block content %}
 
@@ -17,20 +19,20 @@
 					<div class="panel panel-default">
 						<div class="panel-body tabs">
 							<ul class="nav nav-tabs">
-								<li class="active"><a href="#tab1" data-toggle="tab">Projeto Tecnologias de Informação</a></li>
-								<li><a href="#tab2" data-toggle="tab">Projeto Tecnologias de Redes</a></li>
+								<!-- <li class="active"><a href="#tab1" data-toggle="tab">Projeto Tecnologias de Informação</a></li>
+								<li><a href="#tab2" data-toggle="tab">Projeto Tecnologias de Redes</a></li> -->
 							</ul>
 							<div class="tab-content">
 								<div class="tab-pane fade in active" id="tab1">
-									<h4>Projeto Tecnologias de Informação</h4>
+									<!-- <h4>Projeto Tecnologias de Informação</h4> -->
 									<table class="table">
 										<thead>
 											<tr>
-												<th colspan="5">Mudança de Turma</th>
+												<th colspan="5">Resposta a Pedidos</th>
 											</tr>
 											<tr>
-												<th>Número</th>
-												<th>Nome</th>
+                        <th>Disciplina</th>
+												<th>Professor</th>
 												<th>Origem</th>
 												<th>Mudança</th>
 												<th></th>
@@ -38,20 +40,10 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>11111</td>
-												<td>Ana Lúcia</td>
+                        <td>Arquitetura de Computadores</td>
+                        <td>João Oliveira</td>
 												<td>TP23</td>
 												<td>TP24</td>
-												<td>
-													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
-													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
-												</td>
-											</tr>
-											<tr>
-												<td>22222</td>
-												<td>Claudia Pascoal</td>
-												<td>TP24</td>
-												<td>TP23</td>
 												<td>
 													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
 													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
@@ -60,16 +52,16 @@
 										</tbody>
 									</table>
 								</div>
-								<div class="tab-pane fade" id="tab2">
+								<!-- <div class="tab-pane fade" id="tab2">
 									<h4>Projeto Tecnologias de Redes</h4>
 									<table class="table">
 										<thead>
 											<tr>
-												<th colspan="5">Mudança de Turma</th>
+												<th colspan="5">Resposta a Pedidos de Mudança de Turma</th>
 											</tr>
 											<tr>
-												<th>Número</th>
-												<th>Nome</th>
+                        <th>Disciplina</th>
+												<th>Professor</th>
 												<th>Origem</th>
 												<th>Mudança</th>
 												<th></th>
@@ -77,52 +69,51 @@
 										</thead>
 										<tbody>
 											<tr>
-												<td>33333</td>
-												<td>Carlos Andrade</td>
-												<td>PL21</td>
-												<td>PL22</td>
-												<td>
+                        <td>Arquitetura de Computadores</td>
+                        <td>João Oliveira</td>
+												<td>TP23</td>
+												<td>TP24</td
 													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
 													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
 												</td>
 											</tr>
 										</tbody>
 									</table>
-								</div>
+								</div> -->
 							</div>
 						</div>
 					</div><!--/.panel-->
 				</div><!--/.col-->
-	
+
 				<div class="col-md-6">
 					<div class="panel panel-default">
 						<div class="panel-body">
 							<table class="table">
 								<thead>
 									<tr>
-										<th colspan="5">Mudança de Turma</th>
+										<th colspan="5">Estado dos Pedidos</th>
 									</tr>
 									<tr>
-										<th>Número</th>
-										<th>Nome</th>
-										<th>Origem</th>
-										<th>Mudança</th>
+                    <th>Disciplina</th>
+                    <th>Professor</th>
+                    <th>Origem</th>
+                    <th>Mudança</th>
 										<th>Ação Tomada</th>
 									</tr>
 								</thead>
 								<tbody>
 									<tr>
-										<td>11111</td>
-										<td>Ana Lúcia</td>
-										<td>TP23</td>
-										<td>TP24</td>
+                    <td>Matemática I</td>
+                    <td>Maria Silva</td>
+                    <td>TP23</td>
+                    <td>TP24</td>
 										<td>Aceite</td>
 									</tr>
 									<tr>
-										<td>22222</td>
-										<td>Claudia Pascoal</td>
-										<td>TP24</td>
-										<td>TP23</td>
+                    <td>Arquitetura de Computadores</td>
+                    <td>João Oliveira</td>
+                    <td>TP23</td>
+                    <td>TP24</td>
 										<td>Rejeitado</td>
 									</tr>
 								</tbody>
