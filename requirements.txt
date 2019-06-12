@@ -2,4 +2,4 @@ Django==2.1.7
 mysqlclient==1.4.2
 wheel==0.32.3
 gunicorn==19.9.0
-daterange_filter
+daterange_filter==1.3.0
