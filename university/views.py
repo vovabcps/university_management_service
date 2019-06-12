@@ -498,6 +498,13 @@ def request_change_lesson_s(request):
     else: 
         return HttpResponseRedirect(reverse('login'))
 
+def estado_pedidos_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/estado_pedidos.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
+
 def apagar_s(request):
     return render(request, 'student/apagar.html', {})
 
@@ -656,10 +663,16 @@ def uniqueElements(lst):
 
 def resposta_pedidos_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        return render(request, 'teacher/envio_resposta_pedidos_D.html', {})
+        return render(request, 'teacher/resposta_pedidos_D.html', {})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
+
+def enviar_pedidos_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/enviar_pedido.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 def presencas_consultar_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :

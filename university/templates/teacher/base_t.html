@@ -146,7 +146,7 @@
 					<li><a class="" href="{% url 'consult_turmas_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Consulta Turmas
 					</a></li>
-                    <li><a class="" href="{% url 'resposta_pedidos_t' %}">
+                    <li><a class="" href="{% url 'enviar_pedidos_t' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Envio de Pedido
 					</a></li>
                     <li><a class="" href="{% url 'resposta_pedidos_t' %}">
@@ -233,7 +233,7 @@
 
     {% block footer %}
       <footer class="rodape">
-          <p class="reservado"> © 2019 G05 DIANA GALVÃO, MARIANA LEITES, RUTE MONTEIRO, RUTE PALMEIRO, SÉRGIO MENDES, VOLODYMYR KELBEL  ALL RIGHTS RESERVED</p> 
+          <p class="reservado"> © 2019 G05 ALL RIGHTS RESERVED</p> 
       </footer>
     {% endblock %}
 
@@ -268,7 +268,7 @@ if (pag == "consult_details" || pag == "consult_contacts" || pag == "horario"){
 	pag="consultar";  
 } 
 
-if (pag == "consult_turmas" || pag == "resposta_pedidos"){
+if (pag == "consult_turmas" || pag == "resposta_pedidos" || pag=="enviar_pedidos"){
 	pag="disciplinas";  
 } 
 

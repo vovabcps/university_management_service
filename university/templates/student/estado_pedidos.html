@@ -1,0 +1,136 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Responder pedidos{% endblock %}
+
+{% block content_title %}Responder pedidos{% endblock %}
+
+{% block breadcrumbs %}
+        › Responder pedidos
+{% endblock %}
+
+{% block content %}
+
+<div id="content-main">
+		<div class="row">
+				<div class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-body tabs">
+							<ul class="nav nav-tabs">
+								<li class="active"><a href="#tab1" data-toggle="tab">Projeto Tecnologias de Informação</a></li>
+								<li><a href="#tab2" data-toggle="tab">Projeto Tecnologias de Redes</a></li>
+							</ul>
+							<div class="tab-content">
+								<div class="tab-pane fade in active" id="tab1">
+									<h4>Projeto Tecnologias de Informação</h4>
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="5">Mudança de Turma</th>
+											</tr>
+											<tr>
+												<th>Número</th>
+												<th>Nome</th>
+												<th>Origem</th>
+												<th>Mudança</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>11111</td>
+												<td>Ana Lúcia</td>
+												<td>TP23</td>
+												<td>TP24</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+											<tr>
+												<td>22222</td>
+												<td>Claudia Pascoal</td>
+												<td>TP24</td>
+												<td>TP23</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="tab-pane fade" id="tab2">
+									<h4>Projeto Tecnologias de Redes</h4>
+									<table class="table">
+										<thead>
+											<tr>
+												<th colspan="5">Mudança de Turma</th>
+											</tr>
+											<tr>
+												<th>Número</th>
+												<th>Nome</th>
+												<th>Origem</th>
+												<th>Mudança</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>33333</td>
+												<td>Carlos Andrade</td>
+												<td>PL21</td>
+												<td>PL22</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
+													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div><!--/.panel-->
+				</div><!--/.col-->
+	
+				<div class="col-md-6">
+					<div class="panel panel-default">
+						<div class="panel-body">
+							<table class="table">
+								<thead>
+									<tr>
+										<th colspan="5">Mudança de Turma</th>
+									</tr>
+									<tr>
+										<th>Número</th>
+										<th>Nome</th>
+										<th>Origem</th>
+										<th>Mudança</th>
+										<th>Ação Tomada</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>11111</td>
+										<td>Ana Lúcia</td>
+										<td>TP23</td>
+										<td>TP24</td>
+										<td>Aceite</td>
+									</tr>
+									<tr>
+										<td>22222</td>
+										<td>Claudia Pascoal</td>
+										<td>TP24</td>
+										<td>TP23</td>
+										<td>Rejeitado</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div><!--/.panel-->
+				</div><!--/.col-->
+			</div><!--/.row-->
+</div><!--/.main-->
+
+{% endblock %}

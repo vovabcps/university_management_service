@@ -164,8 +164,8 @@
 					<li><a class="" href="{% url 'request_change_lesson_s' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Mudança de Turma
 					</a></li>
-					<li><a class="" href="{% url 'home_s' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Enviar Email
+					<li><a class="" href="{% url 'estado_pedidos_s' %}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Estado de pedidos
 					</a></li>
 				</ul>
 			</li>
@@ -232,7 +232,7 @@
 
     {% block footer %}
       <footer class="rodape">
-          <p class="reservado"> © 2019 G05 DIANA GALVÃO, MARIANA LEITES, RUTE MONTEIRO, RUTE PALMEIRO, SÉRGIO MENDES, VOLODYMYR KELBEL  ALL RIGHTS RESERVED</p> 
+          <p class="reservado"> © 2019 G05 ALL RIGHTS RESERVED</p> 
       </footer>
     {% endblock %}
 
@@ -271,7 +271,7 @@ if (pag == "inscricoes_subject" || pag == "choose_lessons") {
 	pag="inscricao";  
 } 
 
-if (pag == "request_change_lesson" ) {
+if (pag == "request_change_lesson" || pag=="estadoPedidos" ) {
 	pag="pedidos";  
 } 
 
