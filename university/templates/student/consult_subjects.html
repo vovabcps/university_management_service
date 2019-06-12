@@ -22,54 +22,31 @@
                                 <div class="panel-heading">As Minhas Disciplinas</div>
     
                                 <div class="panel-body articles-container">
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26752</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Sistemas Inteligentes</a></h4>
-                                                    <p>João Balsa (Regente) | Gabinete: 6.3.38A</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
-                                    
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26709</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Aplicações Distribuídas</a></h4>
-                                                    <p>Alysson Bessani | Gabinete: 6.3.23</p>
+                                   {% for subjs in suAllSubjects %}
+                                        <div class="article border-bottom">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-xs-2 col-md-2 date">
+                                                        <div class="large">{{subjs.subject.id}}</div>
+
+                                                            <div class="text-muted">{{subjs.turmas}}</div>
+
+
+                                                    </div>
+                                                    <div class="col-xs-10 col-md-10">
+                                                        <h4><a href="">{{subjs.subject.name}}</a></h4>
+                                                        {% for reg in suRegentes %}
+                                                        {% if reg.user == subjs.subject.regente %}
+                                                            <p>Regente: {{reg.name}} | Gabinete: {{subjs.subject.regente.gabinete}} | Email: {{subjs.subject.regente.user.email}}</p>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
-                                    
-                                    <div class="article">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26719</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Projeto de Tecnologias de Informação</a></h4>
-                                                    <p>António Ferreira (PTI) | Gabinete: </p>
-                                                    <p>Fernando Ramos (PTR) | Gabinete: </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
+                                            <div class="clear"></div>
+                                        </div><!--End .article-->
+                                    {% endfor %}
+
                                 </div>
                             </div><!--End .articles-->
                 </div><!--/.col-->
@@ -80,44 +57,40 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Procurar Disciplinas</div>
                         <div class="panel-body">
-                            <form role="form" id="">
+                            <form role="form" id="" onsubmit="return false">
                                 <div class="form-group">
                                     <label>Disciplina</label>
                                     <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 1);">
                                 </div>
                             </form>
 
-                            <p>As disciplinas apresentadas abaixo são do curso em que o aluno está inscrito.</p>
+                            <p>As disciplinas apresentadas abaixo são do curso em que está inscrito: {{allMyCourseSubj.1.course.name}}</p>
                             <br><hr><br>
                             
                             <table id="resultTable" class="table">
                                     <thead>
                                         <tr>
                                             <th>Código</th>
-                                            <th>Título</th>
+                                            <th>Nome</th>
+                                            <th>Ano</th>
+                                            <th>Semestre</th>
+                                            <th>Tipo</th>
+                                            <th>ECTS</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+
+                                        {% for subjline in allMyCourseSubj %}
                                         <tr>
-                                            <td>00000</td>
-                                            <td>Arquitetura de Computadores</td>
+                                            <td class = "cod">{{subjline.subject.id}}</td>
+                                            <td class = "subName">{{subjline.subject.name}}</td>
+                                            <td class = "subYear">{{subjline.year}}</td>
+                                            <td class = "subSem">{{subjline.semester}}</td>
+                                            <td class = "subGrau">{{subjline.type}}</td>
+                                            <td class = "ectsNum">{{subjline.subject.credits_number}}</td>
                                         </tr>
-                                        <tr>
-                                            <td>11111</td>
-                                            <td>Programação I</td>
-                                        </tr>
-                                        <tr>
-                                            <td>22222</td>
-                                            <td>Programação II</td>
-                                        </tr>
-                                        <tr>
-                                            <td>33333</td>
-                                            <td>Redes de Computadores</td>
-                                         </tr>
-                                        <tr>
-                                            <td>44444</td>
-                                            <td>Elementos de Matemática I</td>
-                                        </tr>
+                                        {% endfor %}
+
                                     </tbody>
                                 </table>
                         </div>
@@ -141,7 +114,9 @@
                 
                 for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td")[n_column];
-                
+
+                if (filter)
+
                 if (td) {
                     if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
                     tr[i].style.display = "";

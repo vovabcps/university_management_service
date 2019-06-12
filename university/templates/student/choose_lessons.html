@@ -14,62 +14,14 @@
 {% block content_title %}{% endblock %}
 
 {% block breadcrumbs %}
-› Inscrição Turmas
+    › Inscrição Turmas
 {% endblock %}
 
 
 {% block content %}
 <div id="content-main">
 
-  <style>
-    .tab-content {
-      padding: 0;
-    }
-    .box_semestres_bar{
-      border-bottom:1px solid #e9ecf2;
-      margin-bottom: 2px;
-      padding: 2px 0px 2px 1px;
-    border-top-left-radius: 3px;
-    border-top-right-radius: 3px;
-    }
-
-    .semestres ul {
-      padding: 5px;
-    }
-
-    .semestres > .nav-pills li.active a{
-      background-color : dimgrey !important;
-  }
-
-  #myProgress {
-    width: 100%;
-    background-color: #ddd;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-  }
-  
-  #myBar {
-    width: 0%;
-    height: 20px;
-    background-color: rgba(68, 192, 250, 0.596);
-    text-align: center;
-    line-height: 20px;
-    color: black;
-  }
-  
-  #percent{
-    padding-left: 4px;
-  }
-
-  .prog_bar{
-    width: 80%;
-    margin: 5px auto;
-  }
-  </style>
-
-  <br>
+  <br> <!-- para nao ficar colado ao de cima-->
   <div class="row">
     <div class="col-lg-12">
       <div class="panel panel-default">
@@ -105,7 +57,7 @@
       </div> <!-- end row-->
           
 
-        <div class="panel-body">
+        <div id="chooseLessons" class="panel-body">
 
         
           <div class="w3-row">
@@ -222,98 +174,6 @@
 <script>
   document.getElementById("content_titleRow").style.display = "none";
   criarHorario("1sem")
-  function criarHorario(semestre) {
-    console.log(semestre)
-    //reset pq os valores do dic tem q estar ordenados
-    document.getElementById("tabelaSchedule").innerHTML= "";
-
-    //todas os botoes das turmas q foram "activados" num semestre
-    allTurmasEscolhidas = document.querySelectorAll("button[data-" + semestre + "=true]");
-
-
-    var lstLessons = []
-    for (var i = 0; i < allTurmasEscolhidas.length; i++) {
-      turma = allTurmasEscolhidas[i].getAttribute("data-lessons")
-      turmaLessons = turma.split("|").slice(0, -1);
-      lstLessons = lstLessons.concat(turmaLessons)
-    }
-
-    //percorrer a lista com todas as lessons
-    var lstlesson = []
-    for (var i = 0; i < lstLessons.length; i++) {
-      lesson = lstLessons[i].split(",")
-      lesson[1] = format(lesson[1])
-      lesson[3] = getSigla(lesson[3])
-      lstlesson.push(lesson)
-    }
-
-    var scheduleDict = {}
-
-    for (var i = 0; i < lstlesson.length; i++) {
-      if (lstlesson[i][0] in scheduleDict) {
-        scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, 6))
-      } else {
-        scheduleDict[lstlesson[i][0]] = [lstlesson[i].slice(1, 6)]
-      }
-    }
-    console.log(scheduleDict)
-
-    // Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time) 
-    for (var key in scheduleDict) {
-      scheduleDict[key] = scheduleDict[key].sort(function (a, b) {
-        return maior(a[0], b[0])
-      });
-    }
-    console.log(scheduleDict)
-
-    buildSchedule(scheduleDict);
-
-  }
-
-  function maior(str1, str2){
-    console.log(str1 + " " + str2)
-    var res;
-    if ((str1.length + str2.length) == 9 ){
-    //"10:00" > "9:30"
-    console.log(! (str1 > str2))
-    res= (! (str1 > str2))
-    }
-    else{
-      res= str1 > str2
-    }
-
-    if (res){
-      return 1
-    }else{
-      return -1
-    }
-  }
-
-  function format(hour) {
-    //ex: 08:00 -> 8:00
-    if (hour[0] == "0") {
-      hour = hour.substring(1)
-    }
-    return hour
-  }
-
-
-  function getSigla(umaString) {
-    console.log(umaString)
-    lista = umaString.split(" ")
-    sigla = ""
-    for (var i = 0; i < lista.length; i++) {
-      if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
-        sigla = sigla + lista[i][0]
-      }
-      else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
-                sigla = sigla + lista[i]
-      }
-    }
-    console.log(sigla)
-    return sigla
-  }
-
 
 
   $(document).ready(function () {
@@ -326,32 +186,6 @@
     });
   });
 
-  function move() {
-    var totalAllLessons = document.getElementsByClassName("turmas").length;
-    var allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]").length;
-    var allTurmasEscolhidas2sem = document.querySelectorAll("button[data-2sem=true]").length;
-
-    var escolhidos= allTurmasEscolhidas1sem + allTurmasEscolhidas2sem
-    var aumento= 100/totalAllLessons;
-    console.log(totalAllLessons)
-
-    var elem = document.getElementById("myBar");   
-    var prog = document.getElementById("percent");
-    var width= prog.innerHTML; 
-
-    console.log(aumento)
-    console.log(escolhidos)
-    width = escolhidos * aumento; 
-    console.log(width)
-    elem.style.width = width + '%'; 
-    prog.innerHTML = width.toFixed(2);
-    if (width >= 100) {
-      elem.style.backgroundColor= "green";
-      elem.style.color= "white";
-      elem.innerHTML= "Finalize a inscriçao! ";
-    }
-
-  }
 
   function login() {
     totalAllLessons = document.getElementsByClassName("turmas").length

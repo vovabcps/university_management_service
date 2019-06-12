@@ -12,6 +12,7 @@ urlpatterns = [
     path('student/inscricoes_subject', views.inscricoes_subject_s, name='inscricoes_subject_s'),
     path('student/choose_lessons', views.choose_lessons_s, name='choose_lessons_s'),
     path('student/inscricoes_confirmacao', views.inscricoes_confirmacao_s, name='inscricoes_confirmacao_s'), #so para verificar dados
+    path('student/horario', views.horario_atual, name='horario_atual_s'),
     path('student/consult_contacts', views.consult_contacts_s, name='consult_contacts_s'),
     path('student/consult_details', views.consult_details_s, name='consult_details_s'), 
     path('student/consult_subjects', views.consult_subjects_s, name='consult_subjects_s'),
@@ -22,6 +23,7 @@ urlpatterns = [
     
 
     path('teacher/home', views.home_t, name='home_t'), 
+    path('teacher/horario', views.horario_atual, name='horario_atual_t'),
     path('teacher/consult_contacts', views.consult_contacts_t, name='consult_contacts_t'),
     path('teacher/consult_details', views.consult_details_t, name='consult_details_t'),
     path('teacher/consult_turmas', views.consult_turmas_t, name='consult_turmas_t'),

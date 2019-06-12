@@ -1,0 +1,18 @@
+Faculdade de Arquitetura,FA,fa.ulisboa.pt
+Faculdade de Belas-Artes,FBA,belasartes.ulisboa.pt
+Faculdade de Ciências,FC,ciencias.ulisboa.pt
+Faculdade de Direito,FD,fd.ulisboa.pt
+Faculdade de Farmácia,FF,ff.ulisboa.pt
+Faculdade de Letras,FL,letras.ulisboa.pt
+Faculdade de Medicina,FM,medicina.ulisboa.pt
+Faculdade de Medicina Dentária,FMD,fmd.ulisboa.pt
+Faculdade de Medicina Veterinária,FMV,fmv.ulisboa.pt
+Faculdade de Motricidade Humana,FMH,fmh.ulisboa.pt
+Faculdade de Psicologia,FP,fp.ulisboa.pt
+Instituto de Ciências Sociais,ICS,ics.ulisboa.pt
+Instituto de Educação,IE,ie.ulisboa.pt
+Instituto de Geografia e Ordenamento do Território,IGOT,igot.ulisboa.pt
+Instituto Superior de Agronomia,ISA,isa.ulisboa.pt
+Instituto Superior de Ciências Sociais e Políticas,ISCSP,iscsp.ulisboa.pt
+Instituto Superior de Economia e Gestão,ISEG,iseg.ulisboa.pt
+Instituto Superior Técnico,IST,tecnico.ulisboa.pt

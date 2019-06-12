@@ -340,7 +340,7 @@ def makeSystemUserSubjectAndLessonSystemUserOBJs():
                                     anoLetivoAprov= random.choice(opcoes.split("||")) #ano letivo em q foi aprovado a cadeira
 
                                     schoolYearObj= SchoolYear.objects.get(begin=int(anoLetivoAprov.split("/")[0]))
-                                    newSystemUserSubject = SystemUserSubject(user= sysUser, subject=SubjObj, state=state, grade=grade, turmas=turmas_str, anoLetivo=schoolYearObj)
+                                    newSystemUserSubject = SystemUserSubject(user= sysUser, subject=SubjObj, subjSemestre=int(semestre[0]), state=state, grade=grade, turmas=turmas_str, anoLetivo=schoolYearObj)
                                     newSystemUserSubject.save()
 
                                     #lstTypeTurma: ["T11","TP13","PL13"]
@@ -521,6 +521,7 @@ def makeLessonOBJs():
     #atribuir professores
     lstLessonsPrim= []
     lstLessonsSeg= []
+    lstLessonsPrimAndSeg= []
 
     #dados
     subjs= Subject.objects.all()
@@ -530,21 +531,31 @@ def makeLessonOBJs():
     for subj in subjs:
         lesson= Lesson.objects.filter(subject=subj).order_by("week_day", "hour") #lista de lessons
         CRsubjs= CourseSubject.objects.filter(subject=subj)
-        if CRsubjs[0].semester == 1 :
-            lstLessonsPrim.append(lesson)
-        else: #2
-            lstLessonsSeg.append(lesson)
 
-    allLessons = [lstLessonsPrim, lstLessonsSeg]
-   
+        #se o sem da cadeira e igual independentemente do curso
+        if is_semestres_all_same(CRsubjs) :
+            sem= CRsubjs[0].semester
+            if sem == 1:
+                lstLessonsPrim.append(lesson)
+            else:
+                lstLessonsSeg.append(lesson)
+        
+        else:
+            lstLessonsPrimAndSeg.append(lesson)
+
+
+    allLessonsBySem = {"1": lstLessonsPrim, "2":lstLessonsSeg, "1,2": lstLessonsPrimAndSeg}
+    #ex: lstLessonsPrimAndSeg, a cadeira Empreendedorismo é dada no 1 sem e no 2 sem
+    #	450_Formação Cultural Social e Ética	Empreendedorismo em Ciências	2 ano	2 sem	Semestral (Opção)
+	#	450_Formação Cultural Social e Ética	Empreendedorismo em Ciências	1 ano	1 sem	Semestral (Opção)
  
-    for semestre in allLessons:
-        i = 0
-        for lessons in semestre: #lessons- lista de lessons de todas as cadeiras de um semestre
+    i=0
+    for semestre, lstLessons in allLessonsBySem.items():
+        for lessons in lstLessons: #lessons- lista de listas, cada lista tem lessons de uma cadeira de um semestre
             subjectProfs= []
             for lesson in lessons: #lessons de uma cadeira
 
-                while is_lesson_sobreposta(allTeachers[i], lesson):
+                while is_lesson_sobreposta(allTeachers[i], lesson, semestre):
                     i = (i+1) % allTeachers.count() #array circular
                 
                 lesson.professor= allTeachers[i]
@@ -556,7 +567,7 @@ def makeLessonOBJs():
             subj= lesson.subject
             tem= False
             for prof,n in TuplosProfNumOrd:
-                if not Subject.objects.filter(regente=prof).first() : #este prof ainda nao é regente
+                if not Subject.objects.filter(regente=prof).first() : #se prof ainda nao for regente
                     subj.regente =  prof
                     tem= True
                     break
@@ -565,7 +576,8 @@ def makeLessonOBJs():
             subj.save()
 
 
-def is_lesson_sobreposta(professor, lesson):
+def is_lesson_sobreposta(professor, lesson, semestre):
+    #verifica se a lesson fica ou nao sobreposta no horario do prof independentemente do semestre
     lessonProfAnt= Lesson.objects.filter(professor=professor, week_day=lesson.week_day).order_by("hour").last()
     if lessonProfAnt : #se ele ja tiver aulas nesse dia de semana
         if addMinutes(lessonProfAnt.hour, lessonProfAnt.duration) <= hourToMinutes(lesson.hour) :
@@ -574,6 +586,11 @@ def is_lesson_sobreposta(professor, lesson):
             return True
         
     return False
+
+
+
+def is_semestres_all_same(courseSubjs):
+    return all(crS.semester == courseSubjs[0].semester for crS in courseSubjs)
 
 
 
@@ -592,6 +609,16 @@ def addMinutes(hour, duration):
     return hourToMinutes(hour) + hourToMinutes(duration)
 
 
+@transaction.atomic 
+def makeFaculdadeOBJs():
+    with open(settings.MIGRATIONS_DATA_ROOT + "/faculdadesData.txt", encoding="utf8") as rfile:
+        for line in rfile.readlines():
+            if "#" not in line and "," in line: 
+                name, sigla, link= line.split(",")
+                newFaculdade= Faculdade(name=name, sigla=sigla, link=link)
+                newFaculdade.save()
+
+
 
 def mainInsertData(apps, schema_editor):
     #reset (para nao dar duplicado)
@@ -607,6 +634,7 @@ def mainInsertData(apps, schema_editor):
     Lesson.objects.all().delete()
     SystemUserSubject.objects.all().delete()
     LessonSystemUser.objects.all().delete()
+    Faculdade.objects.all().delete()
 
     makeRoleOBJs()
     makeSchoolYearOBJs(2016,2019)
@@ -618,6 +646,7 @@ def mainInsertData(apps, schema_editor):
     makeSystemUserCourseOBJs() #falta
     makeLessonOBJs()
     makeSystemUserSubjectAndLessonSystemUserOBJs() #falta
+    makeFaculdadeOBJs()
 
 
 

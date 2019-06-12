@@ -10,65 +10,41 @@
 {% block content %}
 <div id="content-main">
 
-		
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-default articles">
-                                <div class="panel-heading">Disciplinas</div>
+      
+      <div class="row">
+         <div class="col-md-12">
+            <div class="panel panel-default articles">
+                                <div class="panel-heading">As Minhas Disciplinas:</div>
 
                                 <div class="panel-body articles-container">
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26752</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Sistemas Inteligentes</a></h4>
-                                                    <p>João Balsa (Regente) | Gabinete: 6.3.38A | Email: fc102@professor.fc.ul.pt</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
+                                    {% for sub, value in typesAndLessons.items %}
 
-                                    <div class="article border-bottom">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26709</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Aplicações Distribuídas</a></h4>
-                                                    <p>Alysson Bessani | Gabinete: 6.3.23 | Email: fc134@professor.fc.ul.pt</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
+                                        <div class="article border-bottom">
+                                            <div class="col-xs-12">
+                                                <div class="row">
+                                                    <div class="col-xs-2 col-md-2 date">
+                                                        <div class="large">{{sub.id}}</div>
 
-                                    <div class="article">
-                                        <div class="col-xs-12">
-                                            <div class="row">
-                                                <div class="col-xs-2 col-md-2 date">
-                                                    <div class="large">26719</div>
-                                                    <div class="text-muted">S2</div>
-                                                </div>
-                                                <div class="col-xs-10 col-md-10">
-                                                    <h4><a href="">Projeto de Tecnologias de Informação</a></h4>
-                                                    <p>António Ferreira (PTI) | Gabinete: </p>
-                                                    <p>Fernando Ramos (PTR) | Gabinete: </p>
+                                                            <div class="text-muted">{{value}}</div>
+                                                    </div>
+                                                    <div class="col-xs-10 col-md-10">
+                                                        <h4><a href="">{{sub.name}}</a></h4>
+                                                        {% for reg in suRegentes %}
+                                                        {% if reg.user == sub.regente %}
+                                                            <p>Regente: {{reg.name}} | Gabinete: {{sub.regente.gabinete}} | Email: {{sub.regente.user.email}}</p>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="clear"></div>
-                                    </div><!--End .article-->
+                                            <div class="clear"></div>
+                                        </div><!--End .article-->
+
+                                    {% endfor %}
                                 </div>
-				</div>
-			</div><!--/.col-->
-		</div><!--/.row-->
-	</div>	<!--/.main-->
-	
+            </div>
+         </div><!--/.col-->
+      </div><!--/.row-->
+   </div> <!--/.main-->
+   
 {% endblock %}

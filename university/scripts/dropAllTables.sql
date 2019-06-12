@@ -6,6 +6,7 @@ DROP TABLE IF EXISTS university_systemuser_rooms;
 DROP TABLE IF EXISTS university_systemuser_faculdade;
 DROP TABLE IF EXISTS university_systemuser_schoolyear;
 DROP TABLE IF EXISTS university_systemusercourse;
+DROP TABLE IF EXISTS university_systemuserMensagens;
 
 DROP TABLE IF EXISTS university_course_minicourse;
 DROP TABLE IF EXISTS university_course_faculdade;

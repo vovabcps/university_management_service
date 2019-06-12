@@ -1,0 +1,79 @@
+{% extends base_template %}
+
+{% load i18n static %}
+
+{% block title %}Horario atual{% endblock %}
+{% block content_title %}Horario atual{% endblock %}
+
+{% block breadcrumbs %}
+        › Horario atual
+{% endblock %}
+
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+<div id="content-main">
+
+  <br> <!-- para nao ficar colado ao de cima-->
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="panel panel-default">
+
+      
+        
+      <div class="box_semestres_bar semestres">
+                  <ul class="nav nav-pills" role="tablist">
+                      <li class="nav-item active">
+                        <a class="nav-link active" data-toggle="pill" href="#semestre1" onclick="getLessonsSem('1sem')">1º Semestre</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#semestre2" onclick="getLessonsSem('2sem')" >2º Semestre</a>
+                      </li>
+                    </ul>
+      </div>
+
+          
+
+        <div class="panel-body">
+
+          <table id="tabelaSchedule"></table>
+
+          <div>
+            <p>Legenda:</p>
+            <ul id="legenda"></ul>
+          </div>
+
+          </div>
+       
+
+      </div><!-- /.panel-->
+    </div><!-- /.col-->
+  </div><!-- /.row -->
+
+</div>
+
+<script>
+  
+  getLessonsSem("1sem")
+  function getLessonsSem(semestre){
+    var lstLessons= {{scheduleDict|safe}};
+    var lstLessonsSem= lstLessons[semestre]
+    formatarOrdenarLstLessons(lstLessonsSem)
+
+    var lstSubjsName= {{subjsName|safe}};
+    var lstSubjsNameSem= lstSubjsName[semestre];
+    txt=""
+    for(var i=0; i<lstSubjsNameSem.length; i++){
+      txt += "<li>"+ getSigla(lstSubjsNameSem[i]) + "- " + lstSubjsNameSem[i] +"</li>"
+    }
+    document.getElementById("legenda").innerHTML= txt
+  }
+  
+</script>
+
+{% endblock %}

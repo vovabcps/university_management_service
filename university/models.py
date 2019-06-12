@@ -68,7 +68,9 @@ class PersonalInfo(models.Model):
 
 
 class Faculdade(models.Model):
-    name = models.CharField(max_length=200, default="Faculdade de Ciências")
+    name = models.CharField(max_length=200, null=False, default="Faculdade de Ciências")
+    sigla= models.CharField(max_length=200, null=False, default="FC")
+    link= models.CharField(max_length=200, null=False, default="https://ciencias.ulisboa.pt/")
 
 
 class Course(models.Model):
@@ -92,7 +94,7 @@ class Course(models.Model):
 
 
 class Course_MiniCourse(models.Model):
-    #para ser unico: course, miniCourse, year
+    #para ser unico: course, miniCourse, semestres
     course= models.ForeignKey(Course, on_delete=models.CASCADE)
     miniCourse= models.ForeignKey(Course, related_name="miniCourso", on_delete=models.CASCADE)
     credits_number = models.IntegerField(null=True)
@@ -170,11 +172,10 @@ class Subject(models.Model):
         return detalhesOBJ.name
         #return self.regente.user
 
-    def getSigla (self):
+    def getSigla(self):
         subjName= self.name
         lista = subjName.split(" ")
         sigla = ""
-        print(lista)
         for word in lista:
             if len(word) > 3 and "(" not in word:
                 sigla = sigla + word[0]
@@ -242,12 +243,14 @@ class Lesson(models.Model):
 
 
 class SystemUserSubject(models.Model):
+    #para ser unico: user, subject, anoLetivo
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     # 0 - pending, 1 - approved, 2 - not approved
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    subjSemestre= models.IntegerField(null=True) 
     state = models.IntegerField(null=True)
     grade = models.FloatField(null=True) #nao arredondar
-    turmas= models.CharField(max_length=200, null=True) #T11, PL13
+    turmas= models.CharField(max_length=200, null=True) #T11 PL13
     #nao pode ser lessons pq ex: T11 terça, T11 quinta (2 lessons diferentes)
     anoLetivo= models.ForeignKey(SchoolYear, on_delete=models.CASCADE)
 
@@ -261,20 +264,28 @@ class SystemUserSubject(models.Model):
         return self.anoLetivo.formatSchoolYear()
 
 
-
-
 class LessonSystemUser(models.Model):
     lesson= models.ForeignKey(Lesson, on_delete=models.CASCADE)
     systemUser= models.ForeignKey(SystemUser, on_delete=models.CASCADE) #so alunos xd
     presente= models.BooleanField()
     date= models.DateField()
 
-
     def get_systemUser_user(self):
         return self.systemUser.user #ex: fc1085
 
     def get_lesson_information(self):
         return self.lesson.get_lesson_detalhes()
+
+
+
+class SystemUserMensagens(models.Model):
+    remetente= models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+    destinatario= models.ForeignKey(SystemUser, related_name="destinatario", on_delete=models.CASCADE)
+    subject= models.ForeignKey(Subject, on_delete=models.CASCADE)
+    turmaInicial= models.CharField(max_length=200)
+    turmaFinal= models.CharField(max_length=200)
+
+
 
 
 

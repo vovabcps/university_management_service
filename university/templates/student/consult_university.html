@@ -20,7 +20,7 @@
                     <div class="panel panel-default">
                         <div class="panel-heading">Procurar Universidade</div>
                         <div class="panel-body">
-                            <form role="form" id="">
+                            <form role="form" id="" onsubmit="return false">
                                 <div class="form-group">
                                     <label>Nome da Universidade</label>
                                     <input id="inputText" type="text" class="form-control" onkeyup="DoSearch('inputText', 'resultTable', 0);">
@@ -33,22 +33,20 @@
                                     <thead>
                                         <tr>
                                             <th>Nome</th>
-                                            <th>Localidade</th>
+                                            <th>Sigla</th>
+                                            <th>Website</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+
+                                    {% for facline in listaFaculdades %}
                                         <tr>
-                                            <td>Faculdade de Ciências da Universidade de Lisboa (FCUL)</td>
-                                            <td>Lisbon</td>
+                                            <td>{{facline.name}}</td>
+                                            <td>{{facline.sigla}}</td>
+                                            <td><a href=http://www.{{facline.link}}>{{facline.link}}</a></td>
                                         </tr>
-                                        <tr>
-                                            <td>Escola Superior de Tecnologia da Saúde de Lisboa (ESTSL)</td>
-                                            <td>Lisbon</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Escola Superior de Enfermagem de Lisoa (ESEL)</td>
-                                            <td>Lisbon</td>
-                                        </tr>
+                                    {% endfor%}
+
                                     </tbody>
                                 </table>
                         </div>
@@ -85,4 +83,3 @@
 </script>
 
 {% endblock %}
-

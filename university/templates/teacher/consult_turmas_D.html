@@ -9,114 +9,187 @@
         › Consultar turmas
 {% endblock %}
 
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}
+
+
 {% block content %}
 
 <div id="content-main">
 		
+		<br> <!-- para nao ficar colado ao de cima-->
 		<div class="row">
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Disciplinas</div>
-                        <div class="panel-body">
-                            <button type="button">Projeto Tecnologias de Informação</button>
-							<button type="button">Projeto Tecnologias de Redes</button>
-                        </div>
-                    </div>
-                </div>
-        </div>
-            
-            
-
-		<style>
-		
-			#box1 {
+		  <div class="col-lg-12">
+			<div class="panel panel-default">
+	  
+					<div class="semestres">
+						<ul class="nav nav-pills" role="tablist">
+							<li class="nav-item active">
+							  <a class="nav-link active" data-toggle="pill" href="#semestre1">1º Semestre</a>
+							</li>
+							<li class="nav-item">
+							  <a class="nav-link" data-toggle="pill" href="#semestre2" >2º Semestre</a>
+							</li>
+						  </ul>
+					</div>
 				
-			}
-			
-			#box2 {
-				float: left;
-				max-width: 20%;
-			}
-			
-			#box3 {
-				float: right;
-				width: 80%;
-			 }
-			
-			.dropdown {
-			  position: relative;
-			  display: inline-block;
-			}
-
-			.dropdown-content {
-			  display: none;
-			  position: absolute;
-			  background-color: #f9f9f9;
-			  min-width: 160px;
-			  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-			  padding: 12px 16px;
-			  z-index: 1;
-			}
-
-			.dropdown:hover .dropdown-content {
-			  display: block;
-			}
-			
-			.truma {
-			margin-top: 5px;
-			
-			.but {
-			align: center;
-			}
-			
-			
-		</style>
-		
-
-		
-		<div class="row" id='box2'>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">TURMAS</div>
-						<div class="panel-body">
-							<div class='truma'>
-								<div id='turma' class="nomeTipo">TEORICAS</div>
-								<button class='but' type='button'>T21</button>
-								<button class='but' type='button'>T22</button>
-							</div>
-							<div class='truma'>
-								<div id='turma' class="nomeTipo">PRATICAS</div>
-								<button class='but' type='button'>TP21</button>
-								<button class='but' type='button'>TP22</button>
-								<button class='but' type='button'>TP22</button>	
-							</div>
-							<div class='truma'>
-								<div id='turma' class="nomeTipo">LABORATORIAIS</div>
-								<button class='but' type='button'>PL21</button>
-								<button class='but' type='button'>PL22</button>
-							</div>
-							<div class='truma'>
-								<div id='turma' class="nomeTipo">SINPOSIO</div>
-								<button class='but' type='button'>S21</button>
-								<button class='but' type='button'>S22</button>
-							</div>
-						</div>
-                    </div>
-                </div>
-        </div>
-            
- 		<div class="row" id='box3'>
-                <div class="col-md-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Lista Alunos</div>
-                        <div class="panel-body">
-                            <p>*Inserir aqui lista*<p>
-							
-                        </div>
-                    </div>
-                </div>
 				</div>
+	  
+				
+	  
+			  <div class="panel-body">
+	  
+			  
+				<div class="w3-row">
+					<div class=" w3-third">
+	  
+				<div class="tab-content">
+				  {% for semestre, subjs in subjsSem.items %}
+	  
+				  {% if semestre == "1" %}
+				  <div id="semestre1" class=" tab-pane active">
+	  
+					{% else %}
+					<div id="semestre2" class=" tab-pane fade">
+					  {% endif %}
+	  
+					  <!-- em comum -->
+					  <ul class="nav nav-pills" role="tablist">
+	  
+						{% for subj, dicTypeTurmaLessons in subjs.items %}
+	  
+						{% if forloop.counter == 1 %}
+						<li class="nav-item active ">
+						  <a class="nav-link active" data-toggle="pill"
+							href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+						</li>
+						{% else %}
+						<li class="nav-item">
+						  <a class="nav-link " data-toggle="pill" href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+						</li>
+						{% endif %}
+	  
+						{% endfor %}
+					  </ul>
+	  
+						  <div class="tab-content">
+							 
+							{% for subj, dicTypeTurmaLessons in subjs.items %}
+	  
+							{% if forloop.counter == 1 %}
+							<div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane active">
+							  {% else %}
+							  <div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane fade">
+								{% endif %}
+	  
+								{% for tipo, turmasAlunos in dicTypeTurmaLessons.items %}
+								<br>
+								{% if tipo == "T" %}
+								  <p>TEORICAS</p>
+								{% elif  tipo == "TP" %}
+								  <p>PRATICAS</p>
+								{% elif  tipo == "PL" %}
+								  <p>LABORATORIAIS</p>
+								{% elif  tipo == "O" %}
+								  <p>OUTRA</p>
+								{% elif  tipo == "S" %}
+								  <p>SINPOSIO</p>
+								{% else %}
+								  <p>{{tipo}}</p>
+								{% endif %}
+							
+								<div class="turmas">
+								  {% for turmaAlunos in turmasAlunos %}
+	  
+								  <button type="button" class="w3-button-small w3-khaki w3-round"
+									onclick="mostrarAlunos({{turmaAlunos|last}});"
+									>{{tipo}}{{turmaAlunos|first}}
+								  </button>
+	  
+								  {% endfor %}
+								</div>
+	  
+								{% endfor %}
+							  </div>
+	  
+							  {% endfor %}
+							</div> <!-- class="tab-content" -->
+						 
+					  </div>
+					  {% endfor %}
+					</div> <!-- class="tab-content" -->
+					</div>
+					
+					<div class="w3-twothird">
+							<div class="row" id='box3'>
+									<div class="col-md-12">
+										<div class="panel panel-default">
+											<div class="panel-heading">Lista Alunos</div>
+											<div class="panel-body">
+													<table class="table">
+															<thead>
+																<!--
+																<tr>
+																	<th>Número</th>
+																	<th>Nome</th>
+																	<th>T</th>
+																	<th>TP</th>
+																	<th>PL</th>
+																	<th>Email</th>
+																	<th></th>
+																</tr>
+																	-->
+																<tr>
+																	<th>Número</th>
+																	<th>Nome</th>
+																	<th>Email</th>
+																	<th>Horario</th>
+																</tr>
+															
+															</thead>
+															<tbody id="tabelaAlunos">
+															</tbody>
+														</table>
+												
+											</div>
+										</div>
+									</div>
+									</div>
+					  </div>
+				  
+				  </div> <!-- end row -->
+	  
+				</div>
+			 
+	  
+			</div><!-- /.panel-->
+		  </div><!-- /.col-->
+		</div><!-- /.row -->
+	  
+
+            
+´
 				
 </div><!--/.main-->
+
+<script>
+function mostrarAlunos(JSONalunos){
+	console.log(JSONalunos)
+	var tbody= document.getElementById("tabelaAlunos");
+	tbody.innerHTML= "";
+	for(var i=0; i<JSONalunos.length; i++){
+		var row = tbody.insertRow(-1);
+		var cell1 = row.insertCell(0).innerHTML= JSONalunos[i][0];
+		var cell1 = row.insertCell(1).innerHTML= JSONalunos[i][1];
+		var cell1 = row.insertCell(2).innerHTML= JSONalunos[i][2];
+		var cell1 = row.insertCell(3).innerHTML= "<a href='#''>ver horario</a>";
+		//tbody.innerHTML += "<tr><td>22222</td><td>Claudia Pascoal</td><td>T11</td><td>TP23</td><td>PL23</td><td>claudiapascoal@ul.pt</td><td><a href='#''>Horário</a></td></tr>"
+		//tbody.innerHTML += "<tr><td>22222</td><td>Claudia Pascoal</td><td>claudiapascoal@ul.pt</td><td><a href='#''>Horário</a></td></tr>"
+	
+	}
+}
+</script>
 
 {% endblock %}

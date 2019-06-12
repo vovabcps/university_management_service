@@ -173,7 +173,127 @@ function addMinutes(hour, minutes){
 
 
 
-/* -------------------------------------------------- escolher turmas ------------------------------------------------------------------------------- */
+/* -------------------------------------------------- choose lessons and horario atual ------------------------------------------------------------------------------- */
+function criarHorario(semestre) {
+    console.log(semestre)
+
+    //todas os botoes das turmas q foram "activados" num semestre
+    var allTurmasEscolhidas = document.querySelectorAll("button[data-" + semestre + "=true]");
+
+    var lstLessons = []
+    for (var i = 0; i < allTurmasEscolhidas.length; i++) {
+      var turma = allTurmasEscolhidas[i].getAttribute("data-lessons")
+      var turmaLessons = turma.split("|").slice(0, -1);
+      lstLessons = lstLessons.concat(turmaLessons)
+    }
+    formatarOrdenarLstLessons(lstLessons)
+}
+
+
+function formatarOrdenarLstLessons(lstLessons){
+    /*
+    exemplo: lstLessons
+    ['QUARTA,11:00,1:00,Redes de Computadores (LTI),T,1.5.67', 'QUINTA,09:30,1:00,Redes de Computadores (LTI),T,2.1.14', 
+    'QUINTA,08:00,1:30,Redes de Computadores (LTI),TP,2.1.15', 'TERÇA,09:00,2:00,Segurança Informática,T,2.1.12', 
+    'TERÇA,11:00,1:30,Segurança Informática,TP,2.1.11']
+    */
+    console.log(lstLessons)
+
+    //reset pq os valores do dic tem q estar ordenados
+    document.getElementById("tabelaSchedule").innerHTML= "";
+
+    //percorrer a lista com todas as lessons
+    var lstlesson = []
+    for (var i = 0; i < lstLessons.length; i++) {
+      var lesson = lstLessons[i].split(",")
+      lesson[1] = format(lesson[1])
+      lesson[3] = getSigla(lesson[3])
+      lstlesson.push(lesson)
+    }
+
+    var scheduleDict = {}
+
+    for (var i = 0; i < lstlesson.length; i++) {
+      if (lstlesson[i][0] in scheduleDict) {
+        scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, 6))
+      } else {
+        scheduleDict[lstlesson[i][0]] = [lstlesson[i].slice(1, 6)]
+      }
+    }
+    console.log(scheduleDict)
+
+    // Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time) 
+    // tenho q formatar primeiro a hora e depois ordenar
+    for (var key in scheduleDict) {
+      scheduleDict[key] = scheduleDict[key].sort(function (a, b) {
+        return maior(a[0], b[0])
+      });
+    }
+
+    /*
+    var scheduleDict= {
+        "SEGUNDA" : [["10:30", "1:00", "AVPExp-2", "T", "6.2.48"], ["11:30", "1:00", "AVPExp-2", "TP", "6.4.35"], ["12:30", "0:30", "AVPExp-2", "L", "6.4.35"]],
+        "TERÇA"   : [["8:30", "3:00", "ASSistem-2", "O", "1.2.32"], ["8:30", "2:00", "ASSistem-2", "O", "1.3.12"], ["8:30", "3:00", "ASSistem-2", "O", "1.2.30"],
+                     ["8:30", "3:00", "ASSistem-2", "O", "1.2.31"], ["8:30", "3:00", "AD", "O", "1.2.33"], ["14:00", "1:00", "ECSoc-2", "T", "6.4.31"], 
+                     ["15:00", "0:30", "ECSoc-2", "S", "6.4.31"], ["15:30", "1:30", "ECSoc-2", "TP", "6.4.34"]], 
+        "QUARTA"  : [["8:30", "1:00", "AVPExp-2", "T", "6.2.48"], ["9:30", "1:00", "AVPExp-2", "TP", "6.4.35"], ["10:30", "0:30", "AVPExp-2", "L", "6.4.35"], 
+                     ["16:30", "2:00", "ASSistem-2", "T", "1.3.15"]],
+        "QUINTA"  : [["15:30", "3:00", "ASSistem-2", "TP", "6.2.49"]]
+
+      }
+      */
+
+    console.log(scheduleDict)
+    buildSchedule(scheduleDict);
+}
+
+
+
+  function maior(str1, str2){
+    console.log(str1 + " " + str2)
+    var res;
+    if ((str1.length + str2.length) == 9 ){
+    //"10:00" > "9:30"
+    console.log(! (str1 > str2))
+    res= (! (str1 > str2))
+    }
+    else{
+      res= str1 > str2
+    }
+
+    if (res){
+      return 1
+    }else{
+      return -1
+    }
+  }
+
+  function format(hour) {
+    //ex: 08:00 -> 8:00
+    if (hour[0] == "0") {
+      hour = hour.substring(1)
+    }
+    return hour
+  }
+
+
+  function getSigla(umaString) {
+    console.log(umaString)
+    var lista = umaString.split(" ")
+    var sigla = ""
+    for (var i = 0; i < lista.length; i++) {
+      if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
+        sigla = sigla + lista[i][0]
+      }
+      else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
+                sigla = sigla + lista[i]
+      }
+    }
+    console.log(sigla)
+    return sigla
+  }
+
+/* -------------------------------------------------- choose lessons ------------------------------------------------------------------------------- */
 function marcado(obj,id) {
     var semestre= id.split("|")[0];
     console.log(semestre)
@@ -194,6 +314,35 @@ function marcado(obj,id) {
         }
     }  
 }
+
+
+//barra de progresso
+function move() {
+    var totalAllLessons = document.getElementsByClassName("turmas").length;
+    var allTurmasEscolhidas1sem = document.querySelectorAll("button[data-1sem=true]").length;
+    var allTurmasEscolhidas2sem = document.querySelectorAll("button[data-2sem=true]").length;
+
+    var escolhidos= allTurmasEscolhidas1sem + allTurmasEscolhidas2sem
+    var aumento= 100/totalAllLessons;
+    console.log(totalAllLessons)
+
+    var elem = document.getElementById("myBar");   
+    var prog = document.getElementById("percent");
+    var width= prog.innerHTML; 
+
+    console.log(aumento)
+    console.log(escolhidos)
+    width = escolhidos * aumento; 
+    console.log(width)
+    elem.style.width = width + '%'; 
+    prog.innerHTML = width.toFixed(2);
+    if (width >= 100) {
+      elem.style.backgroundColor= "green";
+      elem.style.color= "white";
+      elem.innerHTML= "Finalize a inscriçao! ";
+    }
+
+  }
 
 
 /* -------------------------------------------------- inscriçoes subject ------------------------------------------------------------------------------- */
@@ -219,12 +368,393 @@ function minicToggleAno(ano){
 }
 
 
-
-
-
-
 function minicToggle(mcName){
 	$.each($("tr[data-mcName='"+mcName+"']"), function () {
 		$(this).toggle();
 	});
 }
+
+/* -------------------------------------------------- nav bar shadow ------------------------------------------------------------------------------- */
+
+
+window.onscroll = function() {myFunction()};
+    
+function myFunction() {
+	if (document.body.scrollTop > 15|| document.documentElement.scrollTop > 15) {
+		document.getElementById("bar_nav").classList.add("nse-top-navigation--with-bottom-shadow");
+	} else {
+		document.getElementById("bar_nav").classList.remove("nse-top-navigation--with-bottom-shadow");
+	}
+}
+
+
+/* -------------------------------------------------- calendario registar presenças ------------------------------------------------------------------------------- */
+
+"use strict";
+
+var meses = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+var diasDaSemana= ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'];
+
+
+
+//clicar nas setas ou botao hoje
+function calend(triger, dicAulas){
+    var MesAnoDeHojeManipuladaSTR= "/09/2018";
+    var DiaDeHojeCerto= new Date().getDate();
+    var DataDeHojeManipuladaSTR= DiaDeHojeCerto + MesAnoDeHojeManipuladaSTR;
+    var d = DataDeHojeManipuladaSTR.split("/");
+    var DataDeHojeManipulada= new Date(d[2], parseInt(d[1])-1, d[0]);
+    
+
+
+    if (triger == undefined){
+        var mes = DataDeHojeManipulada.getMonth();
+        var ano = DataDeHojeManipulada.getFullYear();
+
+    }else{
+        var mesActual= meses.indexOf(document.getElementById("mes").innerHTML.split("<br>")[0]);
+        var anoActual= parseInt(document.getElementById("ano").innerHTML);
+    
+        if (triger == "anterior"){
+            if (mesActual == 0) {
+                var mes= 11;
+                var ano= anoActual - 1;
+            }else{
+                var mes= mesActual - 1;
+                var ano= anoActual;
+            }
+        }
+
+        if (triger == "proximo"){
+            if (mesActual == 11) {
+                var mes= 0;
+                var ano= anoActual + 1;
+            }else{
+                var mes= mesActual + 1;
+                var ano= anoActual;
+            }
+        }
+    }
+
+    buildCalendar(mes, ano, DataDeHojeManipulada);
+    inserirAulas(dicAulas,mes,ano);
+    responsiveModel();
+
+}
+
+
+function buildCalendar(mes, ano, DataDeHojeManipulada){
+    console.log(mes + "," + ano);
+    var feriados = ['1/1', '19/4', '21/4', '25/4', '1/5', '10/6', '20/6', '15/8', '5/10', '1/11', '1/12', '8/12', '25/12']
+    var ferias= [["4/3/"+ano, "6/3/"+ano], //carnaval
+                ["17/4/"+ano, "23/4/"+ano]] //pascoa
+
+    document.getElementById("mes").innerHTML= meses[mes] + "<br> <span id='ano' style='font-size:13px'>" + ano + "</span>";
+    var table = document.getElementById("tabelaCalend");
+    table.innerHTML = ""; //reset
+    var linhaDiasDaSemana= table.insertRow(-1);
+    for (var i= 0; i<diasDaSemana.length; i++){
+        linhaDiasDaSemana.innerHTML += "<td class='celulaDiasDaSemana'>" + diasDaSemana[i] + "</td>";
+    }
+
+    var preencher = false;
+    var contDia= 1;
+
+    while (contDia <= getDiasNumMes(mes, ano)){
+
+        var corpoTab= table.insertRow(-1);
+        for(var diaDeSemana=0; diaDeSemana<diasDaSemana.length; diaDeSemana++){ //para cada dia da semana
+            if (getDiaDaSemana(1, mes, ano) == diaDeSemana && preencher == false)(
+                preencher = true
+            )
+            if(contDia > getDiasNumMes(mes, ano)) preencher = false;
+
+            //por os numeros
+            if(preencher){
+                var dma= contDia + "/" + mes + "/" + ano
+                var dmaCheck= contDia + "/" + (mes+1) + "/" + ano
+                var dm= contDia + "/" + (mes+1)
+                console.log(dma)
+
+                var td = document.createElement("td")
+                td.setAttribute("id", contDia)
+                td.setAttribute("data-DMA", dma)
+                td.setAttribute("class", "celulaDias")
+
+                if (is_dateBetweenOrEqual2dates("17/09/2018", "19/12/2018", dmaCheck)){
+                    td.setAttribute("data-aulas", "true")
+                    td.setAttribute("data-aulas1sem", "true")
+                }else if (is_dateBetweenOrEqual2dates("18/02/2019", "31/05/2019", dmaCheck)){
+                    td.setAttribute("data-aulas", "true")
+                    td.setAttribute("data-aulas2sem", "true")
+                }else{
+                    td.setAttribute("data-aulas", "false")
+                }
+                
+                if(is_ferias(dmaCheck, ferias)){
+                    td.setAttribute("bgcolor", 'blanchedalmond')
+                    td.setAttribute("data-aulas", "false")
+                }else if (feriados.indexOf(dm) >= 0){
+                    td.setAttribute("bgcolor", 'beige')
+                    td.setAttribute("data-aulas", "false")
+                }
+
+                if (mes == DataDeHojeManipulada.getMonth() && contDia == DataDeHojeManipulada.getDate()){ //se for o dia de hoje
+                    td.innerHTML= "<div class='diaDeHoje'>" + contDia +"</div><div class='boxAulas'></div>"
+                }else{
+                    td.innerHTML= "<div>" + contDia +"</div><div class='boxAulas'></div>"
+                }
+                //console.log(td)
+                corpoTab.appendChild(td)
+
+                contDia++;
+            }else{
+                corpoTab.insertCell(diaDeSemana); //celula vazia
+            }
+        }
+    }
+}
+
+
+function is_dateBetweenOrEqual2dates(dateFrom, dateTo, dateCheck){
+    //format of dates: "dd/mm/yyyy", mm-> janeiro : 1
+    var d1 = dateFrom.split("/");
+    var d2 = dateTo.split("/");
+    var c = dateCheck.split("/");
+
+    var from = new Date(d1[2], parseInt(d1[1])-1, d1[0]);  // -1 because months are from 0 to 11
+    var to   = new Date(d2[2], parseInt(d2[1])-1, d2[0]);
+    var check = new Date(c[2], parseInt(c[1])-1, c[0]);
+
+    return check >= from && check <= to
+}
+
+function is_ferias(date, ferias){
+    //format of date: "dd/mm/yyyy", mm -> janeiro : 1
+    //format of ferias: [["4/3/201*", "6/3/201*"], ["17/4/201*", "23/4/201*"]], mm -> janeiro : 1
+    for(var i=0; i<ferias.length; i++){
+        var lstFerias= ferias[i]
+        if (is_dateBetweenOrEqual2dates(lstFerias[0], lstFerias[1], date)){
+            return true
+        }
+    }
+    return false
+}
+
+function inserirAulas(dicAulas,mes,ano){
+    var dicSubjectColor= {}
+    var lstColors= ["rgb(255, 209, 115)", "#4CAF4C", "rgb(97, 183, 207)", "rgb(118, 115, 217)", "rgb(150, 107, 214)", "rgb(231, 104, 171)", "#A8FFFF", "#87CEFA", "#AFEEEE", "rgb(255, 115, 115)"];
+
+    for (var sem in dicAulas) {
+        var dicAulasSem= dicAulas[sem]
+        for (var diaDaSemana in dicAulasSem) { //para cada dia da semana 
+            var lstAulas= dicAulasSem[diaDaSemana] //as aulas que tenho nesse dia de semana
+
+            var HTMLaulas="";
+
+            for (var a= 0; a < lstAulas.length; a++){ 
+                //criar o html das aulas que vou ter nesse dia de semana
+                if (lstAulas[a][1] in dicSubjectColor){
+                    var color= dicSubjectColor[lstAulas[a][1]];
+                }
+                else {
+                    var color= lstColors.shift();
+                    dicSubjectColor[lstAulas[a][1]] = color; //add to dicSubjectColor the new subject
+                }
+
+                HTMLaulas += "<div onclick='aulaEscolhida(this)' class='aulas' style='background-color:" + color + ";'> <span style='font-weight: bold;'>"+ lstAulas[a][0] +"</span>  <span>"+ lstAulas[a][1] + "</span> <span>"+ lstAulas[a][2] + lstAulas[a][3] +"</span></div>";
+            }
+
+            var coluna= colunaDeUmDiaDeSemana(diaDaSemana, mes, ano); //obtenho todos os dias q calham nesse dia de semana
+            //console.log(coluna)
+            for (var d = 0; d<coluna.length; d++){ //para cada um desses dias
+                var dia= document.getElementById(coluna[d].toString());
+                //console.log(dia)
+                var attribute= "data-aulas" + sem
+                if (dia.getAttribute("data-aulas") == "true" && dia.getAttribute(attribute) == "true"){
+                    //o dia/celula so tem link se tiver aulas e se nao for um feriado
+                    var link = "<a class='link' style='display:none' onclick='showAulas(this)'>+<span id='cont" + coluna[d] + "'></span> more</a>";
+                    dia.children[1].innerHTML = HTMLaulas + link; //por as aulas nesse dia
+                }
+            }
+        }
+    }
+
+}
+
+
+function getDiasNumMes(mes, ano){
+    //mes+1 por causa do indice ex: março= 2+1 
+    // ex: (março) getDiasNumMes(3, 2019) -> 31
+    return new Date(ano, mes+1,0).getDate();
+}
+
+function getDiaDaSemana(dia, mes, ano){
+    return new Date(ano, mes, dia).getDay();
+}
+
+function colunaDeUmDiaDeSemana(diaDaSemanaSRT,mes,ano){
+    //ex: colunaDeUmDiaDeSemana("Terça",2,2019) --> [5, 12, 19, 26]   (2 é março)
+    var diaDaSemana= diasDaSemana.indexOf(diaDaSemanaSRT);
+    var coluna= [];
+    for (var dia = 1; dia<=getDiasNumMes(mes, ano); dia++)
+        if (diaDaSemana == getDiaDaSemana(dia, mes, ano))
+            coluna.push(dia);
+    return coluna;
+}
+
+function showAulas(link){
+    //tabela
+    var boxAulas = link.parentElement;
+    var diaMesAno= boxAulas.parentElement.getAttribute("data-DMA").split("/");
+    var diaDaSemana= getDiaDaSemana(diaMesAno[0], diaMesAno[1], diaMesAno[2]);
+
+    //modal
+    var modalAulas = document.getElementById("showAulas"); 
+    modalAulas.setAttribute("data-DMA", diaMesAno[0] + "/"+diaMesAno[1]+ "/"+diaMesAno[2]);
+    var HTMLheader= "<div class='headerModal'><div> " + diasDaSemana[diaDaSemana] + ", " + diaMesAno[0] + " " + meses[diaMesAno[1]] + 
+    "<span onclick=document.getElementById('modalContent').style.display='none' class='closeButton'>&times;</span></div></div>";
+    modalAulas.innerHTML = HTMLheader;
+    var lst = boxAulas.children;
+    for (var i = 0; i<lst.length -1; i++){
+        var aula = lst[i].cloneNode(true);
+        aula.style.display = "block";
+        modalAulas.appendChild(aula);
+    }
+    document.getElementById("modalContent").style.display = "block";
+
+}
+
+
+
+
+function aulaEscolhida(aula){
+    var div= aula.parentElement;
+
+    //se escolher a aula no modal
+    if (div.id == "showAulas"){
+        var DMA= div.getAttribute("data-DMA");
+    }
+    //se escolher a aula do calendario
+    else{
+        var DMA= div.parentElement.getAttribute("data-DMA");
+    }
+    //dma, mm -> janeiro : 0
+    console.log(DMA, aula.children[0].innerHTML, aula.children[1].innerHTML, aula.children[2].innerHTML)
+
+    document.getElementById("option1Header").innerHTML= "<span class='fa fa-navicon'>&nbsp;</span>1. Escolher novamente"
+    var lstDMA= DMA.split("/")
+    $("#diaEscolhido").text(lstDMA[0] +"/"+ (parseInt(lstDMA[1])+1) + "/" + lstDMA[2] + ", "+ aula.children[0].innerHTML);
+    $("#cadeira").text(aula.children[1].innerHTML);
+    $("#turma").text(aula.children[2].innerHTML);
+    $("#option2").css("display", "block");
+    $("#option1").toggle();
+}
+
+// ------------------------------ Calendario responsive -----------------------------------------------------
+var sizes = [ 
+    window.matchMedia("(max-height: 600px)"),
+    window.matchMedia("(max-height: 500px)"),
+    window.matchMedia("(max-height: 300px)")
+]
+function responsiveModel(){
+    for (var i=0; i<sizes.length; i++){ 
+        myFunction(); 
+        sizes[i].addListener(myFunction); 
+    }
+}
+
+function myFunction(){
+    var boxAulas = document.getElementsByClassName("boxAulas");
+    var lstPrim= []; //as primeiras aulas
+    var lstSeg= []; //as segundas aulas
+    var lstTer= []; //as terceiras aulas
+    for (var i = 0; i<boxAulas.length; i++){
+         if (boxAulas[i].children[0] != undefined && boxAulas[i].children[0].className != "link")
+            lstPrim.push(boxAulas[i].children[0]);
+         if (boxAulas[i].children[1] != undefined && boxAulas[i].children[1].className != "link") 
+            lstSeg.push(boxAulas[i].children[1]);
+         if (boxAulas[i].children[2] != undefined && boxAulas[i].children[2].className != "link") 
+            lstTer.push(boxAulas[i].children[2]);
+    }
+    
+    for (var i = 0; i < lstPrim.length; i++){
+        if (sizes[2].matches) lstPrim[i].style.display = "none"; //se for menor q 300px
+        else lstPrim[i].style.display = "block"; //se for maior q 300px
+    }
+
+    for (var i = 0; i < lstSeg.length; i++){
+        if (sizes[1].matches) lstSeg[i].style.display = "none"; //se for menor q 500px
+        else lstSeg[i].style.display = "block"; //se for maior q 500px
+    }
+
+    for (var i = 0; i < lstTer.length; i++){
+        if (sizes[0].matches) lstTer[i].style.display = "none"; //se for menor q 600px
+        else lstTer[i].style.display = "block"; //se for maior q 600px
+    }
+
+    var lstLink= document.getElementsByClassName("link"); // o link pode ser o seg, ou ter, ...
+    for (var i = 0; i < lstLink.length; i++){ //para cada dia em q ha aulas
+        var lstAulas = lstLink[i].parentElement.children; //lista de aulas desse dia
+
+        var contHidden = 0;
+        for(var j= 0; j < lstAulas.length - 1; j++){ //quantas aulas faltam aparecer, -1 para nao contar com o link
+            if (j >= 3) lstAulas[j].style.display = "none"; //nunca aparecem mais do q 3 aulas
+            if (lstAulas[j].style.display ==  "none") contHidden++;
+        }
+        if (contHidden != 0) { //se falta aparecer alguma aula
+            var idSpan= lstAulas[lstAulas.length -1].firstElementChild.id;
+            document.getElementById(idSpan).innerHTML = contHidden; //atualiza o numero de aulas escondidas
+            lstLink[i].style.display = "block"; 
+        }else{
+            lstLink[i].style.display = "none"; 
+        }
+    }
+    
+}
+
+
+
+/* ----------------------- Arrastar model aulas ----------------------- */
+
+function dragElement(elmnt) {
+    var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    if (document.getElementById(elmnt.id + "header")) {
+      /* if present, the header is where you move the DIV from:*/
+      document.getElementById(elmnt.id + "header").onmousedown = dragMouseDown;
+    } else {
+      /* otherwise, move the DIV from anywhere inside the DIV:*/
+      elmnt.onmousedown = dragMouseDown;
+    }
+  
+    function dragMouseDown(e) {
+      e = e || window.event;
+      // get the mouse cursor position at startup:
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      document.onmouseup = closeDragElement;
+      // call a function whenever the cursor moves:
+      document.onmousemove = elementDrag;
+    }
+  
+    function elementDrag(e) {
+      e = e || window.event;
+      // calculate the new cursor position:
+      pos1 = pos3 - e.clientX;
+      pos2 = pos4 - e.clientY;
+      pos3 = e.clientX;
+      pos4 = e.clientY;
+      // set the element's new position:
+      elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+      elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+    }
+  
+    function closeDragElement() {
+      /* stop moving when mouse button is released:*/
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+
+
