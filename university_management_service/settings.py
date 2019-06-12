@@ -11,10 +11,10 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from django_replicated.settings import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
@@ -27,7 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -36,16 +35,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #override django's admin
+    # override django's admin
     'university',
-    'django.contrib.admin'
+    'django.contrib.admin',
+    'import_export',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'django_replicated.middleware.ReplicationMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -72,11 +73,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'university_management_service.wsgi.application'
 
-
-
 DATABASES = {
     'default': {
-        'HOST': '127.0.0.1',
+        'HOST': '104.155.5.49',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'wyvern',
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'PORT': '3306'
+    },
+    'slave1': {
+        'HOST': '35.205.105.127',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'wyvern',
         'USER': os.getenv('DATABASE_USER'),
@@ -86,14 +93,13 @@ DATABASES = {
 }
 
 CACHES = {
-    'default':  {
+    'default': {
         'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
         'LOCATION': 'memcached-service.memcached.svc.cluster.local'
     }
 }
 
-
-AUTH_PASSWORD_VALIDATORS = [    
+AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -108,7 +114,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -122,10 +127,15 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
+# STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
 MIGRATIONS_DATA_ROOT = os.path.join(BASE_DIR, 'university/migrations_data')
+
+# Replication management
+REPLICATED_DATABASE_SLAVES = ['slave1']
+DATABASE_ROUTERS = ['django_replicated.router.ReplicationRouter']
+REPLICATED_DATABASE_DOWNTIME = 20

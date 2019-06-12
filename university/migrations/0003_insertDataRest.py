@@ -120,7 +120,7 @@ def makeSystemUserOBJs():
 @transaction.atomic
 def makePersonalInfoOBJs():
     allSystemUsers= SystemUser.objects.all()
-    with open(settings.MIGRATIONS_DATA_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/NamesGenderNationalityBirthAdressVat800.txt", encoding="utf8") as rfile:
         listData = rfile.readlines()
     num= 0
     for user in allSystemUsers :
@@ -178,7 +178,7 @@ def makeCourseOBJs():
 
 @transaction.atomic
 def makeSubjectAndCourseSubjectOBJs():
-    with open(settings.MIGRATIONS_DATA_ROOT + "/subjectsData.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/subjectsData.txt", encoding="utf8") as rfile:
         for line in rfile.readlines():
             if "#" not in line and "||" in line: 
                 
@@ -225,7 +225,7 @@ def makeLessonSystemUserOBJs():
 
 @transaction.atomic         
 def makeLessonOBJs():
-    with open(settings.MIGRATIONS_DATA_ROOT + "/lessonsData.txt") as rfile:
+    with open(settings.MIGRATIONS_DATA_ROOT + "/lessonsData.txt", encoding="utf8") as rfile:
         for line in rfile.readlines():
             if "#" not in line and "||" in line: 
                 

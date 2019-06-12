@@ -5,21 +5,29 @@
 
 {% block content_title %}Exportar Dados{% endblock %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block extrastyle %}{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
 {% block bodyclass %}{{ block.super }} dashboard{% endblock %}
 
 {% block breadcrumbs %}
     <div class="breadcrumbs">
-    <a href="{% url 'home_a' %}"><em class="fas fa-file-export"></em></a> › Export
+        <a href="{% url 'home_a' %}"><em class="fas fa-file-export"></em></a> › Export
     </div>
 {% endblock %}
 
 {% block content %}
 
 
-<body>
+    <body>
 
+    <div class="container">
+        <div id="action_area">
+            <img id="export_loading_img" style="display: none" src="{% static "our/img/loading2.gif" %}" alt="">
+            <button class="button" id="export_database">Export database json file</button>
+        </div>
+    </div>
 
+    {% comment %}
   <div class="container">
       <p>Lista de Tabelas</p>
       <form method=POST action="">
@@ -59,24 +67,37 @@
  <br><br>
     <input type="submit">
   </form>
+  {% endcomment %}
+    <script>
 
-</body>
+        $(document).ready(function () {
 
-<div id="content-main">
+            $('#export_database').on('click ', function () {
+                $("#export_database").toggle();
+                $("#export_loading_img").toggle();
+                $.ajax({
+                    url: "{% url 'export_db_api' %}",
+                    type: "POST",
+                    //dataType: 'json',
+                    success: function (res) {
+                        let a = document.createElement('a');
+                        a.href = window.URL.createObjectURL(new Blob([JSON.stringify(res)], {type: 'application/json'}));
+                        a.download = 'db.json';
+                        a.click();
+                        window.URL.revokeObjectURL(a.href);
+                    },
+                    error: function (err) {
+                        alert(err)
+                    }
+                }).done(function () {
+                    $("#export_database").toggle();
+                    $("#export_loading_img").toggle();
+                });
+            });
+        });
 
-<script>
 
-$(document).ready(function(){
-  $('#tabelasExport input').change(function () {
-
-  });
-});
-
-
-
-</script>
-
-
-</div>
+    </script>
+    </body>
 
 {% endblock %}

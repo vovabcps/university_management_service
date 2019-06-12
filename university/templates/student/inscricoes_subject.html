@@ -29,8 +29,9 @@
 								<p id="creditosApr"><strong>Créditos para Aprovação:</strong> <span id="ano_lectivo_act">180.0</span></p>
 							</div>
               <br><br>
-							<form role="form" id="insert_disciplina">
-								{{MiniC}}
+							<form role="form" id="insert_disciplina" method="post" action="{% url 'choose_lessons_s' %}">
+									<fieldset>
+								<p>mini curso: {{MiniC}}</p>
 
 								<p>Selecione as Disciplinas:</p>
 								{% for course_subj in course_subjs %}
@@ -38,8 +39,10 @@
 									, {{course_subj.semester}} semestre, {{course_subj.type}}, {{course_subj.get_subject_credits}}.0	Créd.<br>
 								{% endfor %}
 								<br><br>
-								<a href="{{ model.admin_url }}"><button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary" onclick="addDisciplinas()" >Submit Button</button></a>
+								<button id="submit" type="submit" style="float: right" class="btn btn-lg btn-primary">Submit Button</button>
+								<!-- onclick="addDisciplinas()" -->
 								<button type="reset" class="btn btn-default">Reset Button</button>
+								</fieldset>
 							</form>
 						</div>
 					</div>

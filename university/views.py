@@ -1,12 +1,19 @@
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import render
+from django.core.files import File
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseServerError, HttpResponseForbidden
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
+from django.views.decorators.http import require_http_methods
+from django.core.management import call_command
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 # convert to json
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
+from django_replicated.decorators import use_master
+
 from .models import *
 import university.models
 from django.views.decorators.cache import cache_page
@@ -134,6 +141,7 @@ def request_user(request):
 
 
 # --------------- logout ---------------
+@use_master
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect(reverse('login'))
@@ -156,6 +164,40 @@ def inscricoes_subject_s(request):
             "semester")
         return render(request, 'student/inscricoes_subject.html',
                       {'suCourse': suCourse, 'MiniC': MiniC, 'course_subjs': course_subjs})
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+
+def choose_lessons_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE):
+        if request.method == 'POST':
+            subjs = request.POST.getlist('subjs')
+            dicSubjsTypeTurmaAndLessons = {}
+            subjsLessonsOBJs = {}
+            for s in subjs:
+                dicTypeTurmaLessons = {}
+                SubjObj = Subject.objects.get(name=s)
+                lessons = Lesson.objects.filter(subject=SubjObj).order_by("type").order_by("turma")
+                for l in lessons:
+                    if l.type in dicTypeTurmaLessons:
+                        novaTurma = True
+                        for [turma, lstLessons] in dicTypeTurmaLessons[l.type]:
+                            if turma == l.turma:
+                                print(lstLessons)
+                                oldList = [[t, ls] for [t, ls] in dicTypeTurmaLessons[l.type] if t != l.turma]
+                                dicTypeTurmaLessons[l.type] = oldList + [[l.turma, lstLessons + [l]]]
+                                novaTurma = False
+                                break
+                        if novaTurma:
+                            dicTypeTurmaLessons[l.type] = dicTypeTurmaLessons[l.type] + [[l.turma, [l]]]
+
+                    else:
+                        dicTypeTurmaLessons[l.type] = [[l.turma, [l]]]  # nao por tuplos pq eles sao imutaveis
+                dicSubjsTypeTurmaAndLessons[SubjObj] = dicTypeTurmaLessons
+            return render(request, 'student/choose_lessons.html', {'subjs': dicSubjsTypeTurmaAndLessons})
+
+        else:
+            return HttpResponseRedirect(reverse('inscricoes_subject_s'))
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -211,6 +253,7 @@ def consult_details_t(request):
 
 
 # --------------- admin ---------------
+
 def home_a(request):
     if is_authenticated(request, university.models.ADMIN_ROLE):
         return render(request, 'admin/index.html', {})
@@ -296,3 +339,36 @@ def export_a(request):
         return render(request, 'admin/export.html', {'app_list': [app_list[1]]})
     else:
         return HttpResponseRedirect(reverse('login'))
+
+
+@require_http_methods(["POST"])
+def import_database_a(request):
+    if is_authenticated(request, university.models.ADMIN_ROLE):
+        up_file = request.FILES['file']
+        print(up_file.name.endswith('.json'))
+
+        if not up_file.name.endswith(".json"):
+            return HttpResponse(json.dumps({'ok': False}))
+
+        default_storage.delete('upload_db.json')
+        default_storage.save('upload_db.json', ContentFile(up_file.read()))
+
+        try:
+            call_command('loaddata', 'upload_db.json')
+        except Exception:
+            return HttpResponse(json.dumps({'ok': False}))
+        return HttpResponse(json.dumps({'ok': True}))
+    else:
+        return HttpResponseForbidden()
+
+
+@require_http_methods(["POST"])
+def export_database_a(request):
+    if is_authenticated(request, university.models.ADMIN_ROLE):
+        call_command('dumpdata', '-o', 'db.json')
+
+        response = HttpResponse(open("db.json", "r"), content_type='application/json', )
+        response['Content-Disposition'] = "filename=db.json"
+        return response
+    else:
+        return HttpResponseForbidden()

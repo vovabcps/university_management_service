@@ -22,3 +22,4 @@ coverage.xml
 .git
 settings.py
 .DS_Store
+db.json
