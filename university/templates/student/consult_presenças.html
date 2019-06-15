@@ -1,0 +1,80 @@
+{% extends "student/base_s.html" %}
+{% load i18n static %}
+
+{% block title %}Consultar presenças{% endblock %}
+
+{% block content_title %}Consultar presenças{% endblock %}
+
+{% block breadcrumbs %}
+        › Consultar presenças
+{% endblock %}
+
+
+{% block content %}
+
+	<div id="content-main">
+<div class="row">
+			<div class="col-md-12">
+                <div class="panel panel-default">
+					<div class="panel-body tabs">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#tab1" data-toggle="tab">Disciplina 1</a></li>
+							<li><a href="#tab2" data-toggle="tab">Disciplina 2</a></li>
+							<li><a href="#tab3" data-toggle="tab">Disciplina 3</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade in active" id="tab1">
+								<h4>Disciplina 1</h4>
+								<table class="table">
+										<thead>
+                                            <tr>
+                                                <th></th>
+                                                <th colspan="4" style="text-align: center">Semanas (Dias)</th>
+                                            </tr>
+											<tr>
+												<th>Turma</th>
+												<th>6/5 - 11/5</th>
+												<th>13/5 - 18/5</th>
+												<th>20/5 - 25/5</th>
+												<th>27/5 - 1/6</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>T11</td>
+												<td>2/2</td>
+												<td>2/2</td>
+												<td>1/2</td>
+												<td>2/2</td>
+											</tr>
+											<tr>
+												<td>TP23</td>
+												<td>2/2</td>
+												<td>1/2</td>
+												<td>1/2</td>
+												<td>0/2</td>
+											</tr>
+											<tr>
+												<td>PL23</td>
+												<td>1/1</td>
+												<td>1/1</td>
+												<td>0/1</td>
+												<td>1/1</td>
+											</tr>
+										</tbody>
+								</table>
+							</div>
+							<div class="tab-pane fade" id="tab2">
+								<h4>Disciplina 2</h4>
+							</div>
+							<div class="tab-pane fade" id="tab3">
+								<h4>Disciplina 3</h4>
+							</div>
+						</div>
+					</div>
+                </div><!--/.panel-->
+            </div><!--/.col-->
+</div><!--/.row-->
+</div>
+
+{% endblock %}

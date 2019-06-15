@@ -483,6 +483,12 @@ def consult_subjects_s(request):
         return HttpResponseRedirect(reverse('login'))
 
 
+def consult_presencas_s(request):
+    if is_authenticated(request, university.models.STUDENT_ROLE) :
+        return render(request, 'student/consult_presenças.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
+
 
 def consult_university_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
@@ -659,6 +665,13 @@ def uniqueElements(lst):
         if e not in newLst :
             newLst.append(e)
     return newLst
+
+
+def fechar_turma_t(request):
+    if is_authenticated(request, university.models.TEACHER_ROLE) :
+        return render(request, 'teacher/fechar_turma.html', {})
+    else: 
+        return HttpResponseRedirect(reverse('login'))
 
 
 def resposta_pedidos_t(request):

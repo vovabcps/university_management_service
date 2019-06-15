@@ -1,0 +1,113 @@
+{% extends "teacher/base_t.html" %}
+{% load i18n static %}
+
+{% block title %}Fechar turmas{% endblock %}
+
+{% block content_title %}Fechar turmas{% endblock %}
+
+{% block breadcrumbs %}
+        › Fechar turmas
+{% endblock %}
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<div id="content-main">
+<div class="row">
+			<div class="col-md-12">
+                <div class="panel panel-default">
+					<div class="panel-body tabs">
+						<ul class="nav nav-tabs">
+							<li class="active"><a href="#tab1" data-toggle="tab">Disciplina 1</a></li>
+							<li><a href="#tab2" data-toggle="tab">Disciplina 2</a></li>
+							<li><a href="#tab3" data-toggle="tab">Disciplina 3</a></li>
+						</ul>
+						<div class="tab-content">
+							<div class="tab-pane fade in active" id="tab1">
+								<h4>Disciplina 1</h4>
+								<table class="table">
+										<thead>
+											<tr>
+												<th>Turma</th>
+												<th>Dia da Semana</th>
+												<th>Horário</th>
+												<th>Alunos Inscritos</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>T11</td>
+												<td>Segunda</td>
+												<td>9h - 10h30m</td>
+												<td>36</td>
+												<td>
+													
+												</td>
+											</tr>
+											<tr>
+												<td>T11</td>
+												<td>Quinta</td>
+												<td>9h - 10h30m</td>
+												<td>36</td>
+												<td>
+													
+												</td>
+											</tr>
+											<tr>
+												<td>TP23</td>
+												<td>Terça</td>
+												<td>13h - 14h30m</td>
+												<td>12</td>
+												<td>
+													
+												</td>
+											</tr>
+											<tr>
+												<td>TP24</td>
+												<td>Quarta</td>
+												<td>13h - 14h30m</td>
+												<td>0</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-danger">Fechar Turma</button>
+												</td>
+											</tr>
+											<tr>
+												<td>PL22</td>
+												<td>Quarta</td>
+												<td>13h - 14h30m</td>
+												<td>0</td>
+												<td>
+													<button type="button" class="btn btn-sm btn-danger">Fechar Turma</button>
+												</td>
+											</tr>
+											<tr>
+												<td>PL23</td>
+												<td>Sexta</td>
+												<td>13h - 14h30m</td>
+												<td>16</td>
+												<td>
+													
+												</td>
+											</tr>
+										</tbody>
+								</table>
+							</div>
+							<div class="tab-pane fade" id="tab2">
+								<h4>Disciplina 2</h4>
+							</div>
+							<div class="tab-pane fade" id="tab3">
+								<h4>Disciplina 3</h4>
+							</div>
+						</div>
+					</div>
+                </div><!--/.panel-->
+            </div><!--/.col-->
+</div><!--/.row-->
+</div>
+{% endblock %}

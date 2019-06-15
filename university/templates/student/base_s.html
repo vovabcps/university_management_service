@@ -145,14 +145,17 @@
                     <li><a class="" href="{% url 'horario_atual_s' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Horário
 					</a></li>
+					<li><a class="" href="{% url 'consult_presencas_s' %}">
+						<span class="fa fa-arrow-right">&nbsp;</span> Presenças
+					</a></li>
                     <li><a class="" href="{% url 'consult_subjects_s' %}">
 						<span class="fa fa-arrow-right">&nbsp;</span> Disciplinas
 					</a></li>
 					<li><a class="" href="{% url 'consult_contacts_s' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Pesquisa de Contactos
+						<span class="fa fa-arrow-right">&nbsp;</span> Contactos
 					</a></li>
                     <li><a class="" href="{% url 'consult_university_s' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Pesquisa Universidade
+						<span class="fa fa-arrow-right">&nbsp;</span> Universidades
 					</a></li>
 				</ul>
 			</li>
@@ -263,7 +266,7 @@ if (pageArray[pageArray.length - 1] == ""){
     pag = pageArray[pageArray.length - 1]
 }
 
-if (pag == "consult_details" || pag == "consult_subjects" || pag == "consult_contacts" || pag == "consult_university" || pag == "horario"){
+if (pag == "consult_details" || pag == "consult_subjects" || pag == "consult_contacts" || pag == "consult_university" || pag == "horario" || pag == "consult_presencas"){
 	pag="consultar";  
 } 
 
