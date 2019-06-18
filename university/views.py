@@ -667,9 +667,9 @@ def uniqueElements(lst):
     return newLst
 
 
-def fechar_turma_t(request):
+def alterar_turmas_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        return render(request, 'teacher/fechar_turma.html', {})
+        return render(request, 'teacher/alterar_turmas.html', {})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
