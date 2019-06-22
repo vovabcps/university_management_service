@@ -454,6 +454,13 @@ button[disabled]{
   }
 
 
+/* ---------------------------- consultar turmas ---------------------------- */
+
+.verHorarioLink{
+  text-decoration: underline;
+  color: #30a5ff;
+  cursor: pointer;
+}
 
 
 

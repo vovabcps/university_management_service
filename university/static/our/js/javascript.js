@@ -186,28 +186,46 @@ function criarHorario(semestre) {
       var turmaLessons = turma.split("|").slice(0, -1);
       lstLessons = lstLessons.concat(turmaLessons)
     }
-    formatarOrdenarLstLessons(lstLessons)
+    //reset pq os valores do dic tem q estar ordenados
+    document.getElementById("tabelaSchedule").innerHTML= "";
+
+    var dicDiasDaSemena= formatarOrdenarLstLessons(lstLessons)
+    buildSchedule(dicDiasDaSemena);
 }
 
 
 function formatarOrdenarLstLessons(lstLessons){
     /*
-    exemplo: lstLessons
-    ['QUARTA,11:00,1:00,Redes de Computadores (LTI),T,1.5.67', 'QUINTA,09:30,1:00,Redes de Computadores (LTI),T,2.1.14', 
+    lstLessons:
+    horario: exemplo1-> ['QUARTA,11:00,1:00,Redes de Computadores (LTI),T,1.5.67', 'QUINTA,09:30,1:00,Redes de Computadores (LTI),T,2.1.14', 
     'QUINTA,08:00,1:30,Redes de Computadores (LTI),TP,2.1.15', 'TERÇA,09:00,2:00,Segurança Informática,T,2.1.12', 
     'TERÇA,11:00,1:30,Segurança Informática,TP,2.1.11']
+    calendario: exemplo2-> ["QUARTA,08:00,Contabilidade Geral I,PL,13", "SEGUNDA,09:00,Introdução às Tecnologias Web,T,21", "SEGUNDA,11:30,Introdução às Tecnologias Web,TP,25"]
+
+    ensure:
+    exemplo1->     var scheduleDict= {
+                        "QUARTA" : [["11:00", "1:00", "RC", "T", "1.5.67"]],
+                        "QUINTA"   : [["8:00", "1:30", "RC", "TP", "2.1.15"], ["9:30", "1:00", "RC", "T", "2.1.14"]], 
+                        "TERÇA"  : [["9:00", "2:00", "SI", "T", "2.1.12"], ["11:00", "1:30", "SI", "TP", "2.1.11"]]
+                    }
+    exemplo2->      var scheduleDict= {
+                        "Quarta" : [["8:00", "CGI", "PL", "13"]],
+                        "Segunda"   : [["9:00", "IT", "T", "21"], ["11:30", "IT", "TP", "25"]]
+                    }
     */
     console.log(lstLessons)
-
-    //reset pq os valores do dic tem q estar ordenados
-    document.getElementById("tabelaSchedule").innerHTML= "";
 
     //percorrer a lista com todas as lessons
     var lstlesson = []
     for (var i = 0; i < lstLessons.length; i++) {
       var lesson = lstLessons[i].split(",")
-      lesson[1] = format(lesson[1])
-      lesson[3] = getSigla(lesson[3])
+        if (lesson.length == 6){
+            lesson[1] = format(lesson[1])
+            lesson[3] = getSigla(lesson[3])
+        }else{
+            lesson[0] = lowerCaseAllWordsExceptFirstLetters(lesson[0])
+            lesson[1] = format(lesson[1])
+        }
       lstlesson.push(lesson)
     }
 
@@ -215,9 +233,9 @@ function formatarOrdenarLstLessons(lstLessons){
 
     for (var i = 0; i < lstlesson.length; i++) {
       if (lstlesson[i][0] in scheduleDict) {
-        scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, 6))
+        scheduleDict[lstlesson[i][0]].push(lstlesson[i].slice(1, lstlesson[i].length))
       } else {
-        scheduleDict[lstlesson[i][0]] = [lstlesson[i].slice(1, 6)]
+        scheduleDict[lstlesson[i][0]] = [lstlesson[i].slice(1, lstlesson[i].length)]
       }
     }
     console.log(scheduleDict)
@@ -230,24 +248,16 @@ function formatarOrdenarLstLessons(lstLessons){
       });
     }
 
-    /*
-    var scheduleDict= {
-        "SEGUNDA" : [["10:30", "1:00", "AVPExp-2", "T", "6.2.48"], ["11:30", "1:00", "AVPExp-2", "TP", "6.4.35"], ["12:30", "0:30", "AVPExp-2", "L", "6.4.35"]],
-        "TERÇA"   : [["8:30", "3:00", "ASSistem-2", "O", "1.2.32"], ["8:30", "2:00", "ASSistem-2", "O", "1.3.12"], ["8:30", "3:00", "ASSistem-2", "O", "1.2.30"],
-                     ["8:30", "3:00", "ASSistem-2", "O", "1.2.31"], ["8:30", "3:00", "AD", "O", "1.2.33"], ["14:00", "1:00", "ECSoc-2", "T", "6.4.31"], 
-                     ["15:00", "0:30", "ECSoc-2", "S", "6.4.31"], ["15:30", "1:30", "ECSoc-2", "TP", "6.4.34"]], 
-        "QUARTA"  : [["8:30", "1:00", "AVPExp-2", "T", "6.2.48"], ["9:30", "1:00", "AVPExp-2", "TP", "6.4.35"], ["10:30", "0:30", "AVPExp-2", "L", "6.4.35"], 
-                     ["16:30", "2:00", "ASSistem-2", "T", "1.3.15"]],
-        "QUINTA"  : [["15:30", "3:00", "ASSistem-2", "TP", "6.2.49"]]
-
-      }
-      */
-
     console.log(scheduleDict)
-    buildSchedule(scheduleDict);
+    return scheduleDict;
 }
 
 
+function lowerCaseAllWordsExceptFirstLetters(string) {
+    return string.replace(/\w\S*/g, function (word) {
+        return word.charAt(0) + word.slice(1).toLowerCase();
+    });
+}
 
   function maior(str1, str2){
     console.log(str1 + " " + str2)
@@ -284,9 +294,11 @@ function formatarOrdenarLstLessons(lstLessons){
     for (var i = 0; i < lista.length; i++) {
       if (lista[i].length > 3 && lista[i].indexOf('(') <= -1) {
         sigla = sigla + lista[i][0]
-      }
-      else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
+      }else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
                 sigla = sigla + lista[i]
+      }else if (lista[i].length == 1) { //(LTI) / PII
+        sigla = sigla + lista[i]
+      
       }
     }
     console.log(sigla)
@@ -562,7 +574,7 @@ function inserirAulas(dicAulas,mes,ano){
                     dicSubjectColor[lstAulas[a][1]] = color; //add to dicSubjectColor the new subject
                 }
 
-                HTMLaulas += "<div onclick='aulaEscolhida(this)' class='aulas' style='background-color:" + color + ";'> <span style='font-weight: bold;'>"+ lstAulas[a][0] +"</span>  <span>"+ lstAulas[a][1] + "</span> <span>"+ lstAulas[a][2] + lstAulas[a][3] +"</span></div>";
+                HTMLaulas += "<div data-sem="+sem+" data-nomeSubj='" + lstAulas[a][1] + "' onclick='aulaEscolhida(this)' class='aulas' style='background-color:" + color + ";'><span style='font-weight: bold;'>"+ lstAulas[a][0] +"</span>  <span>"+ getSigla(lstAulas[a][1]) + "</span> <span>"+ lstAulas[a][2] + lstAulas[a][3] +"</span></div>";
             }
 
             var coluna= colunaDeUmDiaDeSemana(diaDaSemana, mes, ano); //obtenho todos os dias q calham nesse dia de semana
@@ -642,13 +654,112 @@ function aulaEscolhida(aula){
     //dma, mm -> janeiro : 0
     console.log(DMA, aula.children[0].innerHTML, aula.children[1].innerHTML, aula.children[2].innerHTML)
 
-    document.getElementById("option1Header").innerHTML= "<span class='fa fa-navicon'>&nbsp;</span>1. Escolher novamente"
-    var lstDMA= DMA.split("/")
-    $("#diaEscolhido").text(lstDMA[0] +"/"+ (parseInt(lstDMA[1])+1) + "/" + lstDMA[2] + ", "+ aula.children[0].innerHTML);
-    $("#cadeira").text(aula.children[1].innerHTML);
-    $("#turma").text(aula.children[2].innerHTML);
-    $("#option2").css("display", "block");
-    $("#option1").toggle();
+    $.ajax({
+        type: "POST",
+        url: 'presencas_registar',
+        data: JSON.stringify({
+          'sem': aula.getAttribute("data-sem"),
+          'cadeiraEscolhida': aula.getAttribute("data-nomesubj"),
+          'turmaEscolhida': aula.children[2].innerHTML
+        }),
+        success: function (data) {
+            console.log(data)
+
+          if (data['message'] == "success") {
+            document.getElementById("option1Header").innerHTML= "<span class='fa fa-navicon'>&nbsp;</span>1. Escolher novamente"
+            var opcao2 = document.getElementById("option2");
+            $("#option2").css("display", "block");
+            $("#option1").toggle();
+
+            var lstDMA= DMA.split("/")
+            var aulaEscolhidaTxt = ""
+            var diaDaSemana= getDiaDaSemana(lstDMA[0], lstDMA[1], lstDMA[2])
+            var date= lstDMA[0] +"/"+ (parseInt(lstDMA[1])+1) + "/" + lstDMA[2]
+            aulaEscolhidaTxt += "<h5>Dia: " + diasDaSemana[diaDaSemana] + ", " + date + "</h5>"
+            aulaEscolhidaTxt += "<h5>Hora: " + aula.children[0].innerHTML + "</h5>"
+            var nomeSubj= aula.getAttribute("data-nomesubj")
+            aulaEscolhidaTxt += "<h5>Cadeira: <span id='cadeiraEscolhida'>" + nomeSubj + "</span> ("+aula.children[1].innerHTML + ") </h5>"
+            var turmaEscolhida= aula.children[2].innerHTML
+            aulaEscolhidaTxt += "<h5>Turma: " + turmaEscolhida + "</h5>"
+            opcao2.innerHTML = aulaEscolhidaTxt;
+
+            //tabela
+            var table= document.createElement("Table"); 
+            table.setAttribute("id", 'students_table')
+            table.setAttribute("class", 'table')
+            opcao2.appendChild(table)
+
+            var listAlunos= data['alunos']
+            if (listAlunos.length == 0){
+                table.innerHTML = "Esta vazia :("
+
+            }else{
+                var tableHeader= table.insertRow(-1);
+                tableHeader.innerHTML = "<th>Número</th><th>Nome</th><th></th>"
+
+                for(var l = 0; l<listAlunos.length; l++){
+                    var linha= table.insertRow(-1);
+                    linha.innerHTML = "<td>"+ listAlunos[l][0] +"</td><td>"+ listAlunos[l][1] +"</td><td><div class='checkbox'><label><input type='checkbox' name='presenca' value="+ listAlunos[l][0] +"></label></div></td>"
+                }
+
+                opcao2.innerHTML += "<button onclick=guardarPresenças('"+ diasDaSemana[diaDaSemana]+"','"+ date +"','"+ turmaEscolhida+ "') style='float: right' class='btn btn-lg btn-primary'>Submit</button>"
+            }
+
+            console.log(nomeSubj + ", " + date + ", " + turmaEscolhida)
+            //obter os dados guardados temporariamente
+            if(localStorage.getItem(nomeSubj + ", " + date + ", " + turmaEscolhida) != undefined){
+                var alunosEscolhidos = JSON.parse(localStorage.getItem(nomeSubj + ", " + date + ", " + turmaEscolhida))
+                for (var i = 0; i<alunosEscolhidos.length; i++){
+                    $("input[value='"+alunosEscolhidos[i]+"']").prop("checked", true );
+                }
+            }
+
+          } else {
+            alert("Ocorreu um problema, volte a tentar.")
+          }
+        }
+      });
+}
+
+function guardarPresenças(week_day, date, turmaEscolhida){
+    var alunosEscolhidos= [];
+    var alunosNaoEscolhidos= [];
+    $.each($("input[type='checkbox']"), function () {
+        if ($(this).is(":checked")){
+            alunosEscolhidos.push($(this).val())
+        }else{
+            alunosNaoEscolhidos.push($(this).val())
+        }
+    });
+    console.log(alunosEscolhidos)
+    console.log(alunosNaoEscolhidos)
+
+    if (alunosEscolhidos.length == 0){
+        alert("Escolha pelo menos um aluno!")
+    }else{
+        var cadeiraEscolhida= document.getElementById("cadeiraEscolhida").innerHTML
+
+        //guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
+        var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
+        localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
+            
+        $.ajax({
+            type: "POST",
+            url: 'presencas_registar',
+            data: JSON.stringify({
+            'alunosEscolhidos': alunosEscolhidos,
+            'alunosNaoEscolhidos': alunosNaoEscolhidos,
+            'week_day':week_day.toUpperCase(),
+            'date':date,
+            'cadeiraEscolhida': cadeiraEscolhida,
+            'turmaEscolhida': turmaEscolhida
+            }),
+            success: function (data) {
+                console.log(data)
+                alert("Presenças guardadas")
+            }
+        });
+    }
 }
 
 // ------------------------------ Calendario responsive -----------------------------------------------------

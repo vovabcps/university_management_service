@@ -7,6 +7,8 @@ from django.contrib import messages
 import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
+
+from django.contrib.auth.models import User
 from .models import *
 import university.models
 
@@ -19,7 +21,6 @@ from django.core.files.storage import FileSystemStorage
 
 
 import sys
-
 import re
 
 #password change
@@ -30,6 +31,8 @@ from django.shortcuts import render, redirect
 #consult details
 from django.core.validators import validate_email
 
+#date django model
+from datetime import datetime
 
 #--------------------- all in common -----------------------
 
@@ -584,72 +587,77 @@ def consult_details_t(request):
 
 def consult_turmas_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        su = request_user(request)
-        suLessons = list(Lesson.objects.filter(professor=su))
-        schoolYearObj = SchoolYear.objects.get(begin=2018)
+        if request.method == 'GET':
+            su = request_user(request)
+            suLessons = list(Lesson.objects.filter(professor=su))
+            schoolYearObj = SchoolYear.objects.get(begin=2018)
 
-        dic1SemSubjs= {}
-        dic2SemSubjs= {}
+            dic1SemSubjs= {}
+            dic2SemSubjs= {}
 
-        for lesson in suLessons:
-            str= lesson.type + lesson.turma
-            subj= lesson.subject
-            CRsubjs= CourseSubject.objects.filter(subject=subj) 
+            for lesson in suLessons:
+                str= lesson.type + lesson.turma
+                subj= lesson.subject
+                CRsubjs= CourseSubject.objects.filter(subject=subj) 
 
-            #se o sem da cadeira e igual independentemente do curso
-            if is_semestres_all_same(CRsubjs) :
-                sem= CRsubjs[0].semester
-                if sem == 1:
+                #por a cadeira na listaSemestre certo com as respetivas Turmas
+
+                #se o sem da cadeira e igual independentemente do curso
+                if is_semestres_all_same(CRsubjs) :
+                    sem= CRsubjs[0].semester
+                    if sem == 1:
+                        if subj not in list(dic1SemSubjs.keys()):
+                            dic1SemSubjs[subj] = str
+                        else:
+                            dic1SemSubjs[subj] = dic1SemSubjs[subj] + " " + str
+                    else:
+                        if subj not in list(dic2SemSubjs.keys()):
+                            dic2SemSubjs[subj] = str
+                        else:
+                            dic2SemSubjs[subj] = dic2SemSubjs[subj] + " " + str
+                else:
                     if subj not in list(dic1SemSubjs.keys()):
                         dic1SemSubjs[subj] = str
                     else:
                         dic1SemSubjs[subj] = dic1SemSubjs[subj] + " " + str
-                else:
+
                     if subj not in list(dic2SemSubjs.keys()):
                         dic2SemSubjs[subj] = str
                     else:
                         dic2SemSubjs[subj] = dic2SemSubjs[subj] + " " + str
-            else:
-                if subj not in list(dic1SemSubjs.keys()):
-                    dic1SemSubjs[subj] = str
-                else:
-                    dic1SemSubjs[subj] = dic1SemSubjs[subj] + " " + str
+                
+            for subj in list(dic1SemSubjs.keys()):
+                dic1SemSubjs[subj] = getAlunosOfSubjBySTR(1, subj,  dic1SemSubjs[subj], schoolYearObj)
 
-                if subj not in list(dic2SemSubjs.keys()):
-                    dic2SemSubjs[subj] = str
-                else:
-                    dic2SemSubjs[subj] = dic2SemSubjs[subj] + " " + str
-            
-        for subj in list(dic1SemSubjs.keys()):
-            dic1SemSubjs[subj] = getAlunosOfSubjBySTR(1, subj,  dic1SemSubjs[subj], schoolYearObj)
+            for subj in list(dic2SemSubjs.keys()):
+                dic2SemSubjs[subj] = getAlunosOfSubjBySTR(2, subj,  dic2SemSubjs[subj], schoolYearObj)
 
-        for subj in list(dic2SemSubjs.keys()):
-            dic2SemSubjs[subj] = getAlunosOfSubjBySTR(2, subj,  dic2SemSubjs[subj], schoolYearObj)
+            print(dic1SemSubjs)
+            print(dic2SemSubjs)
+            semestre= {"1": dic1SemSubjs, "2": dic2SemSubjs}
+            return render(request, 'teacher/consult_turmas_D.html', {'subjsSem':semestre})
+        else:
+            dadosJson = json.loads(request.body.decode("utf-8"))
+            print(dadosJson)
+            alunoFc= dadosJson['aluno']
+            print(alunoFc)
+            horarioAluno= []
+            return HttpResponse(json.dumps({"message": "success", "alunos": horarioAluno}), content_type="application/json")
 
-        print(dic1SemSubjs)
-        print(dic2SemSubjs)
-        semestre= {"1": dic1SemSubjs, "2": dic2SemSubjs}
-        return render(request, 'teacher/consult_turmas_D.html', {'subjsSem':semestre})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
 def getAlunosOfSubjBySTR(sem, subj, string, schoolYearObj):
-    #ex: 1, AD, "T11 TP12 T14 L15 ", 2018
+    #ex: 1, AD, " T11 TP12 T14 L15 T11", 2018
     dicTypeTurmasAlunos= {}
     lstTypeTurmas= string.split(" ")
     lstTypeTurmasSemEspaços= [e for e in lstTypeTurmas if e != ""]
-    print(1)
     print(lstTypeTurmasSemEspaços)
-    
     lstTypeTurmasSemEspaçosUnique= uniqueElements(lstTypeTurmasSemEspaços)
-    print(lstTypeTurmasSemEspaçosUnique)
+    print(lstTypeTurmasSemEspaçosUnique)  #[T11, TP12, T14, L15]
+
     for typeTurma in lstTypeTurmasSemEspaçosUnique :
-        suSubjs = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj, subjSemestre=sem))
-        myListOfCollegues= []
-        for suSubj in suSubjs:
-            PI= PersonalInfo.objects.get(user=suSubj.user)
-            dicInfo= {'numero':suSubj.user.user.username, 'nome':PI.name, 'email':suSubj.user.user.email}
-            myListOfCollegues.append(list(dicInfo.values()))
+        myListOfCollegues= getAlunosOfSubjInSpecificClass(sem, subj, typeTurma, schoolYearObj)
         prices_json = json.dumps(myListOfCollegues, cls=DjangoJSONEncoder)
         type, turma= separateLettersNumb(typeTurma)
         if type not in list(dicTypeTurmasAlunos.keys()):
@@ -658,6 +666,19 @@ def getAlunosOfSubjBySTR(sem, subj, string, schoolYearObj):
             dicTypeTurmasAlunos[type] = dicTypeTurmasAlunos[type] + [[turma, prices_json]]
 
     return dicTypeTurmasAlunos
+
+def getAlunosOfSubjInSpecificClass(sem, subj, typeTurma, schoolYearObj):
+    #ex: 1, AD, T11, 2018
+    #obtem todos os alunos que pertencem a uma turma de uma determinada cadeira
+    #retorna em json uma lista de listas, em q cada lista tem informaçao sobre um aluno
+    
+    suSubjs = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj, subjSemestre=sem))
+    myListOfCollegues= []
+    for suSubj in suSubjs:
+        PI= PersonalInfo.objects.get(user=suSubj.user)
+        listInfo= [suSubj.user.user.username, PI.name, suSubj.user.user.email]
+        myListOfCollegues.append(listInfo)
+    return myListOfCollegues
 
 def uniqueElements(lst):
     newLst= []
@@ -696,7 +717,81 @@ def presencas_consultar_t(request):
 
 def presencas_registar_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        return render(request, 'teacher/presenças_registo.html', {})
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+
+        if request.method == 'GET':
+            suLessons = list(Lesson.objects.filter(professor=su))
+            sem1SubjsStr= []
+            sem2SubjsStr= []
+            for lesson in suLessons:
+                str= lesson.week_day + "," + lesson.hour + "," + lesson.subject.name + "," + lesson.type + "," + lesson.turma
+                subj= lesson.subject
+                CRsubjs= CourseSubject.objects.filter(subject=subj) 
+
+                #se o sem da cadeira e igual independentemente do curso
+                if is_semestres_all_same(CRsubjs) :
+                    sem= CRsubjs[0].semester
+                    if sem == 1:
+                        sem1SubjsStr.append(str)
+                    else:
+                        sem2SubjsStr.append(str) 
+                
+                else:
+                    sem1SubjsStr.append(str)
+                    sem2SubjsStr.append(str)
+            
+            print(sem1SubjsStr)
+            print(sem2SubjsStr)
+            scheduleDict = {'1sem' : sem1SubjsStr, '2sem': sem2SubjsStr}
+            return render(request, 'teacher/presenças_registo.html', {'scheduleDict':scheduleDict})
+        
+        else:
+            dadosJson = json.loads(request.body.decode("utf-8"))
+            print(dadosJson)
+
+            #prim pedido ajax
+            if 'alunosEscolhidos' not in dadosJson :
+                aulaEscolhidaInfo= dadosJson
+                sem= aulaEscolhidaInfo['sem'][0]
+                subjName= aulaEscolhidaInfo['cadeiraEscolhida']
+                typeTurma= aulaEscolhidaInfo['turmaEscolhida']
+                SubjObj= Subject.objects.get(name=subjName) 
+                listAlunos= getAlunosOfSubjInSpecificClass(sem, SubjObj, typeTurma, schoolYearObj)
+                return HttpResponse(json.dumps({"message": "success", "alunos": listAlunos}), content_type="application/json")
+            
+            #seg pedido ajax
+            else:
+                alunosEscolhidosInfo= dadosJson
+                print(alunosEscolhidosInfo)
+                alunosEscolhidos= alunosEscolhidosInfo['alunosEscolhidos']
+                alunosNaoEscolhidos= alunosEscolhidosInfo['alunosNaoEscolhidos']
+                subjName= alunosEscolhidosInfo['cadeiraEscolhida']
+                typeTurma= alunosEscolhidosInfo['turmaEscolhida']
+                lsttTypeTurma= separateLettersNumb(typeTurma)
+                week_day= alunosEscolhidosInfo['week_day']
+                SubjObj= Subject.objects.get(name=subjName) 
+                lessonObj= Lesson.objects.get(subject=SubjObj, type=lsttTypeTurma[0], turma=lsttTypeTurma[1], week_day=week_day)
+                date_str= dadosJson['date']
+                dateFormat= datetime.strptime(date_str, "%d/%m/%Y").date()
+
+                #remover dados que possam existir na bd naquela lesson naquele dia
+                LessonSystemUser.objects.filter(lesson=lessonObj, date=dateFormat).delete()
+
+                #tenho que criar novos dados, pq podem haver alunos novos nesta turma
+                for alunoEsc in alunosEscolhidos:
+                    userObj= User.objects.get(username= alunoEsc)
+                    su = SystemUser.objects.get(user=userObj)
+                    newLessonSU= LessonSystemUser(lesson=lessonObj, systemUser=su, presente=True, date=dateFormat)
+                    newLessonSU.save()
+                for alunoEsc in alunosNaoEscolhidos:
+                    userObj= User.objects.get(username= alunoEsc)
+                    su = SystemUser.objects.get(user=userObj)
+                    newLessonSU= LessonSystemUser(lesson=lessonObj, systemUser=su, presente=False, date=dateFormat)
+                    newLessonSU.save()
+                return HttpResponse('')
+          
+            
     else: 
         return HttpResponseRedirect(reverse('login'))
 

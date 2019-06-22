@@ -61,10 +61,16 @@
   
   getLessonsSem("1sem")
   function getLessonsSem(semestre){
+    //reset pq os valores do dic tem q estar ordenados
+    document.getElementById("tabelaSchedule").innerHTML= "";
+    
     var lstLessons= {{scheduleDict|safe}};
+    console.log(lstLessons)
     var lstLessonsSem= lstLessons[semestre]
-    formatarOrdenarLstLessons(lstLessonsSem)
+    var dicDiasDaSemena= formatarOrdenarLstLessons(lstLessonsSem)
+    buildSchedule(dicDiasDaSemena);
 
+    //legenda
     var lstSubjsName= {{subjsName|safe}};
     var lstSubjsNameSem= lstSubjsName[semestre];
     txt=""
@@ -73,7 +79,7 @@
     }
     document.getElementById("legenda").innerHTML= txt
   }
-  
+
 </script>
 
 {% endblock %}

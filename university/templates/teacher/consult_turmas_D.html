@@ -173,8 +173,24 @@ function mostrarAlunos(JSONalunos){
 		var cell1 = row.insertCell(0).innerHTML= JSONalunos[i][0];
 		var cell1 = row.insertCell(1).innerHTML= JSONalunos[i][1];
 		var cell1 = row.insertCell(2).innerHTML= JSONalunos[i][2];
-		var cell1 = row.insertCell(3).innerHTML= "<a href='#''>ver horario</a>";
+		var cell1 = row.insertCell(3).innerHTML= "<a class='verHorarioLink' onclick=criarHorario('"+ JSONalunos[i][0] +"')>ver horario</a>";
 	}
+}
+
+function criarHorario(alunoFc) {
+	console.log(alunoFc)
+	$.ajax({
+			type: "POST",
+			url: 'consult_turmas',
+			data: JSON.stringify({'aluno': alunoFc}),
+			success: function (data) {
+					if (data['message'] == "success") {
+							
+					} else {
+							alert("Nao é possivel ver o horario")
+					}
+			}
+	});
 }
 </script>
 

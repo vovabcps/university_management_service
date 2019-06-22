@@ -64,7 +64,7 @@ admin.site.register(Subject,  SubjectAdmin)
 
 class CourseSubjectAdmin(admin.ModelAdmin):
   search_fields = ["course__name", "subject__name"]
-  list_filter = ["year", "semester", "type"]
+  list_filter = ["course__name", "year", "semester", "type"]
   list_display = ["id", "get_course_name", "get_subject_name", "year", "semester", "type"]
 admin.site.register(CourseSubject,  CourseSubjectAdmin)
 

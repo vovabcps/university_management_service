@@ -17,7 +17,10 @@
 #Estrutura SystemUserSubject: 
 #1esm++ subject-nameSubj, state-(0:pending | 1:approved | 2:not approved), grade-nota de 0-20 float, lessons- tipoTurma !! ...  |  |2sem++ ... !! ...
 
-# --------------------------------------------
+
+# -----------------------------------------------------------------------------------------------------------------------
+#                                 aprovadas-> Cadeiras em q foi inscrito e obteve aprovaçao
+# -----------------------------------------------------------------------------------------------------------------------
 #SystemUserCourse: 
 Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,1
 
@@ -30,7 +33,7 @@ Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,1
 Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,3
 
 #SystemUserSubject      108 ECTCS Realizados
-1sem++Arquiteturas de Computadores,1,17.2,T11,TP11,PL11!!Elementos de Matemática I,1,12.3,T11,TP12!!Programação I (LTI),1,12.2,T11,TP13,PL14!!Produção de Documentos Técnicos,1,19.0,TP16!!Controvérsias Científicas,1,14.3,T11,TP12!!Informática na Ótica do Utilizador,1,20.0,TP19!!Bases de Dados,1,16.7,T11,TP12!!Fundamentos e Técnicas de Visualização,1, 17.2,T11,TP13!!Interação com Computadores,1,16.4,T11,TP12,PL12!!Sistemas Operativos (LTI),1,15.7,T11,TP12|  |2sem++Elementos de Matemática II,1,20.0,T21,TP23!!Introdução às Probabilidades e Estatística,1,19.4,T21,TP25!!Introdução às Tecnologias Web,1,14.1,T21,TP24,PL24!!Programação II (LTI),1,13.7,T21,TP22,PL22!!Redes de Computadores (LTI),1,12.3,T21,TP23!!Análise e Desenho de Software,1,16.4,T21,TP21!!Aplicações Distribuídas,1,15.4,T21,TP23,PL23!!Aplicações e Serviços na Web,1,14.3,T21,TP23,PL24!!Conceção de Produto,1,14.6,T21,TP22
+1sem++Arquiteturas de Computadores,1,17.2,T11,TP11,PL11!!Elementos de Matemática I,1,12.3,T11,TP12!!Programação I (LTI),1,12.2,T11,TP13,PL14!!Produção de Documentos Técnicos,1,19.0,TP16!!Controvérsias Científicas,1,14.3,T11,TP12!!Informática na Ótica do Utilizador,1,20.0,TP19!!Bases de Dados,1,16.7,T11,TP12!!Fundamentos e Técnicas de Visualização,1,17.2,T11,TP13!!Interação com Computadores,1,16.4,T11,TP12,PL12!!Sistemas Operativos (LTI),1,15.7,T11,TP12|  |2sem++Elementos de Matemática II,1,20.0,T21,TP23!!Introdução às Probabilidades e Estatística,1,19.4,T21,TP25!!Introdução às Tecnologias Web,1,14.1,T21,TP24,PL24!!Programação II (LTI),1,13.7,T21,TP22,PL22!!Redes de Computadores (LTI),1,12.3,T21,TP23!!Análise e Desenho de Software,1,16.4,T21,TP21!!Aplicações Distribuídas,1,15.4,T21,TP23,PL23!!Aplicações e Serviços na Web,1,14.3,T21,TP23,PL24!!Conceção de Produto,1,14.6,T21,TP22
 
 #variantes: fazer o primeiro ano todo, fazer apenas uma das opcionais 
 
@@ -39,6 +42,32 @@ Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,3
 Licenciatura em Engenharia Informática,Matriculado,2017/2018,2
 
 #SystemUserSubject      39 ECTCS Realizados
-1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais, 1, 14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13|  |2sem++Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
+1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,1,13.0,TP11!!Arquiteturas de Sistemas Computacionais,1,14.3,T11,TP13!!Cálculo,1,16.2,T11,TP12!!Introdução à Programação,1,15.1,T11,TP13|  |2sem++Algoritmos e Estruturas de Dados,1,13.4,T21,TP21!!Física A,1,13.1,T21,TP21!!Laboratórios de Programação,1,15.4,PL21
 
 
+# -----------------------------------------------------------------------------------------------------------------------
+#                                 pending-> Cadeiras a q se esta a inscrever(ou seja, vai fazer este ano),
+#                                           max de cred q se pode inscrever: 72
+# -----------------------------------------------------------------------------------------------------------------------
+#SystemUserCourse:	50 alunos na bd
+Licenciatura em Tecnologias de Informação,Matriculado,2018/2019,1
+
+#SystemUserSubject     
+
+#25 alunos, 0 ECTCS Realizados, 5 cadeiras para cada semestre
+1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP11,PL17|  |2sem++Programação II (LTI),0,T21,TP21,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21
+
+#25 alunos, 0 ECTCS Realizados, 6 cadeiras para cada semestre, 2 de segundo ano sobrepostas
+1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP11,PL17!!Fundamentos e Técnicas de Visualização,0,T11,TP11|  |2sem++Programação II (LTI),0,T21,TP21,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21!!Aplicações Distribuídas,0,T21,TP21,PL25
+
+
+#tp11,tp12
+#tps diferentes nas variantes
+#tirar null
+#Elementos de Matemática II,0
+
+#Cuidado com estas cadeiras: (tenho q por o LTI)
+#Programação II (LTI)
+#Redes de Computadores (LTI)
+#Sistemas Operativos (LTI)
+#Construção de Sistemas de Software (LTI)

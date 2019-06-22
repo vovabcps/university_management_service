@@ -34,7 +34,10 @@
                                             
                                             <div id="mes" class="w3-half w3-container"> </div>
                                     </div>
-                                    <table id="tabelaCalend"></table>
+
+                                    <form method="post" action="{% url 'presencas_registar_t' %}">
+                                        <table id="tabelaCalend"></table>
+                                      </form>
                         </div>
 					</div>
 				</div>
@@ -46,42 +49,6 @@
                 <div class="panel panel-default">
                     <div id="option2Header" class="panel-heading"><span class="fa fa-navicon">&nbsp;</span>2. Selecione os Alunos Presentes</div>
 					<div id="option2" class="panel-body" style="display: none">
-                        <h5>Dia: <span id="diaEscolhido"></span></h5>
-                        <h5>Cadeira: <span id="cadeira"></span></h5>
-                        <h5>Turma: <span id="turma"></span></h5>
-                        <table id="students_table" class="table">
-                            <thead>
-                                <tr>
-                                    <th>Número/ID</th>
-                                    <th>Nome</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>50036</td>
-                                    <td>Mariana Costa Leites</td>
-                                    <td><div class="checkbox">
-                                        <label><input type="checkbox" name="presenca" value="50036"></label>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                    <td>50476</td>
-                                    <td>Raquel Matias</td>
-                                    <td><div class="checkbox">
-                                        <label><input type="checkbox" name="presenca" value="50476"></label>
-                                    </div></td>
-                                </tr>
-                                <tr>
-                                    <td>7715</td>
-                                    <td>Mafalda Alexandra Dias</td>
-                                    <td><div class="checkbox">
-                                        <label><input type="checkbox" name="presenca" value="7715"></label>
-                                    </div></td>
-                                </tr>
-                            </tbody>
-						</table>
-						<button style="float: right" class="btn btn-lg btn-primary">Submit</button>
                     </div>
                 </div>
             </div>
@@ -89,25 +56,17 @@
     
         
 <script>
-var dicAulas= 
-    {'1sem': {
-            "Quarta" : [["8:30", "AVPExp-2", "T", "10"], ["9:30", "AVPExp-2", "TP", "11"], ["10:30", "AVPExp-2", "L", "3"], ["16:30", "ASSistem-2", "T", "4"]],
-            "Segunda" : [["10:30", "AVPExp-2", "T", "11"], ["11:30", "AVPExp-2", "TP", "11"], ["12:30", "AVPExp-2", "L", "12"]],
-            "Terça" : [["8:30", "ASSistem-2", "O", "9"], ["9:30", "ASSistem-2", "O", "9"],
-                        ["10:30", "ASSistem-2", "O", "8"], ["11:30", "AD", "T", "12"], ["14:00", "ECSoc-2", "T", "1"], 
-                        ["15:00", "ECSoc-2", "S", "1"], ["15:30", "ECSoc-2", "TP", "23"]]
-            },
-    '2sem': {
-            "Quinta" : [["8:30", "AD", "T", "10"], ["9:30", "AD", "TP", "11"], ["10:30", "AD", "L", "3"], 
-                    ["16:30", "ASSistem-2", "T", "4"]],
-            "Segunda": [["10:30", "AVPExp-2", "T", "11"], ["11:30", "AVPExp-2", "TP", "11"], ["12:30", "AVPExp-2", "L", "12"]]
-    }
-}
+    var lstLessons= {{scheduleDict|safe}};
+    console.log(lstLessons)
+  
+    var dicDiasDaSemenaSem1= formatarOrdenarLstLessons(lstLessons['1sem'])
+    var dicDiasDaSemenaSem2= formatarOrdenarLstLessons(lstLessons['2sem'])
+    var dicAulas= {'1sem': dicDiasDaSemenaSem1, '2sem': dicDiasDaSemenaSem2}
+    console.log(dicAulas)
+
     buildCalendarMain()
     function buildCalendarMain(triger){
-        console.log(dicAulas)
         calend(triger, dicAulas);
-
     }
 
     // When the user clicks anywhere outside of the modal, close it
@@ -133,6 +92,7 @@ var dicAulas=
           $("#option2").toggle();
         });
       });
+
 </script>
 
 
