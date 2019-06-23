@@ -6,82 +6,127 @@
 {% block content_title %}Consultar presenças{% endblock %}
 
 {% block breadcrumbs %}
-        › Consultar presenças
+        > Consultar presenças
+{% endblock %}
+
+
+{% block extrahead %}
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
 {% block content %}
-		
-<div class="row">
-        <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">Disciplina</div>
-                    <div id="option2" class="panel-body">
-                        <h2>Nome: <span id="dateDay"></span></h2>
-                        <div class="form-group" style="margin-left: 10%">
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="disciplina" value="ac" checked>Arquitetura de Computadores
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="disciplina" value="pgI">Programação I
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="disciplina" value="Estatistica">Estatistica
-                                </label>
-                            </div>
-                            <div class="radio">
-                                <label>
-                                    <input type="radio" name="disciplina" value="prgII">Programação II
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- /.panel-->
-            </div><!-- /.col-->
+<div id="content-main">
 
-            <div class="col-lg-12">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Turma</div>
-                        <div id="option2" class="panel-body">
-                            <h2>Dia: <span id="dateDay"></span></h2>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Segunda</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="turmas" value="T20" checked>T20, Seg, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Terça</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="turmas" value="TP22">TP22, Ter, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Sexta</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="turmas" value="PL21">PL21, Qua, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="turmas" value="PL22">PL22, Qui, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- /.panel-->
-                </div><!-- /.col-->
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">Alunos</div>
-      <div id="option3" class="panel-body">
-        <h2>Turma: <span id="turma">T20</span></h2>
-                    <table id="students_table" class="table">
+		<br> <!-- para nao ficar colado ao de cima-->
+		<div class="row">
+		  <div class="col-lg-12">
+			<div class="panel panel-default">
+
+					<div class="semestres">
+						<ul class="nav nav-pills" role="tablist">
+							<li class="nav-item active">
+							  <a class="nav-link active" data-toggle="pill" href="#semestre1">1º Semestre</a>
+							</li>
+							<li class="nav-item">
+							  <a class="nav-link" data-toggle="pill" href="#semestre2" >2º Semestre</a>
+							</li>
+						  </ul>
+					</div>
+
+				</div>
+
+
+
+			  <div class="panel-body">
+
+
+				<div class="w3-row">
+					<div class=" w3-third">
+
+				<div class="tab-content">
+				  {% for semestre, subjs in subjsSem.items %}
+
+				  {% if semestre == "1" %}
+				  <div id="semestre1" class=" tab-pane active">
+
+					{% else %}
+					<div id="semestre2" class=" tab-pane fade">
+					  {% endif %}
+
+					  <!-- em comum -->
+					  <ul class="nav nav-pills" role="tablist">
+
+						{% for subj, dicTypeTurmaLessons in subjs.items %}
+
+						{% if forloop.counter == 1 %}
+						<li class="nav-item active ">
+						  <a class="nav-link active" data-toggle="pill"
+							href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+						</li>
+						{% else %}
+						<li class="nav-item">
+						  <a class="nav-link " data-toggle="pill" href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
+						</li>
+						{% endif %}
+
+						{% endfor %}
+					  </ul>
+
+						  <div class="tab-content">
+
+							{% for subj, dicTypeTurmaLessons in subjs.items %}
+
+							{% if forloop.counter == 1 %}
+							<div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane active">
+							  {% else %}
+							  <div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane fade">
+								{% endif %}
+
+								{% for tipo, turmasAlunos in dicTypeTurmaLessons.items %}
+								<br>
+								{% if tipo == "T" %}
+								  <p>TEORICAS</p>
+								{% elif  tipo == "TP" %}
+								  <p>PRATICAS</p>
+								{% elif  tipo == "PL" %}
+								  <p>LABORATORIAIS</p>
+								{% elif  tipo == "O" %}
+								  <p>OUTRA</p>
+								{% elif  tipo == "S" %}
+								  <p>SINPOSIO</p>
+								{% else %}
+								  <p>{{tipo}}</p>
+								{% endif %}
+
+								<div class="turmas">
+								  {% for turmaAlunos in turmasAlunos %}
+
+								  <button type="button" class="w3-button-small w3-khaki w3-round"
+									onclick="mostrarAlunos({{turmaAlunos|last}});">{{tipo}}{{turmaAlunos|first}}
+								  </button>
+
+								  {% endfor %}
+								</div>
+
+								{% endfor %}
+							  </div>
+
+							  {% endfor %}
+							</div> <!-- class="tab-content" -->
+
+					  </div>
+					  {% endfor %}
+					</div> <!-- class="tab-content" -->
+					</div>
+
+					<div class="w3-twothird">
+							<div class="row" id='box3'>
+									<div class="col-md-12">
+										<div class="panel panel-default">
+											<div class="panel-heading">Lista Alunos</div>
+											<div class="panel-body">
+													<table id="students_table" class="table">
                         <thead>
                             <tr>
                                 <th>Número/ID</th>
@@ -94,54 +139,64 @@
                                 <th style="background-color: lightgrey; font-weight: bold;">Total</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>50036</td>
-                                <td>Mariana Costa Leites</td>
-                                <td></td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td></td>
-                                <td></td>
-                                <td style="background-color: lightgrey; font-weight: bold;">3%</td>
-                            </tr>
-                            <tr>
-                                <td>50476</td>
-                                <td>Raquel Matias</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td style="background-color: lightgrey; font-weight: bold;">100%</td>
-                            </tr>
-                            <tr>
-                                <td>7715</td>
-                                <td>Mafalda Alexandra Dias</td>
-                                <td></td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td>x</td>
-                                <td style="background-color: lightgrey; font-weight: bold;">83%</td>
-                            </tr>
-                            <tr style="background-color: lightgrey; font-weight: bold;">
-                                <td>Número de Estudantes Out of 20 (n.º | %)</td>
-                                <td></td>
-                                <td>5 | 25%</td>
-                                <td>10 | 50%</td>
-                                <td>5 | 25%</td>
-                                <td>10 | 50%</td>
-                                <td>5 | 25%</td>
-                                <td>Media: 75%</td>
-                            </tr>
+                        <tbody id="tabelaAlunos">
+
                         </tbody>
         </table>
-        <button style="float: right" class="btn btn-lg btn-primary">Submit</button>
-                </div>
-            </div>
-        </div>
-    </div><!--/.row-->
 
+											</div>
+										</div>
+									</div>
+									</div>
+					  </div>
+
+				  </div> <!-- end row -->
+
+				</div>
+
+
+			</div><!-- /.panel-->
+		  </div><!-- /.col-->
+		</div><!-- /.row -->
+</div><!--/.main-->
+
+
+<script>
+
+function mostrarAlunos(JSONalunos){
+	console.log(JSONalunos)
+	var tbody= document.getElementById("tabelaAlunos");
+	tbody.innerHTML= "";
+	for(var i=0; i<JSONalunos.length; i++){
+		var row = tbody.insertRow(-1);
+		var cell0 = row.insertCell(0).innerHTML= JSONalunos[i][0];
+		var cell1 = row.insertCell(1).innerHTML= JSONalunos[i][1];
+		var cell2 = row.insertCell(2).innerHTML= "x";
+		var cell3 = row.insertCell(3).innerHTML= "x";
+	    var cell4 = row.insertCell(4).innerHTML= "x";
+	    var cell5 = row.insertCell(5).innerHTML= "x";
+	    var cell6 = row.insertCell(6).innerHTML= "x";
+	    var cell7 = row.insertCell(7)
+	    cell7.innerHTML= "30%";
+	    console.log(cell7);
+	    cell7.style.backgroundColor="lightgrey";
+	    cell7.style.fontWeight= "bold";
+	}
+	var row = tbody.insertRow(-1);
+	row.style.backgroundColor="lightgrey";
+	row.style.fontWeight= "bold";
+	var cell0 = row.insertCell(0)
+	cell0.innerHTML= "Attendance Rate(n.º|%)";
+	cell0.colSpan= "2";
+
+    var cell2 = row.insertCell(1).innerHTML= "10 | 50%";
+    var cell3 = row.insertCell(2).innerHTML= "5 | 25%";
+    var cell4 = row.insertCell(3).innerHTML= "10 | 50%";
+    var cell5 = row.insertCell(4).innerHTML= "5 | 25%";
+    var cell6 = row.insertCell(5).innerHTML= "10 | 50%";
+    var cell7 = row.insertCell(6).innerHTML= "Media: 75%";
+}
+
+</script>
 
 {% endblock %}

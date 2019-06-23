@@ -16,65 +16,89 @@
 <div class="row">
 			<div class="col-md-12">
                 <div class="panel panel-default">
-					<div class="panel-body tabs">
-						<ul class="nav nav-tabs">
-							<li class="active"><a href="#tab1" data-toggle="tab">Disciplina 1</a></li>
-							<li><a href="#tab2" data-toggle="tab">Disciplina 2</a></li>
-							<li><a href="#tab3" data-toggle="tab">Disciplina 3</a></li>
-						</ul>
-						<div class="tab-content">
-							<div class="tab-pane fade in active" id="tab1">
-								<h4>Disciplina 1</h4>
-								<table class="table">
-										<thead>
-                                            <tr>
-                                                <th></th>
-                                                <th colspan="4" style="text-align: center">Semanas (Dias)</th>
-                                            </tr>
-											<tr>
-												<th>Turma</th>
-												<th>6/5 - 11/5</th>
-												<th>13/5 - 18/5</th>
-												<th>20/5 - 25/5</th>
-												<th>27/5 - 1/6</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>T11</td>
-												<td>2/2</td>
-												<td>2/2</td>
-												<td>1/2</td>
-												<td>2/2</td>
-											</tr>
-											<tr>
-												<td>TP23</td>
-												<td>2/2</td>
-												<td>1/2</td>
-												<td>1/2</td>
-												<td>0/2</td>
-											</tr>
-											<tr>
-												<td>PL23</td>
-												<td>1/1</td>
-												<td>1/1</td>
-												<td>0/1</td>
-												<td>1/1</td>
-											</tr>
-										</tbody>
-								</table>
-							</div>
-							<div class="tab-pane fade" id="tab2">
-								<h4>Disciplina 2</h4>
-							</div>
-							<div class="tab-pane fade" id="tab3">
-								<h4>Disciplina 3</h4>
+					{% if bySchoolYear %}
+						
+						<div class="panel-body tabs">
+							<ul id="yearsTab" class="nav nav-tabs">
+								{% for year in schoolYears %}
+									<li><a href="#{{year}}" data-toggle="{{year}}">{{year}}</a></li>
+								{% endfor %}
+							</ul>
+							<div id="subjectContent" class="tab-content">
+								{% for yearS, presencasBySubject in bySchoolYear.items %}
+									<div class="tab-pane fade in" id="{{yearS}}">
+										{% for s in subjects %}
+											<button type="button" class="btn btn-md btn-default" href="#{{s.1}}">{{s.0}}</button>
+										{% endfor %}
+										
+										{% for subj, presentDict in presencasBySubject.items %}
+										<div class="fade in subjectDiv" id="{{subj.1}}">
+											<h4>{{subj.0}}</h4>
+											{%for subjectType, dates in presentDict.items %}
+											<table class="table" style="text-align: center">
+												<tbody>
+													<tr>
+														<th rowspan="3">{{subjectType}}</th>
+													</tr>
+													<tr>
+														{%for d in dates %}
+															<th>{{d.0}}</th>
+														{% endfor %}
+													</tr>
+													<tr>
+														{%for d in dates %}
+															{%if d.1 == True %}
+																<td>x</td>
+															{% else %}
+																<td></td>
+															{% endif %}
+														{% endfor %}
+													</tr>
+												</tbody>
+											</table>
+											{% endfor %}
+										</div>
+										{% endfor %}
+									</div>
+								{% endfor %}
 							</div>
 						</div>
-					</div>
+					{% else %}
+						<div class="panel-body">
+							<p>Não tem presenças para consultar.</p>
+						</div>
+					{% endif %}
                 </div><!--/.panel-->
             </div><!--/.col-->
 </div><!--/.row-->
 </div>
 
+<script>
+	var yearT = $("#yearsTab li").first().text();
+	$("#yearsTab li").first().addClass("active");
+	$("#subjectContent #" + yearT).addClass("active");
+	$("#subjectContent #" + yearT + " button").first().addClass("btn-warning");
+	var subj = $("#subjectContent #" + yearT + " button").first().text();
+	$(".subjectDiv").css("display", "none");
+	$("#" + subj.split(" ").join("_")).css("display", "block");
+
+	$("#yearsTab li").click(function() {
+		$("#subjectTabs li, #subjectContent div").removeClass("active");
+		var yearT = $(this).text();
+		$(this).addClass("active");
+		$("#subjectContent #" + subyearT).addClass("active");
+
+	})
+
+	$("#subjectContent button").click(function(){
+		$("#subjectContent button").removeClass("btn-warning");
+		$(this).addClass("btn-warning");
+		var subj = $(this).text();
+		$(".subjectDiv").css("display", "none");
+		$("#" + subj.split(" ").join("_")).css("display", "block");
+	})
+
+</script>
+
 {% endblock %}
+

@@ -10,6 +10,27 @@
 {% block content %}
 <div id="content-main">
 
+    <div class="modal" id="exampleModal" style="top:5% !important" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="modalHeader"></h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="panel-body">
+        
+                            <table id="tabelaSchedule"></table>
+                            <div>
+                                    <p>Legenda:</p>
+                                    <ul id="legenda"></ul>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+          </div>
+        </div>
+
       
       <div class="row">
          <div class="col-md-12">
@@ -28,7 +49,7 @@
                                                             <div class="text-muted">{{value}}</div>
                                                     </div>
                                                     <div class="col-xs-10 col-md-10">
-                                                        <h4><a href="">{{sub.name}}</a></h4>
+                                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-nomeCadeira="{{sub.name}}" id={{sub.name}} href="">{{sub.name}}</a></h4>
                                                         {% for reg in suRegentes %}
                                                         {% if reg.user == sub.regente %}
                                                             <p>Regente: {{reg.name}} | Gabinete: {{sub.regente.gabinete}} | Email: {{sub.regente.user.email}}</p>
@@ -45,6 +66,137 @@
             </div>
          </div><!--/.col-->
       </div><!--/.row-->
+    <div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-danger">
+					<div class="panel-heading">Alertas</div>
+					<div class="panel-body">
+						<h4>Sobreposições</h4>
+						<table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>N.º Aluno</th>
+									<th>Disciplina</th>
+									<th>Turma</th>
+									<th>Horário Aluno</th>
+                                    <th>Pedir mudança de turma</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td rowspan="2">1</td>
+                                    <td rowspan="2">50036</td>
+									<td>Sistemas Inteligentes</td>
+									<td>TP23</td>
+									<td data-toggle="modal" data-target="#exampleModal" data-alunoFc="fc485" id="but1" rowspan="2"><a>Horário</a></td>
+                                    <td rowspan="2"><a>Enviar</a></td>
+
+                                </tr>
+                                <tr>
+
+									<td>Sistemas Operativos</td>
+									<td>TP21</td>
+
+                                </tr>
+                                <tr>
+                                    <td rowspan="2">2</td>
+                                    <td rowspan="2">50234</td>
+									<td>Arquitetura de Computadores</td>
+									<td>PL21</td>
+									<td  data-toggle="modal" data-target="#exampleModal" data-alunoFc="fc490" id="but2" rowspan="2"><a>Horário</a></td>
+                                    <td rowspan="2"><a>Enviar</a></td>
+                                </tr>
+                                <tr>
+
+									<td>Elementos de Matemática I</td>
+									<td>T21</td>
+
+                                </tr>
+                            </tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div><!--/.row-->
+
+
    </div> <!--/.main-->
-   
+
+
+  <script>
+
+    $(document).ready(function(){
+
+      $('#exampleModal').on('show.bs.modal', function (event) {
+          var link = $(event.relatedTarget) // Button that triggered the modal
+          var modal = $(this) 
+          document.getElementById("tabelaSchedule").innerHTML= "";
+          console.log(link)
+          if ('nomecadeira' in link.data()){
+                var nomeCadeira = link.data('nomecadeira') // Extract info from data-* attributes
+                console.log(nomeCadeira)
+                modal.find('#modalHeader').text("Horario da cadeira " + nomeCadeira + " :")
+                document.getElementById("legenda").innerHTML= "<li>"+ getSigla(nomeCadeira) + "- " + nomeCadeira +"</li>"
+
+                $.ajax({
+                    type: "POST",
+                    url: 'home',
+                    data: JSON.stringify({'nomeCadeira': nomeCadeira}),
+                    success: function (data) {
+                        console.log(data)
+                            if (data['message'] == "success") {
+                                getLessonsSubj(data['schedule'])
+                            } else {
+                                    alert("Nao é possivel ver o horario")
+                            }
+                        }
+                });
+            }else{
+                var alunoFc = link.data('alunofc') // Extract info from data-* attributes
+                console.log(alunoFc) //data-alunoFc="fc490"
+                modal.find('#modalHeader').text("Horario do aluno " + alunoFc + " :")
+
+                $.ajax({
+                    type: "POST",
+                    url: 'home',
+                    data: JSON.stringify({'aluno': alunoFc}),
+                    success: function (data) {
+                        console.log(data)
+                            if (data['message'] == "success") {
+                                getLessonsSem('1sem', data['scheduleDict'], data['subjsName'])
+                            } else {
+                                    alert("Nao é possivel ver o horario")
+                            }
+                        }
+                });
+            }
+
+      })
+
+    });
+    
+    function getLessonsSubj(lstSchedule){
+        console.log(lstSchedule)
+        var dicDiasDaSemena= formatarOrdenarLstLessons(lstSchedule)
+        buildSchedule(dicDiasDaSemena);
+    }
+
+
+    function getLessonsSem(semestre, scheduleDict, subjsName){
+        console.log(scheduleDict)
+        var lstLessonsSem= scheduleDict[semestre]
+        var dicDiasDaSemena= formatarOrdenarLstLessons(lstLessonsSem)
+        buildSchedule(dicDiasDaSemena);
+    
+        //legenda
+        var lstSubjsNameSem= subjsName[semestre];
+        txt=""
+        for(var i=0; i<lstSubjsNameSem.length; i++){
+            txt += "<li>"+ getSigla(lstSubjsNameSem[i]) + "- " + lstSubjsNameSem[i] +"</li>"
+        }
+        document.getElementById("legenda").innerHTML= txt
+    }
+  </script>
+
 {% endblock %}

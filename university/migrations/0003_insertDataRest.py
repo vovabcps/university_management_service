@@ -642,20 +642,18 @@ def is_lesson_sobreposta(professor, lesson, semestre):
         lessonsWeekDay= getLessonsInSpecificWeekDayInSemOfTeacher(professor, int(semestre), lesson.week_day)
         if lessonsWeekDay : #se ele ja tiver aulas nesse dia de semana
             lastLessonWeekDay= lessonsWeekDay[-1]
-            return is_lesson2_asseguir_ha_lesson1(lastLessonWeekDay, lesson)
+            return is_lesson1_and_lesson2_sobrepostas(lastLessonWeekDay, lesson)
 
     else:
         lastLessonWeekDay= Lesson.objects.filter(professor=professor, week_day=lesson.week_day).order_by("hour").last()
         if lastLessonWeekDay :
-            return is_lesson2_asseguir_ha_lesson1(lastLessonWeekDay, lesson)
+            return is_lesson1_and_lesson2_sobrepostas(lastLessonWeekDay, lesson)
         
     return False
 
-def is_lesson2_asseguir_ha_lesson1(lesson1, lesson2):
-    if addMinutes(lesson1.hour, lesson1.duration) <= hourToMinutes(lesson2.hour) :
-        return False
-    else:
-        return True
+def is_lesson1_and_lesson2_sobrepostas(lesson1, lesson2):
+    return addMinutes(lesson1[0], lesson1[1]) > hourToMinutes(lesson2[0])
+
 
 
 def getLessonsInSpecificWeekDayInSemOfTeacher(professor, semestre, week_day):
@@ -687,6 +685,7 @@ def ordenarPorNumOcorrencias(lstObjs):
 
 
 def hourToMinutes(hour):
+    #ex: hour-> "9:00" ou "09:00"
     lhour= hour.split(":")
     return int(lhour[0])*60 + int(lhour[1])
 
