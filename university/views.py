@@ -31,8 +31,8 @@ from django.shortcuts import render, redirect
 #consult details
 from django.core.validators import validate_email
 
-#date django model
-from datetime import datetime
+#date django model, presenças
+from datetime import datetime, timedelta
 
 #--------------------- all in common -----------------------
 
@@ -586,8 +586,12 @@ def home_t(request):
                 if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
                     regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
+            NumberOfStudentsList=[]
+            for sub in mySubjects:
+                num = len(SystemUserSubject.objects.filter(anoLetivo = schoolYearObj, subject= sub).values_list("user__user").distinct())
+                NumberOfStudentsList.append((sub, num))
 
-            return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary})
+            return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary, "NumStdBySub" : NumberOfStudentsList})
         else:
             dadosJson = json.loads(request.body.decode("utf-8"))
 
@@ -703,8 +707,30 @@ def presencas_consultar_t(request):
         schoolYearObj = SchoolYear.objects.get(begin=2018)
         dic1SemSubjs, dic2SemSubjs= getAllTypesturmasBySubjsGiveByTeacher(su, schoolYearObj)
 
-        dic1SemSubjs = getAlunosOfTypesturmasInSubjs(1, dic1SemSubjs, schoolYearObj, True)
-        dic2SemSubjs = getAlunosOfTypesturmasInSubjs(2, dic2SemSubjs, schoolYearObj, True)
+        """
+        2018/2019
+            1º semestre: 17/09/2018(seg) a 19/12/2018(quarta)
+            2º semestre: 18/02/2019(seg) a 31/05/2019(sex)
+        """
+
+
+        dataInicio= "17/09/2018"
+        dataFinal= "19/12/2018"
+        ano= "2018"
+        joinFerias= allFeriasDate(ferias, ano)
+        formatFeriados= convertFeriados(feriados, ano)
+        joinFeriasAndFeriados= joinFerias + formatFeriados
+        infoSemPresenças= [dataInicio, dataFinal, joinFeriasAndFeriados]
+        dic1SemSubjs = getAlunosOfTypesturmasInSubjs(1, dic1SemSubjs, schoolYearObj, infoSemPresenças)
+
+        dataInicio= "18/02/2019"
+        dataFinal= "31/05/2019"
+        ano= "2019"
+        joinFerias= allFeriasDate(ferias, ano)
+        formatFeriados= convertFeriados(feriados, ano)
+        joinFeriasAndFeriados= joinFerias + formatFeriados
+        infoSemPresenças= [dataInicio, dataFinal, joinFeriasAndFeriados]
+        dic2SemSubjs = getAlunosOfTypesturmasInSubjs(2, dic2SemSubjs, schoolYearObj, infoSemPresenças)
 
         print(dic1SemSubjs)
         print(dic2SemSubjs)
@@ -798,16 +824,22 @@ def presencas_registar_t(request):
 
 
 #------------------------------------------------ Funçoes auxiliares Teacher ------------------------------------------------
-def getAlunosOfTypesturmasInSubjs(sem, dicSemSubjs, schoolYearObj, presençasAlunos=False):
+lstDiasDaSemana= ["SEG", "TER", "QUA", "QUI", "SEX", "SAB", "DOM"]
+feriados = ['01/01', '19/04', '21/04', '25/04', '01/05', '10/06', '20/06', '15/08', '05/10', '01/11', '01/12', '08/12', '25/12'] #completo
+ferias= [["04/03", "06/03"], #carnaval
+         ["17/04", "23/04"]] #pascoa
+
+
+def getAlunosOfTypesturmasInSubjs(sem, dicSemSubjs, schoolYearObj, infoSemPresenças=[]):
     #ex: 1, {<Subject: Subject object (1766)>: 'T12 T11', <Subject: Subject object (1767)>: 'T11'}, 2018
     print(dicSemSubjs)
     for subj in dicSemSubjs:
         print(dicSemSubjs[subj])
-        dicSemSubjs[subj] = getAlunosOfClassesInSpecificSubj(sem, subj,  dicSemSubjs[subj], schoolYearObj, presençasAlunos)
+        dicSemSubjs[subj] = getAlunosOfClassesInSpecificSubj(sem, subj,  dicSemSubjs[subj], schoolYearObj, infoSemPresenças)
     return dicSemSubjs
 
 
-def getAlunosOfClassesInSpecificSubj(sem, subj, string, schoolYearObj, presençasAlunos=False):
+def getAlunosOfClassesInSpecificSubj(sem, subj, string, schoolYearObj, infoSemPresenças=[]):
     #ex: 1, AD, " T11 TP12 T14 L15 T11", 2018
     #a string pode ter turmas repetitas por causa das lessons
     dicTypeTurmasAlunos= {}
@@ -818,7 +850,7 @@ def getAlunosOfClassesInSpecificSubj(sem, subj, string, schoolYearObj, presença
     print(lstTypeTurmasSemEspaçosUnique)  #[T11, TP12, T14, L15]
 
     for typeTurma in lstTypeTurmasSemEspaçosUnique :
-        myListOfCollegues= getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, presençasAlunos=False)
+        myListOfCollegues= getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, infoSemPresenças)
         prices_json = json.dumps(myListOfCollegues, cls=DjangoJSONEncoder)
         type, turma= separateLettersNumb(typeTurma)
         if type not in list(dicTypeTurmasAlunos.keys()):
@@ -828,19 +860,28 @@ def getAlunosOfClassesInSpecificSubj(sem, subj, string, schoolYearObj, presença
 
     return dicTypeTurmasAlunos
 
-def getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, presençasAlunos=False):
+def getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, infoSemPresenças=[]):
     #ex: 1, AD, T11, 2018
     #obtem todos os alunos que pertencem a uma turma de uma determinada cadeira
     #retorna em json uma lista de listas, em q cada lista tem informaçao sobre um aluno
     
     suSubjs = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj, subjSemestre=sem))
+    print(infoSemPresenças)
+    if infoSemPresenças :
+        lstDates= getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças)
+        print(lstDates) #ex: ['19/02/2019', '20/02/2019', ...]
+    
     myListOfCollegues= []
     for suSubj in suSubjs:
+        lstPresencasAluno= []
+        for date in lstDates:
+            pass
+            #dataFormat=
+            #lSU= LessonSystemUser.objects.filter(user)
         PI= PersonalInfo.objects.get(user=suSubj.user)
-
-        lstDates= getAllDatasByTypeturmaSubj()
-        if presençasAlunos :
-            listInfo= [suSubj.user.user.username, PI.name, []]
+        if infoSemPresenças : #se nao for uma lista vazia
+            presençasAluno= {}
+            listInfo= [suSubj.user.user.username, PI.name, presençasAluno]
         else:
             listInfo= [suSubj.user.user.username, PI.name, suSubj.user.user.email]
 
@@ -854,6 +895,18 @@ def uniqueElements(lst):
         if e not in newLst :
             newLst.append(e)
     return newLst
+
+
+
+def getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças):
+    #ex: "T11", ["18/02/2019", "31/05/2019", joinFeriasAndFeriados]
+    dataInicio, dataFinal, joinFeriasAndFeriados= infoSemPresenças
+    type, turma= separateLettersNumb(typeTurma)
+    turmaLessons= list(Lesson.objects.filter(subject=subj, type=type, turma=turma).values_list("week_day"))
+    print(turmaLessons)
+    diasDaSemanaStr= " ".join([tlesson[0] for tlesson in turmaLessons])
+    print(diasDaSemanaStr)
+    return getDatesBetween2Dates(dataInicio, dataFinal, joinFeriasAndFeriados, diasDaSemanaStr)
 
 
 def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
@@ -1175,5 +1228,66 @@ def buildHorarioSubject(nameSubj):
 
 
 
+#------------------------------------------------ Funçoes auxiliares Datas ------------------------------------------------
+
+def getDatesBetween2Dates(dataInicio, dataFinal, lazyDays=None, diasDaSemana=lstDiasDaSemana):
+  """
+  devolve todas as datas que calham em dias de semana especificos
+  lazyDays != none, retira as datas q sejam feriados ou no periodo de mini ferias
+  diasDaSemana -> os dias da semana que quero as datas, pode ser uma lista ou uma string(ex: "TER QUI")
+
+  recebe: ex: 17/04/2017, 23/04/2017, None, ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SAB', 'DOM']
+  retorna: ex: ['17/04/2017', '18/04/2017', ... , '22/04/2017', '23/04/2017']
+
+  recebe: ex: 18/09/2017, 21/12/2017, ['04/03/2017', '05/03/2017', ...], "QUARTA" (ou 'QUA')
+  retorna: ex: ['20/09/2017', '27/09/2017', '04/10/2017', ...,  '20/12/2017']
+  """
+  start_date  = datetime.strptime(dataInicio, '%d/%m/%Y')
+  end_date    = datetime.strptime(dataFinal, '%d/%m/%Y')
+
+  if lazyDays == None:
+    lstDates= [] 
+  else:
+    lstWorkDates= []
+
+  for i in range(-1, (end_date - start_date).days, 1):
+    nextDate= start_date + timedelta(days=i+1)
+    diaDaSemana= lstDiasDaSemana[nextDate.weekday()]
+    if diaDaSemana in diasDaSemana:
+      date_str= nextDate.date().strftime('%d/%m/%Y')
+      #print(date_str)
+      if lazyDays == None:
+        lstDates.append(date_str)
+      else:
+        if date_str not in lazyDays: 
+          lstWorkDates.append(date_str)
+
+  
+  if lazyDays == None:
+    return lstDates
+  else: 
+    return lstWorkDates
+
+
+def convertFerias(ferias, ano):
+  #recebe ex: ferias= [["04/03", "06/03"], ["17/04", "23/04"]], ano=2018
+  #retorna ex: [['04/03/201*', '06/03/201*'], ['17/04/201*', '23/04/201*']]
+  return list(map(lambda lst: list(map(lambda dm: dm + "/" + ano, lst)), ferias))
+
+def convertFeriados(feriados, ano):
+  #recebe ex: feriados = ['01/01', '19/04', ... ], ano=2018
+  #retorna ex: feriados = ['01/01/201*', '19/04/201*', '21/04/201*', ...]
+  return list(map(lambda dm: dm + "/" + ano, feriados))
+
+
+def allFeriasDate(ferias, ano):
+  #recebe ex: ferias= [["04/03", "06/03"], ["17/04", "23/04"]], ano=2018
+  #retorna ex: ['04/03/2018', '05/03/2018', '06/03/2018', '17/04/2018', '18/04/2018', ... , '23/04/2018']
+  newFerias= convertFerias(ferias, ano)
+  newFerias_str= []
+  for f in newFerias:
+    dataInicio, dataFinal= f
+    newFerias_str = newFerias_str + getDatesBetween2Dates(dataInicio, dataFinal)
+  return newFerias_str
        
 
