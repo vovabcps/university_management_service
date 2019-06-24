@@ -487,7 +487,6 @@ def consult_subjects_s(request):
     else: 
         return HttpResponseRedirect(reverse('login'))
 
-
 def consult_presencas_s(request):
     def anoLetivo(d):
         if d >= datetime.strptime("20/9/2016", "%d/%m/%Y").date() and d <= datetime.strptime("31/5/2017", "%d/%m/%Y").date():
@@ -522,14 +521,26 @@ def consult_presencas_s(request):
                 bySchoolYear[anoletivo][tupleLessonName] = {}
 
             if lessonType not in bySchoolYear[anoletivo][tupleLessonName]:
-                bySchoolYear[anoletivo][tupleLessonName][lessonType] = [(l.date, l.presente)]
+                if l.presente == True:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType] = [[1,100], [(l.date, l.presente)]]
+                else:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType] = [[0,0], [(l.date, l.presente)]]
             else:
-                bySchoolYear[anoletivo][tupleLessonName][lessonType].append((l.date, l.presente))
-            
+                bySchoolYear[anoletivo][tupleLessonName][lessonType][1].append((l.date, l.presente))
+                classesTotal = len(bySchoolYear[anoletivo][tupleLessonName][lessonType][1])
+                if l.presente == True:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType][0][0] += 1
+                
+                classes = bySchoolYear[anoletivo][tupleLessonName][lessonType][0][0]
+                percentage = (float(classes)/float(classesTotal))*100
+                bySchoolYear[anoletivo][tupleLessonName][lessonType][0][1] = percentage
+
+        
         schoolYears.sort()
         return render(request, 'student/consult_presenças.html', {"bySchoolYear": bySchoolYear, "schoolYears": schoolYears})
     else: 
         return HttpResponseRedirect(reverse('login'))
+
 
 
 
@@ -593,7 +604,16 @@ def home_t(request):
                 num = len(SystemUserSubject.objects.filter(anoLetivo = schoolYearObj, subject= sub).values_list("user__user").distinct())
                 NumberOfStudentsList.append((sub, num))
 
-            getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
+            lstAlunos= getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
+            for aluno in lstAlunos:
+                scheduleDict= buildHorarioSystemUser("Aluno", aluno, schoolYearObj)[1]
+
+                #scheduleDict = {'1sem' : sem1SubjsStr, '2sem': sem2SubjsStr}
+                #ordenar_horario(scheduleDict['1sem'])
+                #ordenar_horario(scheduleDict['2sem'])
+                scheduleDict= ordenar_horario(scheduleDict['1sem'])
+                #print(aulas_sobrepostas_horario(scheduleDict))
+                print(aulas_sobrepostas_horario(scheduleDict, ['Redes de Computadores (LTI)', "Segurança Informática"]))
 
             return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary, "NumStdBySub" : NumberOfStudentsList})
         else:
@@ -924,6 +944,7 @@ def getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças):
 
 
 def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
+    #ex: retorna-> [14514, 14538, ..., 15196]
     lstAlunos= []
     lessons= Lesson.objects.filter(professor=systemUser).values("subject__name", "type", "turma").distinct()
     print(lessons)
@@ -933,12 +954,22 @@ def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
         print(subjName)
         print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
         for dic in typeTurma :
-            suSubject= SystemUserSubject.objects.filter(subject__name=subjName, turmas__contains=dic["type"] + dic["turma"], anoLetivo=schoolYearObj).values("user")
+            suSubject= list(SystemUserSubject.objects.filter(subject__name=subjName, turmas__contains=dic["type"] + dic["turma"], anoLetivo=schoolYearObj).values("user"))
             if len(suSubject) != 0 :
-                lstAlunos.append(suSubject)
+                lstAlunos = lstAlunos + suSubject
 
-    print(lstAlunos)
-    return lstAlunos
+    #print(lstAlunos)
+    print(len(lstAlunos))
+
+    #elementos unicos de uma lista
+    lstAlunosUnique= []
+    for dic in lstAlunos:
+        if dic["user"] not in lstAlunosUnique :
+            lstAlunosUnique.append(dic["user"])
+
+    #print(lstAlunosUnique)
+    print(len(lstAlunosUnique))
+    return lstAlunosUnique
 
 
 def getAllTypesturmasBySubjsGiveByTeacher(systemUser, schoolYearObj):
@@ -1163,6 +1194,11 @@ def is_semestres_all_same(courseSubjs):
 
 
 def buildHorarioSystemUser(roleName, systemUser, schoolYearObj):
+    #ex: ensures sem1SubjsStr: 
+    # ['QUINTA,08:00,1:00,Programação I (LTI),T,2.1.10', 'QUINTA,09:00,1:30,Programação I (LTI),PL,2.1.11', 
+    # 'QUINTA,10:30,1:30,Programação I (LTI),PL,2.1.10', 'QUINTA,12:00,1:30,Programação I (LTI),PL,2.1.11', 
+    # 'QUARTA,08:00,1:30,Programação I (LTI),TP,1.5.64', 'QUARTA,09:30,1:30,Programação I (LTI),TP,1.5.63']
+
     sem1SubjsStr= []
     sem2SubjsStr= []
     sem1subjsName= []
@@ -1313,3 +1349,89 @@ def allFeriasDate(ferias, ano):
   return newFerias_str
        
 
+
+
+#------------------------------------------------ Funçoes auxiliares Sobreposiçoes ------------------------------------------------
+def ordenar_horario(lstLessonsStr):
+    """
+    requires: ['QUARTA,11:00,1:00,Redes de Computadores (LTI),T,1.5.67', 'QUINTA,09:30,1:00,Redes de Computadores (LTI),T,2.1.14', 
+              'QUINTA,08:00,1:30,Redes de Computadores (LTI),TP,2.1.15', 'TERÇA,09:00,2:00,Segurança Informática,T,2.1.12', 
+              'TERÇA,11:00,1:30,Segurança Informática,TP,2.1.11']
+
+    ensures: {
+              'QUARTA': [['11:00', '1:00', 'Redes de Computadores (LTI)', 'T', '1.5.67']], 
+              'QUINTA': [['08:00', '1:30', 'Redes de Computadores (LTI)', 'TP', '2.1.15'], ['09:30', '1:00', 'Redes de Computadores (LTI)', 'T', '2.1.14']], 
+              'TERÇA': [['09:00', '2:00', 'Segurança Informática', 'T', '2.1.12'], ['11:00', '1:30', 'Segurança Informática', 'TP', '2.1.11']]
+              }
+    """
+    lstlessons = []
+    for lessonStr in lstLessonsStr :
+      lesson = lessonStr.split(",")
+      lstlessons.append(lesson)
+
+    scheduleDict = {}
+
+    for lesson in lstlessons :
+      if lesson[0] in scheduleDict:
+        scheduleDict[lesson[0]].append(lesson[1:])
+      else :
+        scheduleDict[lesson[0]]= [lesson[1:]]
+
+    #print(scheduleDict)
+
+    #Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time) 
+    # tenho q formatar primeiro a hora e depois ordenar
+    for weekDay, lessons in  scheduleDict.items() :
+        scheduleDict[weekDay] = sorted(lessons)
+
+    #print(scheduleDict)
+    return scheduleDict
+
+
+
+
+def aulas_sobrepostas_horario(scheduleDict, checkLstCadeiras=[]):
+  """
+  se checkLstCadeiras == [] entao ele devolve todas as sobreposiçoes do horario
+  se checkLstCadeiras != [] entao ele devolve apenas as sobreposiçoes que envolvem cadeiras que estao nessa lista
+    requires: {
+              'QUARTA': [['11:00', '1:00', 'Redes de Computadores (LTI)', 'T', '1.5.67']], 
+              'QUINTA': [['08:00', '1:30', 'Redes de Computadores (LTI)', 'TP', '2.1.15'], ['09:30', '1:00', 'Redes de Computadores (LTI)', 'T', '2.1.14']], 
+              'TERÇA': [['09:00', '2:00', 'Segurança Informática', 'T', '2.1.12'], ['11:00', '1:30', 'Segurança Informática', 'TP', '2.1.11']]
+              }
+
+    ensures: [] ou
+             [['TERÇA', ['08:00', '1:30', 'Segurança Informática', 'T', '2.1.12'], ['09:00', '0:00', 'Segurança Informática', 'TP', '2.1.11']]] ou
+             [['QUINTA', ['08:00', '1:00', 'Redes de Computadores (LTI)', 'T', '2.1.14'], ['08:00', '2:00', 'Redes de Computadores (LTI)', 'TP', '2.1.15']], ['TERÇA', ['08:00', '2:00', 'Segurança Informática', 'T', '2.1.12'], ['08:00', '3:30', 'Segurança Informática', 'TP', '2.1.11']]]
+    """
+  sobreposicoes= []
+  for weekDay, lstLessons in scheduleDict.items():
+    if len(lstLessons) > 1 :
+      primLesson= True
+      for lesson in lstLessons:
+        if primLesson :
+          lessonToCompare= lesson
+          primLesson= False
+        else:
+          if is_lesson1_and_lesson2_sobrepostas(lessonToCompare, lesson):
+            if checkLstCadeiras :
+              if lessonToCompare[2] in checkLstCadeiras or lesson[2] in checkLstCadeiras :
+                sobreposicoes.append([weekDay, lessonToCompare, lesson])
+            else:
+              sobreposicoes.append([weekDay, lessonToCompare, lesson])
+          else:
+            lessonToCompare= lesson
+  return sobreposicoes
+
+def is_lesson1_and_lesson2_sobrepostas(lesson1, lesson2):
+    return addMinutes(lesson1[0], lesson1[1]) > hourToMinutes(lesson2[0])
+
+
+def hourToMinutes(hour):
+    #ex: hour-> "9:00" ou "09:00"
+    lhour= hour.split(":")
+    return int(lhour[0])*60 + int(lhour[1])
+
+
+def addMinutes(hour, duration):
+    return hourToMinutes(hour) + hourToMinutes(duration)

@@ -223,6 +223,7 @@ class Lesson(models.Model):
     duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
+    estadoTurma= models.BooleanField(null=True)
     #school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True) 
 
     def get_lesson_detalhes(self):
