@@ -932,13 +932,12 @@ def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
     for subjName, typeTurma in groupby(lessons, lambda a : a["subject__name"]):
         print(subjName)
         print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
-        typeTurmasStr= ""
         for dic in typeTurma :
-            typeTurmasStr += dic["type"] + dic["turma"] + " "
+            suSubject= SystemUserSubject.objects.filter(subject__name=subjName, turmas__contains=dic["type"] + dic["turma"], anoLetivo=schoolYearObj).values("user")
+            if len(suSubject) != 0 :
+                lstAlunos.append(suSubject)
 
-        print(typeTurmasStr)
-        lstAlunos.append(SystemUserSubject.objects.filter(subject__name=subjName, turmas__contain=typeTurmasStr, anoLetivo=schoolYearObj))
-    
+    print(lstAlunos)
     return lstAlunos
 
 
