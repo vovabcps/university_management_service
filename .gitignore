@@ -22,3 +22,4 @@ coverage.xml
 settings.py
 .DS_Store
 university/static/our/pics
+db.json

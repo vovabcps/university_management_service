@@ -1,0 +1,62 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wyvern-base
+  namespace: wyvern
+  labels:
+    app: wyvern-base
+spec:
+  # Number of replicas of our Django application
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: wyvern-base
+    spec:
+      containers:
+      - name: wyvern-base-app
+        image: vovabcps/wyvern-app:latest
+        # delete in production
+        imagePullPolicy: Always
+        env:
+            # [START cloudsql_secrets]
+            - name: DATABASE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql
+                  key: username
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql
+                  key: password
+            # [END cloudsql_secrets]
+        ports:
+        - containerPort: 8080
+
+      # [START proxy_container]
+      - image: b.gcr.io/cloudsql-docker/gce-proxy:latest
+        name: cloudsql-proxy
+        # !!! Change instance connection name !!!
+        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
+                  "-instances=wyvern-240717:europe-west1:wyvern=tcp:3306",
+                  "-credential_file=/secrets/cloudsql/credentials.json"]
+        volumeMounts:
+          - name: cloudsql-oauth-credentials
+            mountPath: /secrets/cloudsql
+            readOnly: true
+          - name: ssl-certs
+            mountPath: /etc/ssl/certs
+          - name: cloudsql
+            mountPath: /cloudsql
+      # [END proxy_container]
+      # [START volumes]
+      volumes:
+        - name: cloudsql-oauth-credentials
+          secret:
+            secretName: cloudsql-oauth-credentials
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs
+        - name: cloudsql
+          emptyDir: {}

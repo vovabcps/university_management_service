@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: memcached
+  namespace: memcached
+  labels:
+    app: memcached
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: memcached
+    spec:
+      containers:
+      - name: wyvern-base-app
+        image: memcached:1.5.14-alpine
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 11211

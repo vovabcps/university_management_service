@@ -23,4 +23,6 @@ coverage.xml
 *.log
 .git
 .DS_Store
-university/static
+university/static/
+static/
+deployments/
