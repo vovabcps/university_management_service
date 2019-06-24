@@ -21,3 +21,4 @@ coverage.xml
 .git
 settings.py
 .DS_Store
+university/static/our/pics
