@@ -140,62 +140,77 @@
 
 <script>
 
-function mostrarAlunos(JSONalunos){
-    console.log(JSONalunos)
-    if (JSONalunos.length > 1){
-        var numDatas= JSONalunos[0].length
-        var tHead= document.getElementById("headerTabela");
-        tHead.innerHTML= "";
-        var row = tHead.insertRow(-1);
-        row.insertCell(-1).outerHTML= "<th>Número/ID</th>";
-        row.insertCell(-1).outerHTML= "<th>Nome</th>";
-        for(var i=0; i<numDatas; i++){ //<th>29/abr</th>
-            var date= JSONalunos[0][i].split("/")
-            row.insertCell(-1).outerHTML= "<th>"+date[0]+"/"+date[1]+"</th>";
-        }
-        row.insertCell(-1).outerHTML= "<th style='background-color: lightgrey; font-weight: bold;'>Total</th>";
-        
-        var tbody= document.getElementById("tabelaAlunos");
-        tbody.innerHTML= "";
-        for(var i=1; i<JSONalunos.length; i++){
-            var row = tbody.insertRow(-1);
-            row.insertCell(-1).innerHTML= JSONalunos[i][0];
-            row.insertCell(-1).innerHTML= JSONalunos[i][1];
-            for(var j=0; j<JSONalunos[i][2].length; j++){
-                if (JSONalunos[i][2][j] == true){
-                    row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-yes.svg' %}'>";
-                }else if (JSONalunos[i][2][j] == false){
-                    row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-no.svg' %}'>";
-                }else{
-                    row.insertCell(-1).innerHTML= JSONalunos[i][2][j];
-                }
-                
+    function mostrarAlunos(JSONalunos){
+      console.log(JSONalunos)
+      if (JSONalunos.length > 1){
+          var numDatas= JSONalunos[0].length
+          var tHead= document.getElementById("headerTabela");
+          tHead.innerHTML= "";
+          var row = tHead.insertRow(-1);
+          row.insertCell(-1).outerHTML= "<th>Número/ID</th>";
+          row.insertCell(-1).outerHTML= "<th>Nome</th>";
+          for(var i=0; i<numDatas; i++){ 
+              var date= JSONalunos[0][i].split("/")
+              row.insertCell(-1).outerHTML= "<th>"+date[0]+"/"+date[1]+"</th>";
+          }
+          row.insertCell(-1).outerHTML= "<th style='background-color: lightgrey; font-weight: bold;'>Total</th>";
+          
+          var tbody= document.getElementById("tabelaAlunos");
+          tbody.innerHTML= "";
+          total=0
+          for(var i=1; i<JSONalunos.length; i++){
+            var value = 0;
+              var max = 0;
+              var row = tbody.insertRow(-1);
+              row.insertCell(-1).innerHTML= JSONalunos[i][0];
+              row.insertCell(-1).innerHTML= JSONalunos[i][1];
+              for(var j=0; j<JSONalunos[i][2].length; j++){
+                  if (JSONalunos[i][2][j] == true){
+                      row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-yes.svg' %}'>";
+                      value +=1
+                      max+=1
+                  }else if (JSONalunos[i][2][j] == false){
+                      row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-no.svg' %}'>";
+                      max+=1
+                  }else{
+                      row.insertCell(-1).innerHTML= JSONalunos[i][2][j];
+                  }
+                  
+              }
+              var lastCell = row.insertCell(-1)
+        total += value/max*100
+              lastCell.innerHTML= Math.round(value/max*100).toString() + "%";
+              lastCell.style.backgroundColor="lightgrey";
+              lastCell.style.fontWeight= "bold";
+          }
+          
+          var row = tbody.insertRow(-1);
+          row.style.backgroundColor="lightgrey";
+          row.style.fontWeight= "bold";
+          var cell0 = row.insertCell(-1)
+          cell0.innerHTML= "Attendance Rate(n.∫|%)";
+          cell0.colSpan= "2";
+  
+          for(var j=0; j<JSONalunos[0].length; j++){
+            val=0;
+            max=0;
+            for(var i=1; i<JSONalunos.length; i++){
+          if (JSONalunos[i][2][j] == true){
+            val+=1
+          }
+  
             }
-            var lastCell = row.insertCell(-1)
-            lastCell.innerHTML= "30%";
-            lastCell.style.backgroundColor="lightgrey";
-            lastCell.style.fontWeight= "bold";
-        }
-        
-        var row = tbody.insertRow(-1);
-        row.style.backgroundColor="lightgrey";
-        row.style.fontWeight= "bold";
-        var cell0 = row.insertCell(-1)
-        cell0.innerHTML= "Attendance Rate(n.º|%)";
-        cell0.colSpan= "2";
-
-        for(var i=0; i<numDatas; i++){
-            row.insertCell(-1).innerHTML= "10 | 50%";
-        }
-        row.insertCell(-1).innerHTML= "Media: 75%";
-
-    }else{
-        var tHead= document.getElementById("headerTabela");
-        tHead.innerHTML= "Nao existem alunos inscritos!";
-        var tbody= document.getElementById("tabelaAlunos");
-        tbody.innerHTML= "";
-    }
-}
+              row.insertCell(-1).innerHTML= val.toString() + " | " + Math.round(val/JSONalunos.length*100).toString() + "%";
+          }
+          row.insertCell(-1).innerHTML= "Media: " + Math.round(total/JSONalunos.length).toString() + "%";
+  
+      }else{
+          var tHead= document.getElementById("headerTabela");
+          tHead.innerHTML= "Nao existem alunos inscritos!";
+          var tbody= document.getElementById("tabelaAlunos");
+          tbody.innerHTML= "";
+      }
+  }
 
 function reset(){
   document.getElementById("headerTabela").innerHTML= "";;

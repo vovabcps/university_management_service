@@ -734,32 +734,28 @@ function guardarPresenças(week_day, date, turmaEscolhida){
     console.log(alunosEscolhidos)
     console.log(alunosNaoEscolhidos)
 
-    if (alunosEscolhidos.length == 0){
-        alert("Escolha pelo menos um aluno!")
-    }else{
-        var cadeiraEscolhida= document.getElementById("cadeiraEscolhida").innerHTML
+    var cadeiraEscolhida= document.getElementById("cadeiraEscolhida").innerHTML
 
-        //guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
-        var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
-        localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
-            
-        $.ajax({
-            type: "POST",
-            url: 'presencas_registar',
-            data: JSON.stringify({
-            'alunosEscolhidos': alunosEscolhidos,
-            'alunosNaoEscolhidos': alunosNaoEscolhidos,
-            'week_day':week_day.toUpperCase(),
-            'date':date,
-            'cadeiraEscolhida': cadeiraEscolhida,
-            'turmaEscolhida': turmaEscolhida
-            }),
-            success: function (data) {
-                console.log(data)
-                alert("Presenças guardadas")
-            }
-        });
-    }
+    //guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
+    var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
+    localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
+        
+    $.ajax({
+        type: "POST",
+        url: 'presencas_registar',
+        data: JSON.stringify({
+        'alunosEscolhidos': alunosEscolhidos,
+        'alunosNaoEscolhidos': alunosNaoEscolhidos,
+        'week_day':week_day.toUpperCase(),
+        'date':date,
+        'cadeiraEscolhida': cadeiraEscolhida,
+        'turmaEscolhida': turmaEscolhida
+        }),
+        success: function (data) {
+            console.log(data)
+            alert("Presenças guardadas")
+        }
+    });
 }
 
 // ------------------------------ Calendario responsive -----------------------------------------------------

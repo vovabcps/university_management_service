@@ -66,8 +66,8 @@
 
 												<div class="col-md-12">
 													<div class="row progress-labels">
-														<div class="col-sm-6">Presente em {{dates.0.0}} aulas</div>
-														<div class="col-sm-6" style="text-align: right;">de {{dates.1|length}} aulas lecionadas</div>
+														<div class="col-sm-6">Presente em {{dates.0.0}}/{{dates.1|length}} aulas lecionadas</div>
+														<div class="col-sm-6" style="text-align: right;"> {{dates.0.1|floatformat:2}}/100% de aulas lecionadas</div>
 													</div>
 													<div class="progress">
 														<div data-percentage="0%" style="width: {{dates.0.1}}%;" class="progress-bar progress-bar-blue" role="progressbar" aria-valuemin="0" aria-valuemax="100"></div>
