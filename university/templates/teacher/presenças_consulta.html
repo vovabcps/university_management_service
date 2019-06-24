@@ -26,10 +26,10 @@
 					<div class="semestres">
 						<ul class="nav nav-pills" role="tablist">
 							<li class="nav-item active">
-							  <a class="nav-link active" data-toggle="pill" href="#semestre1">1º Semestre</a>
+							  <a class="nav-link active" data-toggle="pill" href="#semestre1" onclick="reset()">1º Semestre</a>
 							</li>
 							<li class="nav-item">
-							  <a class="nav-link" data-toggle="pill" href="#semestre2" >2º Semestre</a>
+							  <a class="nav-link" data-toggle="pill" href="#semestre2" onclick="reset()" >2º Semestre</a>
 							</li>
 						  </ul>
 					</div>
@@ -195,6 +195,11 @@ function mostrarAlunos(JSONalunos){
         var tbody= document.getElementById("tabelaAlunos");
         tbody.innerHTML= "";
     }
+}
+
+function reset(){
+  document.getElementById("headerTabela").innerHTML= "";;
+  document.getElementById("tabelaAlunos").innerHTML= "";
 }
 
 </script>
