@@ -29,6 +29,8 @@ urlpatterns = [
     path('admin/insert', views.insert_a, name='insert_a'), 
     path('admin/operacoesBloco', views.operacoesBloco_a, name='operacoesBloco_a'), 
     path('admin/export', views.export_a, name='export'),
+    path('admin/import_database', views.import_database_a, name='import_db_api'),
+    path('admin/export_database', views.export_database_a, name='export_db_api'),
 
 
     path('admin/passwordchang', views.password_change, name='password_change_a'),

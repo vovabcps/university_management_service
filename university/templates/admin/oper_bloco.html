@@ -5,12 +5,13 @@
 
 {% block content_title %}Introduza o ficheiro (.sql):{% endblock %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
+{% block extrastyle %}{{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% static "admin/css/dashboard.css" %}">{% endblock %}
 {% block bodyclass %}{{ block.super }} dashboard{% endblock %}
 
 {% block breadcrumbs %}
     <div class="breadcrumbs">
-    <a href="{% url 'home_a' %}"><em class="fa fa-home"></em></a> › Operaçoes em bloco
+        <a href="{% url 'home_a' %}"><em class="fa fa-home"></em></a> › Operaçoes em bloco
     </div>
 {% endblock %}
 
@@ -20,40 +21,65 @@
 
 
 
-<div id="content-main">
+    <div id="content-main">
+        <div id="response_msg"><p></p></div>
+        <img id="import_loading_img" style="display: none" src="{% static "our/img/loading2.gif" %}" alt=""/>
+        <form id="dropForm" onsubmit="return false" enctype="multipart/form-data" target="uploadTrg">
+            {% csrf_token %}
+            <input type="file" name="file" id="input_files" data-max-file-size="2M">
+            <p>Drag your files here or click in this area.</p>
+            <button type="submit">Upload</button>
+        </form>
+    </div>
 
-
-<form id="dropForm" method="post" action="" enctype="multipart/form-data">
- {% csrf_token %}
-  <input type="file" name="file_sql" data-max-file-size="2M">
-  <p>Drag your files here or click in this area.</p>
-  <button type="submit">Upload</button>
-</form>
-
-  {% if uploaded %}
-         {% if uploaded == "yapp" %}
-          <script>alert("Success")</script>
-          {% elif uploaded == "empty" %}
-          <script>alert("Insira um ficheiro")</script>
+    {% comment %}
+    {% if uploaded %}
+        {% if uploaded == "yapp" %}
+            <script>alert("Success")</script>
+        {% elif uploaded == "empty" %}
+            <script>alert("Insira um ficheiro")</script>
         {% else %}
-          <script>alert("Tente novamente!")</script>
-          {% endif %}
-  {% endif %}
+            <script>alert("Tente novamente!")</script>
+        {% endif %}
+    {% endif %}
+    {% endcomment %}
 
 
 
-<script>
+    <script>
 
+        $(document).ready(function () {
+            $('#dropForm input').change(function () {
+                $('#dropForm p').text("Nome do ficheiro: " + this.files[0].name);
+            });
 
-$(document).ready(function(){
-  $('#dropForm input').change(function () {
-    $('#dropForm p').text("Nome do ficheiro: " + this.files[0].name);
-  });
-});
-
-</script>
-
-</div>
+            $('#dropForm').on('submit', function () {
+                $('#dropForm').toggle();
+                $('#import_loading_img').toggle();
+                let fd = new FormData();
+                fd.append('file', $('#input_files')[0].files[0], $('#input_files')[0].files[0].name);
+                $.ajax({
+                    url: "{% url 'import_db_api' %}",
+                    data: fd,
+                    processData: false,
+                    contentType: false,
+                    type: 'POST',
+                    success: function (resp) {
+                        $('#dropForm').toggle();
+                        $('#import_loading_img').toggle();
+                        let ok = JSON.parse(resp)['ok'];
+                        if (ok) {
+                            $('#response_msg p').css({'color': 'green'})
+                                .text("Base de dados foi importada com sucesso.");
+                        } else {
+                            $('#response_msg p').css('color', 'red')
+                                .text("Erro no importação de base de dados.");
+                        }
+                    },
+                })
+            });
+        });
+    </script>
 
 {% endblock %}
 
