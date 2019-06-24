@@ -32,7 +32,7 @@ Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,1
 #SystemUserCourse:  
 Licenciatura em Tecnologias de Informação,Matriculado,2016/2017,3
 
-#SystemUserSubject      108 ECTCS Realizados
+#SystemUserSubject      108 ECTCS Realizados 19 cadeiras
 1sem++Arquiteturas de Computadores,1,17.2,T11,TP11,PL11!!Elementos de Matemática I,1,12.3,T11,TP12!!Programação I (LTI),1,12.2,T11,TP13,PL14!!Produção de Documentos Técnicos,1,19.0,TP16!!Controvérsias Científicas,1,14.3,T11,TP12!!Informática na Ótica do Utilizador,1,20.0,TP19!!Bases de Dados,1,16.7,T11,TP12!!Fundamentos e Técnicas de Visualização,1,17.2,T11,TP13!!Interação com Computadores,1,16.4,T11,TP12,PL12!!Sistemas Operativos (LTI),1,15.7,T11,TP12|  |2sem++Elementos de Matemática II,1,20.0,T21,TP23!!Introdução às Probabilidades e Estatística,1,19.4,T21,TP25!!Introdução às Tecnologias Web,1,14.1,T21,TP24,PL24!!Programação II (LTI),1,13.7,T21,TP22,PL22!!Redes de Computadores (LTI),1,12.3,T21,TP23!!Análise e Desenho de Software,1,16.4,T21,TP21!!Aplicações Distribuídas,1,15.4,T21,TP23,PL23!!Aplicações e Serviços na Web,1,14.3,T21,TP23,PL24!!Conceção de Produto,1,14.6,T21,TP22
 
 #variantes: fazer o primeiro ano todo, fazer apenas uma das opcionais 
@@ -66,19 +66,20 @@ Licenciatura em Tecnologias de Informação,Matriculado,2018/2019,1
 #tirar null
 #Elementos de Matemática II,0
 
+
 #Cuidado com estas cadeiras: (tenho q por o LTI)
 #Programação II (LTI)
 #Redes de Computadores (LTI)
 #Sistemas Operativos (LTI)
 #Construção de Sistemas de Software (LTI)
-
+#Produção de Documentos Técnicos,0,TP18,PL16 nao existe pl
 
 # --------------------------------------------
 #SystemUserCourse:	
 
 
 #SystemUserSubject     0 ECTCS Realizados  #5 cadeiras para cada semestre #Turma 4
-1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP14,PL14!!Programação I (LTI),0,T11,TP14,PL14!!Elementos de Matemática I,0,T11,TP12!!Produção de Documentos Técnicos,0,TP13,PL16|  |2sem++Programação II (LTI),0,T21,TP25,PL26!!Introdução às Tecnologias Web,0,T21,TP24,PL24!!Introdução às Probabilidades e Estatística,0,T21,TP27!!Elementos de Matemática II,0,T21,TP27!!Redes de Computadores (LTI),0,T21,TP24
+#1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP14,PL14!!Programação I (LTI),0,T11,TP14,PL14!!Elementos de Matemática I,0,T11,TP12!!Produção de Documentos Técnicos,0,TP13,PL16|  |2sem++Programação II (LTI),0,T21,TP25,PL26!!Introdução às Tecnologias Web,0,T21,TP24,PL24!!Introdução às Probabilidades e Estatística,0,T21,TP27!!Elementos de Matemática II,0,T21,TP27!!Redes de Computadores (LTI),0,T21,TP24
 
 
 # --------------------------------------------
@@ -86,12 +87,12 @@ Licenciatura em Tecnologias de Informação,Matriculado,2018/2019,1
 
 
 #SystemUserSubject     0 ECTCS Realizados  #6 cadeiras para cada semestre, 2 de segundo ano sobrepostas FTV e AD
-1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP11,PL17!!Produção de Documentos Técnicos,0,TP13,PL16!!Fundamentos e Técnicas de Visualização,0,T11,TP11|  |2sem++Programação II (LTI),0,T21,TP21,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21!!Aplicações Distribuídas,0,T21,TP21,PL25
+#1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP11,PL17!!Produção de Documentos Técnicos,0,TP13!!Fundamentos e Técnicas de Visualização,0,T11,TP11|  |2sem++Programação II (LTI),0,T21,TP21,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21!!Aplicações Distribuídas,0,T21,TP21,PL25
 
 
 # --------------------------------------------
 #SystemUserCourse:	
-Licenciatura em Engenharia Informática,Matriculado,2018/2019,1
+#Licenciatura em Engenharia Informática,Matriculado,2018/2019,1
 
 #SystemUserSubject     0 ECTCS Realizados  #5 cadeiras para cada semestre #Turma 3
-1sem++Introdução à Programação,0,T11,TP13!!Produção de Documentos Técnicos,0,TP18,PL16!!Arquiteturas de Sistemas Computacionais,0,T11,TP13!!Lógica de Primeira Ordem,0,T11,TP13!!Cálculo,0,T11,TP12!!Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21|  |2sem++Elementos de Álgebra Linear,0,T21,TP21!!Algoritmos e Estruturas de Dados,0,T21,TP22!!Introdução às Probabilidades e Estatística,0,T21,TP22!!Física A,0,T21,TP22!!Laboratórios de Programação,0,PL22
+#1sem++Introdução à Programação,0,T11,TP13!!Produção de Documentos Técnicos,0,TP18,PL16!!Arquiteturas de Sistemas Computacionais,0,T11,TP13!!Lógica de Primeira Ordem,0,T11,TP13!!Cálculo,0,T11,TP12!!Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21|  |2sem++Elementos de Álgebra Linear,0,T21,TP21!!Algoritmos e Estruturas de Dados,0,T21,TP22!!Introdução às Probabilidades e Estatística,0,T21,TP22!!Física A,0,T21,TP22!!Laboratórios de Programação,0,PL22

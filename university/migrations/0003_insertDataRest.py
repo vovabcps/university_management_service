@@ -652,7 +652,7 @@ def is_lesson_sobreposta(professor, lesson, semestre):
     return False
 
 def is_lesson1_and_lesson2_sobrepostas(lesson1, lesson2):
-    return addMinutes(lesson1[0], lesson1[1]) > hourToMinutes(lesson2[0])
+    return addMinutes(lesson1.hour, lesson1.duration) > hourToMinutes(lesson2.hour)
 
 
 

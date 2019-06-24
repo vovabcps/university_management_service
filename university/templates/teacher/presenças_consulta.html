@@ -37,14 +37,7 @@
 				</div>
 
 
-
-			  <div class="panel-body">
-
-
-				<div class="w3-row">
-					<div class=" w3-third">
-
-				<div class="tab-content">
+                <div class="tab-content">
 				  {% for semestre, subjs in subjsSem.items %}
 
 				  {% if semestre == "1" %}
@@ -57,6 +50,7 @@
 					  <!-- em comum -->
 					  <ul class="nav nav-pills" role="tablist">
 
+                            
 						{% for subj, dicTypeTurmaLessons in subjs.items %}
 
 						{% if forloop.counter == 1 %}
@@ -86,20 +80,20 @@
 								{% for tipo, turmasAlunos in dicTypeTurmaLessons.items %}
 								<br>
 								{% if tipo == "T" %}
-								  <p>TEORICAS</p>
+								  <span>TEORICAS:</span>
 								{% elif  tipo == "TP" %}
-								  <p>PRATICAS</p>
+								  <span>PRATICAS:</span>
 								{% elif  tipo == "PL" %}
-								  <p>LABORATORIAIS</p>
+								  <span>LABORATORIAIS:</span>
 								{% elif  tipo == "O" %}
-								  <p>OUTRA</p>
+								  <span>OUTRA:</span>
 								{% elif  tipo == "S" %}
-								  <p>SINPOSIO</p>
+								  <span>SINPOSIO:</span>
 								{% else %}
-								  <p>{{tipo}}</p>
+								  <span>{{tipo}}:</span>
 								{% endif %}
 
-								<div class="turmas">
+								<div style="display:inline" class="turmas">
 								  {% for turmaAlunos in turmasAlunos %}
 
 								  <button type="button" class="w3-button-small w3-khaki w3-round"
@@ -109,53 +103,36 @@
 								  {% endfor %}
 								</div>
 
-								{% endfor %}
+                                {% endfor %}
+                            
 							  </div>
 
 							  {% endfor %}
 							</div> <!-- class="tab-content" -->
 
-					  </div>
-					  {% endfor %}
-					</div> <!-- class="tab-content" -->
-					</div>
+                      </div>
+                      {% endfor %}
+                    </div> <!-- class="tab-content" -->
+                  
+                  <div class="row" id='box3'>
+                        <div class="col-md-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Lista Alunos (2018/2019)</div>
+                                <div class="panel-body">
+                                    <div style="overflow-x:auto;">
+                                    <table id="students_table" class="table">
+                                        <thead id="headerTabela"></thead>
+                                        <tbody id="tabelaAlunos"></tbody>
+                                     </table>
+                                    </div>
 
-					<div class="w3-twothird">
-							<div class="row" id='box3'>
-									<div class="col-md-12">
-										<div class="panel panel-default">
-											<div class="panel-heading">Lista Alunos</div>
-											<div class="panel-body">
-													<table id="students_table" class="table">
-                        <thead>
-                            <tr>
-                                <th>Número/ID</th>
-                                <th>Nome</th>
-                                <th>29/abr</th>
-                                <th>6/mai</th>
-                                <th>13/mai</th>
-                                <th>20/mai</th>
-                                <th>27/mai</th>
-                                <th style="background-color: lightgrey; font-weight: bold;">Total</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabelaAlunos">
-
-                        </tbody>
-        </table>
-
-											</div>
-										</div>
-									</div>
-									</div>
-					  </div>
-
-				  </div> <!-- end row -->
-
-				</div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
 
 
-			</div><!-- /.panel-->
+
 		  </div><!-- /.col-->
 		</div><!-- /.row -->
 </div><!--/.main-->
@@ -164,37 +141,51 @@
 <script>
 
 function mostrarAlunos(JSONalunos){
-	console.log(JSONalunos)
-	var tbody= document.getElementById("tabelaAlunos");
-	tbody.innerHTML= "";
-	for(var i=0; i<JSONalunos.length; i++){
+    console.log(JSONalunos)
+    var numDatas= JSONalunos[0].length
+    var tHead= document.getElementById("headerTabela");
+    var row = tHead.insertRow(-1);
+    row.insertCell(-1).outerHTML= "<th>Número/ID</th>";
+    row.insertCell(-1).outerHTML= "<th>Nome</th>";
+    for(var i=0; i<numDatas; i++){ //<th>29/abr</th>
+        var date= JSONalunos[0][i].split("/")
+        row.insertCell(-1).outerHTML= "<th>"+date[0]+"/"+date[1]+"</th>";
+    }
+    row.insertCell(-1).outerHTML= "<th style='background-color: lightgrey; font-weight: bold;'>Total</th>";
+    
+    var tbody= document.getElementById("tabelaAlunos");
+    tbody.innerHTML= "";
+	for(var i=1; i<JSONalunos.length; i++){
 		var row = tbody.insertRow(-1);
-		var cell0 = row.insertCell(0).innerHTML= JSONalunos[i][0];
-		var cell1 = row.insertCell(1).innerHTML= JSONalunos[i][1];
-		var cell2 = row.insertCell(2).innerHTML= "x";
-		var cell3 = row.insertCell(3).innerHTML= "x";
-	    var cell4 = row.insertCell(4).innerHTML= "x";
-	    var cell5 = row.insertCell(5).innerHTML= "x";
-	    var cell6 = row.insertCell(6).innerHTML= "x";
-	    var cell7 = row.insertCell(7)
-	    cell7.innerHTML= "30%";
-	    console.log(cell7);
-	    cell7.style.backgroundColor="lightgrey";
-	    cell7.style.fontWeight= "bold";
-	}
+		row.insertCell(-1).innerHTML= JSONalunos[i][0];
+        row.insertCell(-1).innerHTML= JSONalunos[i][1];
+        for(var j=0; j<JSONalunos[i][2].length; j++){
+            if (JSONalunos[i][2][j] == true){
+                row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-yes.svg' %}'>";
+            }else if (JSONalunos[i][2][j] == false){
+                row.insertCell(-1).innerHTML= "<img src='{% static 'our/img/icon-no.svg' %}'>";
+            }else{
+                row.insertCell(-1).innerHTML= JSONalunos[i][2][j];
+            }
+            
+        }
+	    var lastCell = row.insertCell(-1)
+	    lastCell.innerHTML= "30%";
+	    lastCell.style.backgroundColor="lightgrey";
+	    lastCell.style.fontWeight= "bold";
+    }
+    
 	var row = tbody.insertRow(-1);
 	row.style.backgroundColor="lightgrey";
 	row.style.fontWeight= "bold";
-	var cell0 = row.insertCell(0)
+	var cell0 = row.insertCell(-1)
 	cell0.innerHTML= "Attendance Rate(n.º|%)";
 	cell0.colSpan= "2";
 
-    var cell2 = row.insertCell(1).innerHTML= "10 | 50%";
-    var cell3 = row.insertCell(2).innerHTML= "5 | 25%";
-    var cell4 = row.insertCell(3).innerHTML= "10 | 50%";
-    var cell5 = row.insertCell(4).innerHTML= "5 | 25%";
-    var cell6 = row.insertCell(5).innerHTML= "10 | 50%";
-    var cell7 = row.insertCell(6).innerHTML= "Media: 75%";
+    for(var i=0; i<numDatas; i++){
+        row.insertCell(-1).innerHTML= "10 | 50%";
+    }
+    row.insertCell(-1).innerHTML= "Media: 75%";
 }
 
 </script>

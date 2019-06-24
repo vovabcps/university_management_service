@@ -20,22 +20,29 @@
 						
 						<div class="panel-body tabs">
 							<ul id="yearsTab" class="nav nav-tabs">
-								{% for year in schoolYears %}
-									<li><a href="#{{year}}" data-toggle="{{year}}">{{year}}</a></li>
+								{% for y in schoolYears %}
+									<li><a href="#{{y}}" data-toggle="{{y}}">{{y}}</a></li>
 								{% endfor %}
 							</ul>
-							<div id="subjectContent" class="tab-content">
+							<div id="yearsContent" class="tab-content">
 								{% for yearS, presencasBySubject in bySchoolYear.items %}
 									<div class="tab-pane fade in" id="{{yearS}}">
-										{% for s in subjects %}
-											<button type="button" class="btn btn-md btn-default" href="#{{s.1}}">{{s.0}}</button>
-										{% endfor %}
-										
+										<div class="form-group">
+											<label>Escolha a disciplina:</label>
+											<select class="form-control" onchange="showPresencasFromSubject($(this).val())">
+												<option value="none" selected>--Disciplinas--</option>
+												{%for key, values in presencasBySubject.items %}
+													<option value="{{key.1}}">{{key.0}}</option>
+												{% endfor %}
+											</select>
+										</div>
+
+
 										{% for subj, presentDict in presencasBySubject.items %}
 										<div class="fade in subjectDiv" id="{{subj.1}}">
 											<h4>{{subj.0}}</h4>
 											{%for subjectType, dates in presentDict.items %}
-											<table class="table" style="text-align: center">
+											<div style="overflow-x:auto;"><table class="table" style="text-align: center">
 												<tbody>
 													<tr>
 														<th rowspan="3">{{subjectType}}</th>
@@ -48,14 +55,14 @@
 													<tr>
 														{%for d in dates %}
 															{%if d.1 == True %}
-																<td>x</td>
+																<td><img src="{% static 'our/img/icon-yes.svg' %}"></td>
 															{% else %}
-																<td></td>
+																<td><img src="{% static 'our/img/icon-no.svg' %}"></td>
 															{% endif %}
 														{% endfor %}
 													</tr>
 												</tbody>
-											</table>
+											</table></div>
 											{% endfor %}
 										</div>
 										{% endfor %}
@@ -76,27 +83,28 @@
 <script>
 	var yearT = $("#yearsTab li").first().text();
 	$("#yearsTab li").first().addClass("active");
-	$("#subjectContent #" + yearT).addClass("active");
-	$("#subjectContent #" + yearT + " button").first().addClass("btn-warning");
-	var subj = $("#subjectContent #" + yearT + " button").first().text();
+	$("#yearsContent #" + yearT).addClass("active");
+
 	$(".subjectDiv").css("display", "none");
-	$("#" + subj.split(" ").join("_")).css("display", "block");
 
 	$("#yearsTab li").click(function() {
-		$("#subjectTabs li, #subjectContent div").removeClass("active");
+		$("#yearsTab li, #yearsContent div").removeClass("active");
 		var yearT = $(this).text();
 		$(this).addClass("active");
-		$("#subjectContent #" + subyearT).addClass("active");
-
-	})
-
-	$("#subjectContent button").click(function(){
-		$("#subjectContent button").removeClass("btn-warning");
-		$(this).addClass("btn-warning");
-		var subj = $(this).text();
+		$("#yearsContent #" + yearT).addClass("active");
 		$(".subjectDiv").css("display", "none");
-		$("#" + subj.split(" ").join("_")).css("display", "block");
 	})
+
+	function showPresencasFromSubject(subj) {
+		console.log(subj);
+		if (subj == "none") {
+			$(".subjectDiv").css("display", "none");
+		} else {
+			$(".subjectDiv").css("display", "none");
+			$("#" + subj).css("display", "block");
+		}
+	};
+	
 
 </script>
 

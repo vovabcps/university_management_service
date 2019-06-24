@@ -8,6 +8,7 @@ import json
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth import authenticate, login, logout
 
+#models
 from django.contrib.auth.models import User
 from .models import *
 import university.models
@@ -22,6 +23,7 @@ from django.core.files.storage import FileSystemStorage
 
 import sys
 import re
+from itertools import groupby
 
 #password change
 from django.contrib.auth import update_session_auth_hash
@@ -500,32 +502,32 @@ def consult_presencas_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
         su = request_user(request)
         presencas = list(LessonSystemUser.objects.filter(systemUser=su))
-        presencasBySubject = {}
-        subjects = []
+        
         bySchoolYear = {}
         schoolYears = []
         for l in presencas:
-            #anoLetivo(l.date)
             lessonName = l.lesson.get_subject_name()
-            lessonNameWithoutWhitSpace = '_'.join(lessonName.split())
+            lessonNameWithoutWhitespace = '_'.join(lessonName.split("(")[0].split())
+            tupleLessonName = (lessonName, lessonNameWithoutWhitespace)
             lessonType = l.lesson.type
-            if (lessonName, lessonNameWithoutWhitSpace) in presencasBySubject:
-                if lessonType in presencasBySubject[(lessonName, lessonNameWithoutWhitSpace)]:
-                    presencasBySubject[(lessonName, lessonNameWithoutWhitSpace)][lessonType].append((l.date, l.presente))
-                else:
-                    presencasBySubject[(lessonName, lessonNameWithoutWhitSpace)][lessonType] = [(l.date, l.presente)]
-            else:
-                presencasBySubject[(lessonName, lessonNameWithoutWhitSpace)] = {lessonType: [(l.date, l.presente)]}
-            if (lessonName, lessonNameWithoutWhitSpace) not in subjects:
-                subjects.append((lessonName, lessonNameWithoutWhitSpace))
-            
-            anoletivoStr = anoLetivo(l.date)
-            if anoletivoStr not in schoolYears:
-                schoolYears.append(anoletivoStr)
-            
-            bySchoolYear[anoletivoStr] = presencasBySubject
+            anoletivo = anoLetivo(l.date)
 
-        return render(request, 'student/consult_presenças.html', {"bySchoolYear": bySchoolYear, "subjects": subjects, "schoolYears": schoolYears})
+            if anoletivo not in schoolYears:
+                schoolYears.append(anoletivo)
+
+            if anoletivo not in bySchoolYear:
+                bySchoolYear[anoletivo] = {}
+            
+            if tupleLessonName not in bySchoolYear[anoletivo]:
+                bySchoolYear[anoletivo][tupleLessonName] = {}
+
+            if lessonType not in bySchoolYear[anoletivo][tupleLessonName]:
+                bySchoolYear[anoletivo][tupleLessonName][lessonType] = [(l.date, l.presente)]
+            else:
+                bySchoolYear[anoletivo][tupleLessonName][lessonType].append((l.date, l.presente))
+            
+        schoolYears.sort()
+        return render(request, 'student/consult_presenças.html', {"bySchoolYear": bySchoolYear, "schoolYears": schoolYears})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -590,6 +592,8 @@ def home_t(request):
             for sub in mySubjects:
                 num = len(SystemUserSubject.objects.filter(anoLetivo = schoolYearObj, subject= sub).values_list("user__user").distinct())
                 NumberOfStudentsList.append((sub, num))
+
+            getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
 
             return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary, "NumStdBySub" : NumberOfStudentsList})
         else:
@@ -870,18 +874,28 @@ def getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, infoSemP
     if infoSemPresenças :
         lstDates= getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças)
         print(lstDates) #ex: ['19/02/2019', '20/02/2019', ...]
-    
-    myListOfCollegues= []
+        type, turma= separateLettersNumb(typeTurma)
+        myListOfCollegues= [lstDates]
+    else:
+        myListOfCollegues= []
+
+
     for suSubj in suSubjs:
-        lstPresencasAluno= []
-        for date in lstDates:
-            pass
-            #dataFormat=
-            #lSU= LessonSystemUser.objects.filter(user)
         PI= PersonalInfo.objects.get(user=suSubj.user)
         if infoSemPresenças : #se nao for uma lista vazia
-            presençasAluno= {}
-            listInfo= [suSubj.user.user.username, PI.name, presençasAluno]
+            lstPresencasAluno= []
+            for date_str in lstDates:
+                dataFormat= datetime.strptime(date_str, "%d/%m/%Y").date()
+                lSU= LessonSystemUser.objects.filter(systemUser= suSubj.user, lesson__type=type, lesson__subject=subj, date=dataFormat).first()
+                if lSU : #se aquela aula ja ocorreu
+                    is_presente= lSU.presente
+                    lstPresencasAluno.append(is_presente)
+                else: 
+                    lstPresencasAluno.append("-")
+                
+            #print(lstPresencasAluno)
+            listInfo= [suSubj.user.user.username, PI.name, lstPresencasAluno]
+        
         else:
             listInfo= [suSubj.user.user.username, PI.name, suSubj.user.user.email]
 
@@ -911,10 +925,19 @@ def getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças):
 
 def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
     lstAlunos= []
-    dic1SemSubjs, dic2SemSubjs= getAllTypesturmasBySubjsGiveByTeacher(systemUser, schoolYearObj)
+    lessons= Lesson.objects.filter(professor=systemUser).values("subject__name", "type", "turma").distinct()
+    print(lessons)
+    print(lessons.count())
+    
+    for subjName, typeTurma in groupby(lessons, lambda a : a["subject__name"]):
+        print(subjName)
+        print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
+        typeTurmasStr= ""
+        for dic in typeTurma :
+            typeTurmasStr += dic["type"] + dic["turma"] + " "
 
-    dic1SemSubjs = getAlunosOfTypesturmasInSubjs(1, dic1SemSubjs, schoolYearObj)
-    dic2SemSubjs = getAlunosOfTypesturmasInSubjs(2, dic2SemSubjs, schoolYearObj)
+        print(typeTurmasStr)
+        lstAlunos.append(SystemUserSubject.objects.filter(subject__name=subjName, turmas__contain=typeTurmasStr, anoLetivo=schoolYearObj))
     
     return lstAlunos
 
