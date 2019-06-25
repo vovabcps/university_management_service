@@ -3,8 +3,8 @@ venv/
 .idea
 db.sqlite3
 __pycache__
-university_management_service/__pycache__
-university/migrations/__pycache__
+university_management_service/__pycache__/
+university/migrations/__pycache__/
 *.pyc
 *.pyo
 *.pyd
@@ -23,3 +23,4 @@ settings.py
 .DS_Store
 university/static/our/pics
 db.json
+upload_db.json

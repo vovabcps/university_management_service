@@ -88,14 +88,14 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'PORT': '3306'
     },
-    # 'slave1': {
-    #     'HOST': '35.205.105.127',
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'wyvern',
-    #     'USER': os.getenv('DATABASE_USER'),
-    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-    #     'PORT': '3306'
-    # }
+    'slave1': {
+        'HOST': '35.205.105.127',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'wyvern',
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'PORT': '3306'
+    }
 }
 
 CACHES = {

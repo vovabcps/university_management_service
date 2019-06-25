@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://www.wyvernedu.me"],
+    "responseHeader": ["Content-Type"],
+    "method": ["GET"],
+    "maxAgeSeconds": 3600
+  }
+]
