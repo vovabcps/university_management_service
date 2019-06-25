@@ -138,6 +138,7 @@ def request_user(request):
 
 
 # -------------------------------------------------- logout --------------------------------------------------
+@require_http_methods(["POST"])
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect(reverse('login'))

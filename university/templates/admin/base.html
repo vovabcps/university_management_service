@@ -3,200 +3,211 @@
 {% get_current_language as LANGUAGE_CODE %}{% get_current_language_bidi as LANGUAGE_BIDI %}
 <html lang="{{ LANGUAGE_CODE|default:"en-us" }}" {% if LANGUAGE_BIDI %}dir="rtl"{% endif %}>
 <head>
-<meta charset="utf-8">
-<title>{% block title %}{% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
-<link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
-<link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
-<link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
-<link href="{% static 'template/css/style.css' %}" rel="stylesheet">
-<link href="{% static "our/admin/css/style.css" %}" rel="stylesheet">
-<script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{% block stylesheet %}{% static "admin/css/base.css" %}{% endblock %}">
+    <link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/style.css' %}" rel="stylesheet">
+    <link href="{% static "our/admin/css/style.css" %}" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
 
-<link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+    <link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
 
-{% block extrastyle %}{% endblock %}
-{% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">{% endif %}
+    {% block extrastyle %}{% endblock %}
+    {% if LANGUAGE_BIDI %}
+        <link rel="stylesheet" type="text/css"
+              href="{% block stylesheet_rtl %}{% static "admin/css/rtl.css" %}{% endblock %}">{% endif %}
 
-{% block extrahead %}{% endblock %}
+    {% block extrahead %}{% endblock %}
 
-{% block responsive %}
-    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
-    {% if LANGUAGE_BIDI %}<link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive_rtl.css" %}">{% endif %}
-{% endblock %}
-{% block blockbots %}<meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
+    {% block responsive %}
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive.css" %}">
+        {% if LANGUAGE_BIDI %}
+            <link rel="stylesheet" type="text/css" href="{% static "admin/css/responsive_rtl.css" %}">{% endif %}
+    {% endblock %}
+    {% block blockbots %}
+        <meta name="robots" content="NONE,NOARCHIVE">{% endblock %}
 </head>
 {% load i18n %}
 
 <body class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
-  data-admin-utc-offset="{% now "Z" %}">
+      data-admin-utc-offset="{% now "Z" %}">
 
 <!-- Container -->
 <div id="container">
 
- 
+
     <!-- Header -->
     {% block nav-global %}
 
-	<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span></button>
-				<a class="navbar-brand" href=""><span>Wyvern</span>|Administrador</a>
+        <nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span></button>
+                    <a class="navbar-brand" href=""><span>Wyvern</span>|Administrador</a>
 
-        <ul class="navbar-right">
-            {% block usertools %}
-        {% if has_permission %}
-        <div>
-            {% block welcome-msg %}{% endblock %}
-            {% block userlinks %}
-                {% if user.is_active and user.is_staff %}
-                    {% url 'django-admindocs-docroot' as docsroot %}
-                    {% if docsroot %}
-                        <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
-                    {% endif %}
-                {% endif %}
-            {% endblock %}
-        </div>
-        {% endif %}
-        {% endblock %}
-            </ul>
+                    <ul class="navbar-right">
+                        {% block usertools %}
+                            {% if has_permission %}
+                                <div>
+                                    {% block welcome-msg %}{% endblock %}
+                                    {% block userlinks %}
+                                        {% if user.is_active and user.is_staff %}
+                                            {% url 'django-admindocs-docroot' as docsroot %}
+                                            {% if docsroot %}
+                                                <a href="{{ docsroot }}">{% trans 'Documentation' %}</a> /
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endblock %}
+                                </div>
+                            {% endif %}
+                        {% endblock %}
+                    </ul>
 
 
-
-			</div>
-		</div><!-- /.container-fluid -->
-	</nav>
-  {% endblock %}
+                </div>
+            </div><!-- /.container-fluid -->
+        </nav>
+    {% endblock %}
     <!-- END Header -->
 
 
+    <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+        <div class="profile-sidebar">
+            <div class="profile-userpic">
+                <img src="{% static personalData.profile_pic %}" class="img-responsive" alt="">
+            </div>
+            <div class="profile-usertitle">
+                <div class="profile-usertitle-name">{{ personalData.name }}</div>
+                <div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="divider"></div>
+        <ul class="nav menu">
+            <li id="home"><a href="{% url 'home_a' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
+            <li id="consult"><a href="{% url 'consult_a' %}"><em class="fa fa-search">&nbsp;</em>Consultas</a></li>
+            <li id="insert"><a href="{% url 'insert_a' %}"><em
+                    class="fa fa-pencil">&nbsp;</em>Editar/Inserir/Remover</a></li>
+            <li id="operacoesBloco"><a href="{% url 'operacoesBloco_a' %}"><em
+                    class="fa fa-upload">&nbsp;</em>Import</a></li>
+            <li id="export"><a href="{% url 'export' %}"><em class="fa fa-download">&nbsp;</em>Export</a></li>
+            <li id="passwordchang"><a href="{% url 'password_change_a' %}"><em class="fa fa-key">&nbsp;</em>Mudar a
+                minha pass</a></li>
+            <li id="logout">
+                <a href="#">
+                    <form style="margin: 0; padding: 0" action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button style="border: none;background: none;padding: 0;">
+                            <em class="fa fa-power-off">&nbsp;</em> Logout
+                        </button>
+                    </form>
+                </a>
+            </li>
+        </ul>
+    </div><!--/.sidebar-->
+</div>
 
+<!-- Content -->
+<div id="content" class="{% block coltype %}colM{% endblock %} col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
 
+    {% block breadcrumbs %}
+    {% endblock %}
 
-   
-  
-      <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
-		<div class="profile-sidebar">
-			<div class="profile-userpic">
-                    <img src="{% static personalData.profile_pic %}" class="img-responsive" alt="">
-			</div>
-			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">{{personalData.name}}</div>
-				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
-			</div>
-			<div class="clear"></div>
-		</div>
-		<div class="divider"></div>
-		<ul class="nav menu">
-			<li id="home"><a href="{% url 'home_a' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
-            <li id="consult" ><a href="{% url 'consult_a'%}"><em class="fa fa-search">&nbsp;</em>Consultas</a></li>
-            <li id="insert" ><a href="{% url 'insert_a' %}"><em class="fa fa-pencil">&nbsp;</em>Editar/Inserir/Remover</a></li>
-            <li id="operacoesBloco" ><a href="{% url 'operacoesBloco_a' %}"><em class="fa fa-upload">&nbsp;</em>Import</a></li>
-            <li id="export" ><a href="{% url 'export' %}"><em class="fa fa-download">&nbsp;</em>Export</a></li>
-            <li id="passwordchang" ><a href="{% url 'password_change_a' %}"><em class="fa fa-key">&nbsp;</em>Mudar a minha pass</a></li>
-			<li id="logout" ><a href="{% url 'logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
-		</ul>
-	</div><!--/.sidebar-->
-    </div>
-
-     <!-- Content -->
-    <div id="content" class="{% block coltype %}colM{% endblock %} col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-   
-      {% block breadcrumbs %}
-        {% endblock %}
-
-     {% block messages %}
+    {% block messages %}
         {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
+            <ul class="messagelist">{% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+            {% endfor %}</ul>
         {% endif %}
     {% endblock messages %}
 
-    
-  
-  
 
 
 
 
 
-        {% block pretitle %}{% endblock %}
-        <h1>{% block content_title %}{% endblock %}</h1>
-        {% block sidebar %}{% endblock %}
-        {% block content %}
+
+
+
+    {% block pretitle %}{% endblock %}
+    <h1>{% block content_title %}{% endblock %}</h1>
+    {% block sidebar %}{% endblock %}
+    {% block content %}
         {% block object-tools %}{% endblock %}
         {{ content }}
-        {% endblock %}
-        
-        <br class="clear">
-    </div>
-    <!-- END Content -->
+    {% endblock %}
 
-    {% block footer %}<div id="footer"></div>{% endblock %}
+    <br class="clear">
+</div>
+<!-- END Content -->
+
+{% block footer %}
+    <div id="footer"></div>{% endblock %}
 </div>
 <!-- END Container -->
 
 
-	<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
-	<script src="{% static 'template/js/chart.min.js' %}"></script>
-	<script src="{% static 'template/js/chart-data.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart.js' %}"></script>
-	<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
-	<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-	<script src="{% static 'template/js/custom.js' %}"></script>
+<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'template/js/chart.min.js' %}"></script>
+<script src="{% static 'template/js/chart-data.js' %}"></script>
+<script src="{% static 'template/js/easypiechart.js' %}"></script>
+<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
+<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'template/js/custom.js' %}"></script>
 
-
-    
 
 <script>
-var pageArray = location.pathname.split('/');
-console.log(pageArray);
-var pag, li;
-if (pageArray[pageArray.length - 1] == ""){
-    pag = pageArray[pageArray.length - 2]
-}else{
-    pag = pageArray[pageArray.length - 1]
-}
-if (pag == "admin") pag="home";    
-if (pag == "university") pag="consult";
-if (pag == "auth") pag="consult";
+    var pageArray = location.pathname.split('/');
+    console.log(pageArray);
+    var pag, li;
+    if (pageArray[pageArray.length - 1] == "") {
+        pag = pageArray[pageArray.length - 2]
+    } else {
+        pag = pageArray[pageArray.length - 1]
+    }
+    if (pag == "admin") pag = "home";
+    if (pag == "university") pag = "consult";
+    if (pag == "auth") pag = "consult";
 
 
-li= document.getElementById(pag);
-if (li == null){
-    pag= "consult"; //por default
-    if (pageArray.includes("add")) pag= "insert";
-    if (pageArray.includes("change")) pag= "insert";
-    if (document.getElementsByTagName("body")[0].classList.contains("delete-confirmation")) pag= "insert";
-    li= document.getElementById(pag);
-} 
-li.classList.add("active");
+    li = document.getElementById(pag);
+    if (li == null) {
+        pag = "consult"; //por default
+        if (pageArray.includes("add")) pag = "insert";
+        if (pageArray.includes("change")) pag = "insert";
+        if (document.getElementsByTagName("body")[0].classList.contains("delete-confirmation")) pag = "insert";
+        li = document.getElementById(pag);
+    }
+    li.classList.add("active");
 
 
-var navBar= document.getElementById("changelist-search");
-if (navBar){
-    var div= navBar.children[0];
-    div.children[0].innerHTML = "";
-    div.children[1].setAttribute("placeholder", "Search...");
-    var but= document.createElement('button');
-    but.setAttribute("type", "submit");
-    but.innerHTML ="<i class='fa fa-search'></i>"
-    div.replaceChild(but, div.children[2]);
-  
-}
+    var navBar = document.getElementById("changelist-search");
+    if (navBar) {
+        var div = navBar.children[0];
+        div.children[0].innerHTML = "";
+        div.children[1].setAttribute("placeholder", "Search...");
+        var but = document.createElement('button');
+        but.setAttribute("type", "submit");
+        but.innerHTML = "<i class='fa fa-search'></i>";
+        div.replaceChild(but, div.children[2]);
+
+    }
 
 
-console.log(document.getElementsByClassName("breadcrumbs")[0].children[0])
-var path = document.getElementsByClassName("breadcrumbs")[0]
-var linkHome= document.getElementsByClassName("breadcrumbs")[0].children[0]
-linkHome.innerHTML = "<em class='fa fa-home'></em>"
+    console.log(document.getElementsByClassName("breadcrumbs")[0].children[0]);
+    var path = document.getElementsByClassName("breadcrumbs")[0];
+    var linkHome = document.getElementsByClassName("breadcrumbs")[0].children[0];
+    linkHome.innerHTML = "<em class='fa fa-home'></em>"
 </script>
 
 </body>
