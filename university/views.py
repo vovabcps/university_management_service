@@ -38,6 +38,7 @@ from django.core.validators import validate_email
 
 # date django model, presenças
 from datetime import datetime, timedelta
+from django.views.decorators.csrf import csrf_exempt
 
 
 # --------------------- all in common -----------------------
@@ -90,6 +91,7 @@ def is_authenticated(request, role_name):
 
 
 # --------------- login ---------------
+@csrf_exempt
 def login_page(request):
     if request.method == "GET":
         if request.user.is_authenticated:

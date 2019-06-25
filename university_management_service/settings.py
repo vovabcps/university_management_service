@@ -47,7 +47,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'university_management_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': '127.0.0.1',
+        'HOST': '104.155.5.49',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'wyvern',
         'USER': os.getenv('DATABASE_USER'),
@@ -135,8 +135,8 @@ USE_L10N = True
 USE_TZ = True
 
 
-STATIC_URL = '/static/'
-#STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
+#STATIC_URL = '/static/'
+STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
 MIGRATIONS_DATA_ROOT = os.path.join(BASE_DIR, 'university/migrations_data')
 

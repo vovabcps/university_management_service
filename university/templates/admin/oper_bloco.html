@@ -56,9 +56,14 @@
             $('#dropForm').on('submit', function () {
                 $('#dropForm').toggle();
                 $('#import_loading_img').toggle();
+
+                let csrf = $("[name=csrfmiddlewaretoken]").val();
                 let fd = new FormData();
                 fd.append('file', $('#input_files')[0].files[0], $('#input_files')[0].files[0].name);
                 $.ajax({
+                    beforeSend: function(xhr, settings) {
+                      xhr.setRequestHeader("X-CSRFToken", csrf)
+                    },
                     url: "{% url 'import_db_api' %}",
                     data: fd,
                     processData: false,

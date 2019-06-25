@@ -24,6 +24,7 @@
         <div id="action_area">
             <img id="export_loading_img" style="display: none" src="{% static "our/img/loading2.gif" %}" alt="">
             <button class="button" id="export_database">Export database json file</button>
+            {% csrf_token %}
         </div>
     </div>
 
@@ -75,7 +76,12 @@
             $('#export_database').on('click ', function () {
                 $("#export_database").toggle();
                 $("#export_loading_img").toggle();
+
+                let csrf = $("[name=csrfmiddlewaretoken]").val();
                 $.ajax({
+                    beforeSend: function(xhr, settings) {
+                      xhr.setRequestHeader("X-CSRFToken", csrf)
+                    },
                     url: "{% url 'export_db_api' %}",
                     type: "POST",
                     //dataType: 'json',

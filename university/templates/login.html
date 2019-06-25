@@ -31,6 +31,7 @@
 							<div class="form-group">
 								<input class="form-control" id="password" placeholder="Password" name="password" type="password" required>
 							</div>
+                            <div id="login-error" style="color:red"></div>
 							<div class="checkbox">
 								<label>
 									<input name="remember" type="checkbox" value="remember">Remember Me
@@ -59,19 +60,19 @@
         $('#submit-button').click(login);
     });
     function login() {
-        email = $('#username').val();
-        password = $('#password').val();
+        $("#login-error").text("");
+        let email = $('#username').val();
+        let password = $('#password').val();
         $.ajax({
             type: "POST",
             url: '/',
             data: JSON.stringify({'username': email, 'password': password}),
             success: function (data) {
-                if (data['message'] == "success") {
-                    alert("success")
+                if (data['message'] === "success") {
                     location.reload();
-                } else if (data['message'] == "inactive") {
+                } else if (data['message'] === "inactive") {
                 } else {
-                    alert("fail")
+                    $("#login-error").text("Credenciais erradas")
                 }
             }
         });
@@ -79,5 +80,5 @@
 </script>
 
 
-
+</body>
 </html>
