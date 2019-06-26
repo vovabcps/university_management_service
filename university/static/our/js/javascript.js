@@ -296,9 +296,8 @@ function lowerCaseAllWordsExceptFirstLetters(string) {
         sigla = sigla + lista[i][0]
       }else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
                 sigla = sigla + lista[i]
-      }else if (lista[i].length == 1) { //(LTI) / PII
+      }else if (lista[i].length == 1 && lista[i] === lista[i].toUpperCase()) { //(LTI) / PII
         sigla = sigla + lista[i]
-      
       }
     }
     console.log(sigla)
@@ -681,6 +680,9 @@ function aulaEscolhida(aula){
             aulaEscolhidaTxt += "<h5>Cadeira: <span id='cadeiraEscolhida'>" + nomeSubj + "</span> ("+aula.children[1].innerHTML + ") </h5>"
             var turmaEscolhida= aula.children[2].innerHTML
             aulaEscolhidaTxt += "<h5>Turma: " + turmaEscolhida + "</h5>"
+            var listAlunos= data['alunos']
+            aulaEscolhidaTxt += "<br>Nº de alunos: " + listAlunos.length
+            aulaEscolhidaTxt += "<br>Selecionar todos os alunos: <input type='checkbox' onclick='toggle(this)' />"
             opcao2.innerHTML = aulaEscolhidaTxt;
 
             //tabela
@@ -699,7 +701,7 @@ function aulaEscolhida(aula){
 
                 for(var l = 0; l<listAlunos.length; l++){
                     var linha= table.insertRow(-1);
-                    linha.innerHTML = "<td>"+ listAlunos[l][0] +"</td><td>"+ listAlunos[l][1] +"</td><td><div class='checkbox'><label><input type='checkbox' name='presenca' value="+ listAlunos[l][0] +"></label></div></td>"
+                    linha.innerHTML = "<td>"+ listAlunos[l][0] +"</td><td>"+ listAlunos[l][1] +"</td><td><div class='checkbox'><label><input style='transform: scale(1.2)' type='checkbox' name='presenca' value="+ listAlunos[l][0] +"></label></div></td>"
                 }
 
                 opcao2.innerHTML += "<button onclick=guardarPresenças('"+ diasDaSemana[diaDaSemana]+"','"+ date +"','"+ turmaEscolhida+ "') style='float: right' class='btn btn-lg btn-primary'>Submit</button>"
@@ -744,12 +746,12 @@ function guardarPresenças(week_day, date, turmaEscolhida){
         type: "POST",
         url: 'presencas_registar',
         data: JSON.stringify({
-        'alunosEscolhidos': alunosEscolhidos,
-        'alunosNaoEscolhidos': alunosNaoEscolhidos,
-        'week_day':week_day.toUpperCase(),
-        'date':date,
-        'cadeiraEscolhida': cadeiraEscolhida,
-        'turmaEscolhida': turmaEscolhida
+            'alunosEscolhidos': alunosEscolhidos,
+            'alunosNaoEscolhidos': alunosNaoEscolhidos,
+            'week_day':week_day.toUpperCase(),
+            'date':date,
+            'cadeiraEscolhida': cadeiraEscolhida,
+            'turmaEscolhida': turmaEscolhida
         }),
         success: function (data) {
             console.log(data)

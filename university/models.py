@@ -183,7 +183,7 @@ class Subject(models.Model):
             elif "I" in word and "(" not in word: #(LTI) / PII
                 sigla = sigla + word
             
-            elif len(word) == 1 : #ex:Controvérsias Científicas A
+            elif len(word) == 1 and word.isupper(): #ex:Controvérsias Científicas A
                 sigla = sigla + word
 
         return sigla
@@ -223,7 +223,7 @@ class Lesson(models.Model):
     duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
     professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
-    estadoTurma= models.BooleanField(null=True)
+    is_open= models.BooleanField(null=False, default=True)
     #school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True) 
 
     def get_lesson_detalhes(self):

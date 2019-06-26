@@ -94,16 +94,16 @@
 								{% endif %}
 
 								<div style="display:inline" class="turmas">
-								  {% for turmaAlunos in turmasAlunos %}
+								  {% for turma in turmasAlunos %}
 
 								  <button type="button" class="w3-button-small w3-khaki w3-round"
-									onclick="mostrarAlunos({{turmaAlunos|last}});">{{tipo}}{{turmaAlunos|first}}
+									onclick="pedidoAjax('{{semestre}}', '{{subj.name}}', '{{tipo}}{{turma}}')">{{tipo}}{{turma}}
 								  </button>
 
 								  {% endfor %}
 								</div>
 
-                                {% endfor %}
+                  {% endfor %}
                             
 							  </div>
 
@@ -119,6 +119,7 @@
                             <div class="panel panel-default">
                                 <div class="panel-heading">Lista Alunos (2018/2019)</div>
                                 <div class="panel-body">
+                                  <div id="totalAlunos"></div>
                                     <div style="overflow-x:auto;">
                                     <table id="students_table" class="table">
                                         <thead id="headerTabela"></thead>
@@ -140,16 +141,35 @@
 
 <script>
 
+    function pedidoAjax(sem, subjName, typeTurma){
+      $.ajax({
+        type: "POST",
+        url: 'presencas_consultar',
+        data: JSON.stringify({'sem': sem, 'subjName':subjName, 'typeTurma': typeTurma}),
+        success: function (data) {
+            console.log(data)
+                if (data['message'] == "success") {
+                  mostrarAlunos(data['JSONalunos'])
+                } else {
+                        alert("Nao é possivel ver o horario")
+                }
+            }
+      });
+    }
+
+
     function mostrarAlunos(JSONalunos){
       console.log(JSONalunos)
       if (JSONalunos.length > 1){
+          document.getElementById("totalAlunos").innerHTML= " Total: "+ (JSONalunos.length-1).toString() +" alunos";
+       
           var numDatas= JSONalunos[0].length
           var tHead= document.getElementById("headerTabela");
           tHead.innerHTML= "";
           var row = tHead.insertRow(-1);
           row.insertCell(-1).outerHTML= "<th>Número/ID</th>";
           row.insertCell(-1).outerHTML= "<th>Nome</th>";
-          for(var i=0; i<numDatas; i++){ 
+          for(var i=0; i<numDatas; i++){ //<th>29/abr</th>
               var date= JSONalunos[0][i].split("/")
               row.insertCell(-1).outerHTML= "<th>"+date[0]+"/"+date[1]+"</th>";
           }
@@ -179,7 +199,14 @@
               }
               var lastCell = row.insertCell(-1)
         total += value/max*100
-              lastCell.innerHTML= Math.round(value/max*100).toString() + "%";
+  
+              if (max==0){
+                console.log("what")
+          lastCell.innerHTML= "0%";
+        }
+        else{
+          lastCell.innerHTML= Math.round(value/max*100).toString() + "%";
+        }
               lastCell.style.backgroundColor="lightgrey";
               lastCell.style.fontWeight= "bold";
           }
@@ -188,7 +215,7 @@
           row.style.backgroundColor="lightgrey";
           row.style.fontWeight= "bold";
           var cell0 = row.insertCell(-1)
-          cell0.innerHTML= "Attendance Rate(n.∫|%)";
+          cell0.innerHTML= "Attendance Rate(n.º|%)";
           cell0.colSpan= "2";
   
           for(var j=0; j<JSONalunos[0].length; j++){
@@ -202,19 +229,27 @@
             }
               row.insertCell(-1).innerHTML= val.toString() + " | " + Math.round(val/JSONalunos.length*100).toString() + "%";
           }
-          row.insertCell(-1).innerHTML= "Media: " + Math.round(total/JSONalunos.length).toString() + "%";
   
+          if (isNaN(total)){
+            console.log("boop")
+            row.insertCell(-1).innerHTML= "Media: 0%";
+          }
+          else{
+            row.insertCell(-1).innerHTML= "Media: " + Math.round(total/JSONalunos.length).toString() + "%";
+      }
       }else{
           var tHead= document.getElementById("headerTabela");
           tHead.innerHTML= "Nao existem alunos inscritos!";
           var tbody= document.getElementById("tabelaAlunos");
           tbody.innerHTML= "";
+          document.getElementById("totalAlunos").innerHTML= "";
       }
   }
 
 function reset(){
   document.getElementById("headerTabela").innerHTML= "";;
   document.getElementById("tabelaAlunos").innerHTML= "";
+  document.getElementById("totalAlunos").innerHTML= "";
 }
 
 </script>

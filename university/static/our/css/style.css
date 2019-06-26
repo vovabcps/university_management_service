@@ -463,4 +463,8 @@ button[disabled]{
 }
 
 
+/* ---------------------------- home teacher ---------------------------- */
+.border_top{
+  border-top:2px solid black;
+}
 

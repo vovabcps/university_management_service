@@ -131,11 +131,10 @@
 								{% endif %}
 							
 								<div class="turmas">
-								  {% for turmaAlunos in turmasAlunos %}
+								  {% for turma in turmasAlunos %}
 	  
 								  <button type="button" class="w3-button-small w3-khaki w3-round"
-									onclick="mostrarAlunos({{turmaAlunos|last}});"
-									>{{tipo}}{{turmaAlunos|first}}
+									onclick="pedidoAjax('{{semestre}}', '{{subj.name}}', '{{tipo}}{{turma}}')">{{tipo}}{{turma}}
 								  </button>
 	  
 								  {% endfor %}
@@ -158,6 +157,7 @@
 										<div class="panel panel-default">
 											<div class="panel-heading">Lista Alunos</div>
 											<div class="panel-body">
+													<div id="totalAlunos"></div>
 													<table class="table">
 															<thead>
 																<tr>
@@ -195,8 +195,25 @@
 </div><!--/.main-->
 
 <script>
+		function pedidoAjax(sem, subjName, typeTurma){
+      $.ajax({
+        type: "POST",
+        url: 'consult_turmas',
+        data: JSON.stringify({'sem': sem, 'subjName':subjName, 'typeTurma': typeTurma}),
+        success: function (data) {
+            console.log(data)
+                if (data['message'] == "success") {
+                  mostrarAlunos(data['JSONalunos'])
+                } else {
+                        alert("Nao é possivel ver o horario")
+                }
+            }
+      });
+		}
+		
 function mostrarAlunos(JSONalunos){
 	console.log(JSONalunos)
+	document.getElementById("totalAlunos").innerHTML= " Total: "+ JSONalunos.length +" alunos";
 	var tbody= document.getElementById("tabelaAlunos");
 	tbody.innerHTML= "";
 	for(var i=0; i<JSONalunos.length; i++){

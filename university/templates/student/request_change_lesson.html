@@ -22,8 +22,16 @@
 
 
 <style>
- #ta, #th, #l2, #l3{
- 	visibility: hidden;
+ .incognito{
+ 	/* visibility: hidden; */
+  display: none;
+ }
+
+ .begin{
+   /*center object*/
+   margin: auto;
+   width: 35%;
+
  }
 </style>
 
@@ -31,97 +39,96 @@
 
 <script>
 	$(document).ready(function(){
-		$("#f1").click(function(){
-			$("#ta").css("visibility", "visible");
-			$("#th").css("visibility", "visible");
-			$("#l2").css("visibility", "visible");
-			$("#l3").css("visibility", "visible");
+		$("#tabd").click(function(){
+      $(".begin").css("display", "none");
+      $(".incognito").css("display", "block");
+			// $(".incognito").css("visibility", "visible");
+			// $(".begin").css("visibility", "hidden");
 		});
 	});
+
+  function sendRequest() {
+    alert('Olá');
+
+  }
+
 </script>
 
 
+<div class="row" id="myrow">
+          <div class="col-md-12">
+              <div class="panel panel-default">
+                  <div class="panel-body tabs">
+                      <ul id="tabd" class="nav nav-tabs">
+                          {% for obj in finalList %}
+                            <li><a href={{obj.id}} data-toggle="tab">{{obj.subjectName}}</a></li>
+                          {%endfor%}
+                      </ul>
+                      <div class="tab-content">
+                          <h4 class="begin">Escolhe uma Disciplina</h4>
+                            {% for obj in finalList %}
 
-<div class="panel panel-default">
-    <div class="panel-body tabs">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Arquitetura de Computadores</a></li>
-            <li><a href="#tab2" data-toggle="tab">Fisica I</a></li>
-            <li><a href="#tab3" data-toggle="tab">Programação I</a></li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="tab1">
-                <h4>Arquitetura de Computadores</h4>
-                <div class="tabs">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a href="#subtab1" data-toggle="tab">Teórica</a></li>
-                        <li><a href="#subtab2" data-toggle="tab">Prática</a></li>
-                        <li><a href="#subtab3" data-toggle="tab">Laboratorial</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="subtab1">
-                            <h4>Teórica</h4>
-                            <p>Turma Atual: T11</p>
+                            <div class="tab-pane fade" id={{obj.idNoHashTag}}>
+                              <div class="form-group">
+                                <p>Regente da cadeira:</p>
+                                {% for elem in obj.subjectRegente %}
+                                  <p>{{ elem }}</p>
+                                {%endfor%}
+                              </div>
 
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Monday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>T12, 9:00-10:00, 3.2.14
-                                    </label>
+                              <br>
+                                <!-- <h4>{{obj.subjectName}}</h4> -->
+                                <p>1. Seleciona a Turma ATUAL:</p>
+                                {% for elem in obj.classes %}
+                                  <button type="button" class="btn btn-sm btn-default cenasMinhas">{{ elem.0 }}</button>
+                                {%endfor%}
+
+                                <div class="incognito">
+                                  <br>
+                                  <p>2. Seleciona a turma para onde pretendes MUDAR:</p>
+                                  <div class="form-group" style="margin-left: 10%">
+                                    {% for elem in obj.classest %}
+                                          <div class="radio" id={{obj.idNoHashTagRadio}}>
+                                            <div>
+                                              <input type="radio" name="{{obj.id}}" id="optionsRadios+{{obj.id}}" value="option+{{obj.id}}">{{ elem }}
+                                              <!-- <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" -->
+                                            </div>
+                                          </div>
+                                    {%endfor%}
                                 </div>
+                              </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab2">
-                            <h4>Prática</h4>
-                            <p>Turma Atual: TP22</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Tuesday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>TP23, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>TP21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab3">
-                            <h4>Laboratorial</h4>
-                            <p>Turma Atual: PL23</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>PL21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" checked>PL22, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="tab2">
-                <h4>Fisica I</h4>
-            </div>
-            <div class="tab-pane fade" id="tab3">
-                <h4>Programação I</h4>
-            </div>
-        </div>
-        <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
-    </div>
-</div>
+                          {%endfor%}
+                      </div>
+                  <button style="float: right; margin: 20px" class="btn btn-lg btn-primary" onclick="sendRequest()">Submit Request</button>
+              </div>
+          </div>
+  </div><!--/.row-->
+
+  <!-- <h1>TESTE</h1>
+    {% if turmasEscolha %}
+      {% for key, value in turmasEscolha.items %}
+          <!-- <li><a href="{{key}}">{{value}}</a></li>
+          <p>{{ key }}</p>
+          <p>{{ value }}</p>
+      {% endfor %}
+  {% endif %}
+<p> -------- </p>
+  {% if regDict %}
+      {% for key, value in regDict.items %}
+        <p>{{ key }}</p>
+        <p>{{ value }}</p>
+      {% endfor %}
+    {% endif %} -->
+
+
+
+
+
+  <script>
+
+
+  </script>
 
 {% endblock %}
+

@@ -22,25 +22,55 @@
 
 
 <style>
- #ta, #th, #l2, #l3{
+ /* .o2, .o3, .ta1, .ta2, .nt{
  	visibility: hidden;
- }
+  opacity: 0;
+ } */
 </style>
-
 
 
 <script>
 	$(document).ready(function(){
-		$("#f1").click(function(){
-			$("#ta").css("visibility", "visible");
-			$("#th").css("visibility", "visible");
-			$("#l2").css("visibility", "visible");
-			$("#l3").css("visibility", "visible");
+		$(".ta1").click(function(){
+      $(".o3").css("visibility", "visible");
+			$(".nt").css("visibility", "visible");
+		});
+
+    $(".ta2").click(function(){
+      $(".o3").css("visibility", "visible");
+			$(".nt").css("visibility", "visible");
 		});
 	});
+
+
+  function escolhaAluno() {
+    var val = document.getElementById("input").value;
+    var opts = document.getElementById("dlist").childNodes;
+
+    for (var i = 0; i < opts.length; i++) {
+      if (opts[i].value && opts[i].value == " 36789 | Maria Silva") {
+        alert(opts[i].value);
+        document.getElementsByClassName("o2")[0].style.visibility = "visible";
+        document.getElementsByClassName("ta1")[0].style.visibility = "visible";
+        break;
+      }
+      else if (opts[i].value && opts[i].value == " 47653 | Manuel Dias") {
+        alert(opts[i].value);
+        document.getElementsByClassName("o2")[0].style.visibility = "visible";
+        document.getElementsByClassName("ta2")[0].style.visibility = "visible";
+        break;
+      }
+    }
+  }
+
 </script>
 
 
+
+<div class="aqui">
+  <h4>ENVIO DE PEDIDO DE MUDANÇA DE TURMA</h4>
+  <br>
+</<div>
 
 <div class="panel panel-default">
     <div class="panel-body tabs">
@@ -51,63 +81,37 @@
         </ul>
         <div class="tab-content">
             <div class="tab-pane fade in active" id="tab1">
-                <h4>Arquitetura de Computadores</h4>
                 <div class="tabs">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a href="#subtab1" data-toggle="tab">Teórica</a></li>
-                        <li><a href="#subtab2" data-toggle="tab">Prática</a></li>
-                        <li><a href="#subtab3" data-toggle="tab">Laboratorial</a></li>
-                    </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade in active" id="subtab1">
-                            <h4>Teórica</h4>
-                            <p>Turma Atual: T11</p>
-
-                            <p>Escolhe a turma para onde pretendes ir:</p>
+                            <p>1. Escolha o Aluno:</p>
+                            <form action="" method="">
+                              <input type='text' oninput='escolhaAluno()' id='input' list='dlist'>
+                              <datalist id="dlist">
+                                <option id="a1" value=" 36789 | Maria Silva">
+                                <option id="a2" value=" 47653 | Manuel Dias">
+                              </datalist>
+                              <button type="button" id="submitBtn">ok</button>
+                            </form>
+                            <br>
+                            <p class="o2">2. O Aluno encontra-se atualmente INSCRITO na Turma:</p>
+                            <button type="button" class="btn btn-sm btn-default cenasMinhas ta1">TP21</button>
+                            <button type="button" class="btn btn-sm btn-default cenasMinhas ta1">PL12</button>
+                            <br>
+                            <br>
+                            <p class="o3">3. Escolha a NOVA Turma:</p>
                             <div class="form-group" style="margin-left: 10%">
-                                <label>Monday</label>
+                              <label class="nt">
                                 <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>T12, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab2">
-                            <h4>Prática</h4>
-                            <p>Turma Atual: TP22</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Tuesday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>TP23, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>TP21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab3">
-                            <h4>Laboratorial</h4>
-                            <p>Turma Atual: PL23</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>PL21, 9:00-10:00, 3.2.14
-                                    </label>
+                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP12, 11:00-12:30, 3.2.14
                                 </div>
                                 <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" checked>PL22, 9:00-10:00, 3.2.14
-                                    </label>
+                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP13, 9:00-10:00, 3.2.14
                                 </div>
+                                <div class="radio">
+                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP14, 9:00-10:00, 3.2.14
+                                </div>
+                              </label>
                             </div>
                         </div>
                     </div>

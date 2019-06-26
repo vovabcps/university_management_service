@@ -49,7 +49,7 @@
                                                             <div class="text-muted">{{value}}</div>
                                                     </div>
                                                     <div class="col-xs-8 col-md-8">
-                                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-nomeCadeira="{{sub.name}}" id={{sub.name}} href="">{{sub.name}}</a></h4>
+                                                        <h4><a data-toggle="modal" data-target="#exampleModal" data-nomeCadeira="{{sub.name}}" id={{sub.name}}>{{sub.name}}</a></h4>
                                                         {% for reg in suRegentes %}
                                                         {% if reg.user == sub.regente %}
                                                             <p>Regente: {{reg.name}} | Gabinete: {{sub.regente.gabinete}} | Email: {{sub.regente.user.email}}</p>
@@ -74,17 +74,21 @@
             </div>
          </div><!--/.col-->
       </div><!--/.row-->
+
+      {% if dicAlunosSobrepo %}
     <div class="row">
 			<div class="col-md-12">
 				<div class="panel panel-danger">
 					<div class="panel-heading">Alertas</div>
 					<div class="panel-body">
-						<h4>Sobreposições</h4>
+                        <h4>Sobreposições</h4>
+
 						<table class="table">
                             <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>N.º Aluno</th>
+                                    <th>Semestre</th>
 									<th>Disciplina</th>
 									<th>Turma</th>
 									<th>Horário Aluno</th>
@@ -92,41 +96,44 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td rowspan="2">1</td>
-                                    <td rowspan="2">50036</td>
-									<td>Sistemas Inteligentes</td>
-									<td>TP23</td>
-									<td data-toggle="modal" data-target="#exampleModal" data-alunoFc="fc485" id="but1" rowspan="2"><a>Horário</a></td>
-                                    <td rowspan="2"><a>Enviar</a></td>
-
-                                </tr>
-                                <tr>
-
-									<td>Sistemas Operativos</td>
-									<td>TP21</td>
-
-                                </tr>
-                                <tr>
-                                    <td rowspan="2">2</td>
-                                    <td rowspan="2">50234</td>
-									<td>Arquitetura de Computadores</td>
-									<td>PL21</td>
-									<td  data-toggle="modal" data-target="#exampleModal" data-alunoFc="fc490" id="but2" rowspan="2"><a>Horário</a></td>
+                               
+                            {% for aluno, dicSemSobrep in dicAlunosSobrepo.items %}
+                            <!-- dicSemSobrep: {'1sem': [['TERÇA', ['10:00', '1:30', 'Arquiteturas de Computadores', 'T', '11', '1.1.12'], ['11:00', '1:30', 'Arquiteturas de Computadores', 'TP', '14', '1.1.13']]], '2sem': []} -->
+                                <tr class="border_top">
+                                    {% with dicSemSobrep.1|length as len1sem %}
+                                    {% with dicSemSobrep.2|length as len2sem %}
+                                    <td rowspan="{% widthratio len1sem|add:len2sem 1 2 %}">{{forloop.counter}}</td>
+                                    <td rowspan="{% widthratio len1sem|add:len2sem 1 2 %}">fc{{aluno}}</td> <!-- a 1 b = a * b-->
+                                    
+                                  
+                                {% for sem, lst in dicSemSobrep.items %}
+                                    {% for sobrep in lst %}
+                                    <!-- sobrep: ['TERÇA', ['10:00', '1:30', 'Arquiteturas de Computadores', 'T', '11', '1.1.12'], ['11:00', '1:30', 'Arquiteturas de Computadores', 'TP', '14', '1.1.13']] -->
+                                  <td rowspan="2">{{sem}}º, {{sobrep.0}}</td>
+									<td>{{sobrep.1.2}}</td>
+									<td>{{sobrep.1.3}}{{sobrep.1.4}}</td>
+									<td data-toggle="modal" data-target="#exampleModal" data-weekDaySobrep1="{{sobrep.0}}||{{sobrep.1.0}}||{{sobrep.1.5}}" data-weekDaySobrep2="{{sobrep.0}}||{{sobrep.2.0}}||{{sobrep.2.5}}" data-sem="{{sem}}sem" data-alunoFc="fc{{aluno}}" rowspan="2"><a>Horário</a></td>
                                     <td rowspan="2"><a>Enviar</a></td>
                                 </tr>
+
                                 <tr>
-
-									<td>Elementos de Matemática I</td>
-									<td>T21</td>
-
+									<td>{{sobrep.2.2}}</td>
+									<td>{{sobrep.2.3}}{{sobrep.2.4}}</td>
                                 </tr>
+                                    {% endfor %}
+                                {% endfor %}
+
+                                {% endwith %}
+                                {% endwith %}
+                            {% endfor %}
+                                
                             </tbody>
 						</table>
 					</div>
 				</div>
 			</div>
-		</div><!--/.row-->
+        </div><!--/.row-->
+        {% endif %}
 
 
    </div> <!--/.main-->
@@ -163,7 +170,11 @@
             }else{
                 var alunoFc = link.data('alunofc') // Extract info from data-* attributes
                 console.log(alunoFc) //data-alunoFc="fc490"
-                modal.find('#modalHeader').text("Horario do aluno " + alunoFc + " :")
+                var semestre= link.data('sem')
+                var infoLesson1= link.data('weekdaysobrep1').split("||")
+                var infoLesson2= link.data('weekdaysobrep2').split("||")
+
+                modal.find('#modalHeader').text("Horario do aluno " + alunoFc + " ("+ semestre +"):")
 
                 $.ajax({
                     type: "POST",
@@ -172,7 +183,7 @@
                     success: function (data) {
                         console.log(data)
                             if (data['message'] == "success") {
-                                getLessonsSem('1sem', data['scheduleDict'], data['subjsName'])
+                                getLessonsSem(semestre, data['scheduleDict'], data['subjsName'], infoLesson1, infoLesson2)
                             } else {
                                     alert("Nao é possivel ver o horario")
                             }
@@ -191,11 +202,41 @@
     }
 
 
-    function getLessonsSem(semestre, scheduleDict, subjsName){
+    function getLessonsSem(semestre, scheduleDict, subjsName, infoLesson1, infoLesson2){
         console.log(scheduleDict)
         var lstLessonsSem= scheduleDict[semestre]
         var dicDiasDaSemena= formatarOrdenarLstLessons(lstLessonsSem)
         buildSchedule(dicDiasDaSemena);
+        console.log(infoLesson1) //ex: ["TERÇA", "13:00", "1.4.53"]
+        var weekDays= ['DOMINGO','SEGUNDA','TERÇA','QUARTA','QUINTA','SEXTA','SÁBADO'];
+
+        //lesson1
+        var id = document.getElementById(infoLesson1[1]).parentElement.id
+        var classLesson= id + "/" + weekDays.indexOf(infoLesson1[0]) + "/" + infoLesson1[2]
+        //lesson unica -> class=9/1/1.3.37
+
+        var miniBlocks= document.getElementsByClassName(classLesson)
+        for(var i=0; i<miniBlocks.length; i++){
+            if (!miniBlocks[i].classList.contains("empty")) {
+                miniBlocks[i].style.backgroundColor = "red";
+                miniBlocks[i].style.color = "white";
+            }
+        }
+
+        //lesson2
+        var id = document.getElementById(infoLesson2[1]).parentElement.id
+        var classLesson= id + "/" + weekDays.indexOf(infoLesson2[0]) + "/" + infoLesson2[2]
+        //lesson unica -> class=9/1/1.3.37
+
+        var miniBlocks= document.getElementsByClassName(classLesson)
+        for(var i=0; i<miniBlocks.length; i++){
+            if (!miniBlocks[i].classList.contains("empty")) {
+                miniBlocks[i].style.backgroundColor = "red";
+                miniBlocks[i].style.color = "white";
+            }
+        }
+        
+        
     
         //legenda
         var lstSubjsNameSem= subjsName[semestre];

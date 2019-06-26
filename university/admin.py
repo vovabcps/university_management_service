@@ -76,8 +76,8 @@ admin.site.register(SystemUserSubject,  SystemUserSubjectAdmin)
 
 class LessonAdmin(admin.ModelAdmin):
   search_fields = ["subject__name", "professor__user__username", "room__room_number", "turma"]
-  list_filter = ["type", "week_day", "hour", "duration"]
-  list_display = ["id", "get_subject_name", "type", "turma", "week_day", "hour", "duration", "professor_fc", "room_number"]
+  list_filter = ["type", "week_day", "hour", "duration", "is_open"]
+  list_display = ["id", "get_subject_name", "type", "turma", "week_day", "hour", "duration", "professor_fc", "room_number", "is_open"]
 admin.site.register(Lesson,  LessonAdmin)
 
 class LessonSystemUserAdmin(admin.ModelAdmin):
