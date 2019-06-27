@@ -468,3 +468,15 @@ button[disabled]{
   border-top:2px solid black;
 }
 
+
+
+/*------------------------------problemas do css dos horarios no pc da diana---------------------*/
+
+#tabelaSchedule tbody tr th{
+  overflow:hidden
+}
+
+#tabelaSchedule tbody tr td{
+  overflow:hidden
+}
+

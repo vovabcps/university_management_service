@@ -959,7 +959,7 @@ def enviar_pedidos_t(request):
         lstAlunos= getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
 
         if lstAlunos: #se tiver alunos
-            systemUserSemSubjTypTurmas= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
+            systemUserSemSubjTypTurmas, lstSubjTurmasQuerie= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
 
        
             return render(request, 'teacher/enviar_pedido.html', {})
@@ -1450,10 +1450,10 @@ def is_semestres_all_same(courseSubjs):
 
 
 def getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj):
-    #ex: ensures ->     
-    #       [[117, {'1sem': [['Controvérsias Científicas', 'T11 TP11'], ... ], 
-    #            '2sem': [['Programação II (LTI)', 'T21 TP25 PL26'], ... ]}], 
-    #        ...]
+    #ensures ->   ex:  
+    #systemUserSemSubjTypTurmas       [[117, {'1sem': [['Controvérsias Científicas', 'T11 TP11'], ... ], 
+                                #            '2sem': [['Programação II (LTI)', 'T21 TP25 PL26'], ... ]}], 
+                                #        ...]
 
     #print(lstAlunos)
     lstAlunosQuerie= []
@@ -1499,7 +1499,7 @@ def getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj):
         systemUserSemSubjTypTurmas.append([systemUser, {'1sem' : lst1semSubjsTypeTurmasStr, '2sem': lst2semSubjsTypeTurmasStr}])
 
     #print(systemUserSemSubjTypTurmas)
-    return systemUserSemSubjTypTurmas
+    return [systemUserSemSubjTypTurmas, lstSubjTurmasQuerie]
         
 
 
@@ -1507,7 +1507,7 @@ def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
     #ex: lstAlunos é uma lista de systemUsers
     #ex: ensures: dicSytemUsersHorarios= {aluno1: scheduleDict, aluno2: scheduleDict , ...}
 
-    systemUserSemSubjTypTurmas= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
+    systemUserSemSubjTypTurmas, lstSubjTurmasQuerie= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
 
     turmaLessonsPossiveis= Lesson.objects.filter(reduce(operator.or_, lstSubjTurmasQuerie)).values("subject__name", "type", "turma", "week_day", "hour", "duration", "room__room_number")
     #print(turmaLessonsPossiveis)
