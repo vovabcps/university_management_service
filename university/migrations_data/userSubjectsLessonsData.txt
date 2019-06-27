@@ -49,16 +49,19 @@ Licenciatura em Engenharia Informática,Matriculado,2017/2018,2
 #                                 pending-> Cadeiras a q se esta a inscrever(ou seja, vai fazer este ano),
 #                                           max de cred q se pode inscrever: 72
 # -----------------------------------------------------------------------------------------------------------------------
-#SystemUserCourse:	50 alunos na bd
+#SystemUserCourse:	?? alunos na bd
 Licenciatura em Tecnologias de Informação,Matriculado,2018/2019,1
 
 #SystemUserSubject     
 
-#25 alunos, 0 ECTCS Realizados, 5 cadeiras para cada semestre
+#?? alunos, 0 ECTCS Realizados, 5 cadeiras para cada semestre
 1sem++Controvérsias Científicas,0,T11,TP11!!Arquiteturas de Computadores,0,T11,TP14,PL14!!Programação I (LTI),0,T11,TP14,PL14!!Elementos de Matemática I,0,T11,TP12!!Produção de Documentos Técnicos,0,TP13|  |2sem++Programação II (LTI),0,T21,TP25,PL26!!Introdução às Tecnologias Web,0,T21,TP24,PL24!!Introdução às Probabilidades e Estatística,0,T21,TP27!!Elementos de Matemática II,0,T21,TP27!!Redes de Computadores (LTI),0,T21,TP24
 
-#25 alunos, 0 ECTCS Realizados, 6 cadeiras para cada semestre, 2 de segundo ano sobrepostas FTV e AD
+#?? alunos, 0 ECTCS Realizados, 6 cadeiras para cada semestre, 2 de segundo ano sobrepostas FTV e AD
 1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP11!!Produção de Documentos Técnicos,0,TP16!!Fundamentos e Técnicas de Visualização,0,T11,TP11|  |2sem++Programação II (LTI),0,T21,TP21,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21!!Aplicações Distribuídas,0,T21,TP21,PL25
+
+#?? alunos, 0 ECTCS Realizados, 6 cadeiras para cada semestre, 2 de segundo ano sobrepostas FTV e AD
+1sem++Curso de Competências Sociais e Desenvolvimento Pessoal,0,TP21!!Arquiteturas de Computadores,0,T11,TP11,PL11!!Programação I (LTI),0,T11,TP11,PL11!!Elementos de Matemática I,0,T11,TP12!!Produção de Documentos Técnicos,0,TP16|  |2sem++Programação II (LTI),0,T21,TP22,PL21!!Introdução às Tecnologias Web,0,T21,TP21,PL21!!Introdução às Probabilidades e Estatística,0,T21,TP26!!Elementos de Matemática II,0,T21,TP21!!Redes de Computadores (LTI),0,T21,TP21!!Aplicações Distribuídas,0,T21,TP21,PL25
 
 
 # --------------------------------------------

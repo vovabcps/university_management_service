@@ -481,7 +481,7 @@ def consult_subjects_s(request):
         allMyCourseSubj = list(CourseSubject.objects.filter(course=suCourse))
 
         miniCs = Course_MiniCourse.objects.filter(course=suCourse)
-        print(miniCs)
+        #print(miniCs)
 
         nameBefore= []
         for mC in miniCs:
@@ -497,9 +497,50 @@ def consult_subjects_s(request):
             if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
                 regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
-        return render(request, 'student/consult_subjects.html', {"suAllSubjects": inscrito, "suRegentes": regentes, "allMyCourseSubj": allMyCourseSubj})
+        listofSubs = []
+        for line in inscrito:
+            listofSubs.append(line.subject)
+
+        ohlord = (list(Lesson.objects.filter(subject__in = listofSubs).values("subject__name", "professor__user")))
+
+        from itertools import groupby
+
+
+
+        tempList = []
+        myLastList = []
+
+        for sub_name, g in groupby(ohlord, lambda a: a["subject__name"]):
+            print(sub_name)
+
+            listofTeachers=[]
+            a= copy.deepcopy(g)
+            for d in a:
+                if d["professor__user"] not in listofTeachers:
+                    listofTeachers.append(d["professor__user"])
+                    tempList.append(d["professor__user"])
+            myLastList.append((sub_name, listofTeachers))
+            print(listofTeachers)
+        print(tempList)
+
+
+
+        finallyDone = list(PersonalInfo.objects.filter(user__user__in= tempList).values("user__user", "name"))
+
+        TrueFinalList=[]
+        for tuple in myLastList:
+            sub=tuple[0]
+            teacher_string=""
+            for line in finallyDone:
+                if line["user__user"] in tuple[1]:
+                    teacher_string+= line["name"]+", "
+            TrueFinalList.append((sub,teacher_string[:-2]))
+
+        return render(request, 'student/consult_subjects.html', {"suAllSubjects": inscrito, "suRegentes": regentes, "allMyCourseSubj": allMyCourseSubj, "myTeachersBoyy": TrueFinalList})
     else: 
         return HttpResponseRedirect(reverse('login'))
+
+
 
 def consult_presencas_s(request):
     def anoLetivo(d):
@@ -583,23 +624,26 @@ def request_change_lesson_s(request):
 
         su = request_user(request)
         schoolYearObj = SchoolYear.objects.get(begin=2018)
-        i = 1
+        
         turmaLessons = []
 
         finalList = []
 
         suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
 
+        i = 1
         for suSubj in suSubjs:
             subj = suSubj.subject
             sem = suSubj.subjSemestre
+            SUregente= subj.regente
+            piObj= PersonalInfo.objects.get(user=SUregente)
+            regenteName= piObj.name
             lstTurmas = suSubj.turmas.split(" ")
             # ex: lstTurmas-> ["T11","TP13","PL13"]
             lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
 
             myListOfTuples =[]
             for typeTurma in lstTurmasSemEspaços:
-                #subjSemestre = sem
 
                 # Lista dos users da turma x e materia y
                 myList = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj, subjSemestre=sem))
@@ -632,16 +676,8 @@ def request_change_lesson_s(request):
                 tTurmaComp.append(a)
 
 
-            # Regente da cadeira
-            regSubject = Subject.objects.values('regente__personalinfo__name').filter(name=subj)
-            print("Regente:")
-            print(regSubject)
-
-
-            finalList.append(RequestChangeLesson("tab" + str(i), subj.name, regSubject, myListOfTuples, tTurmaComp))
+            finalList.append(RequestChangeLesson("tab" + str(i), subj.name, regenteName, myListOfTuples, tTurmaComp))
             i+=1
-
-
 
         return render(request, 'student/request_change_lesson.html', {"finalList":finalList})
     else:
@@ -882,6 +918,8 @@ def alterar_turmas_t(request):
 
                 finalList.append(FearAllWhoCodeThis("tab" + str(i), sub_name, myList))
                 i += 1
+                
+            return render(request, 'teacher/alterar_turmas.html', {"finalList":finalList})
 
         elif request.method == 'POST':
 
@@ -902,7 +940,6 @@ def alterar_turmas_t(request):
 
             return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
 
-        return render(request, 'teacher/alterar_turmas.html', {"finalList":finalList})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -917,7 +954,15 @@ def resposta_pedidos_t(request):
 
 def enviar_pedidos_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
-        return render(request, 'teacher/enviar_pedido.html', {})
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+        lstAlunos= getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
+
+        if lstAlunos: #se tiver alunos
+            systemUserSemSubjTypTurmas= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
+
+       
+            return render(request, 'teacher/enviar_pedido.html', {})
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -1404,12 +1449,14 @@ def is_semestres_all_same(courseSubjs):
     return all(crS.semester == courseSubjs[0].semester for crS in courseSubjs)
 
 
-def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
-    #ex: lstAlunos é uma lista de systemUsers
-    #ex: ensures: dicSytemUsersHorarios= {aluno1: scheduleDict, aluno2: scheduleDict , ...}
+def getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj):
+    #ex: ensures ->     
+    #       [[117, {'1sem': [['Controvérsias Científicas', 'T11 TP11'], ... ], 
+    #            '2sem': [['Programação II (LTI)', 'T21 TP25 PL26'], ... ]}], 
+    #        ...]
 
-    lstAlunosQuerie= []
     #print(lstAlunos)
+    lstAlunosQuerie= []
     for alunos in lstAlunos:
         lstAlunosQuerie.append(Q(user=alunos))
 
@@ -1450,8 +1497,17 @@ def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
 
         
         systemUserSemSubjTypTurmas.append([systemUser, {'1sem' : lst1semSubjsTypeTurmasStr, '2sem': lst2semSubjsTypeTurmasStr}])
-        
+
     #print(systemUserSemSubjTypTurmas)
+    return systemUserSemSubjTypTurmas
+        
+
+
+def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
+    #ex: lstAlunos é uma lista de systemUsers
+    #ex: ensures: dicSytemUsersHorarios= {aluno1: scheduleDict, aluno2: scheduleDict , ...}
+
+    systemUserSemSubjTypTurmas= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
 
     turmaLessonsPossiveis= Lesson.objects.filter(reduce(operator.or_, lstSubjTurmasQuerie)).values("subject__name", "type", "turma", "week_day", "hour", "duration", "room__room_number")
     #print(turmaLessonsPossiveis)

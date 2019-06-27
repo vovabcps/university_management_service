@@ -388,12 +388,15 @@ def makeSystemUserSubjectAndLessonSystemUserOBJs():
                             
                             else: #"pending"
                                 
-                                #cada turma vai ter 25 alunos exepto teoricas
+                                #cada turma vai ter 17 alunos aproximadamente exepto teoricas
                                 if variante == 0:
-                                    lstSUPartida= lstSystemUserCourseObj[:25]
+                                    lstSUPartida= lstSystemUserCourseObj[:17]
+                                    variante += 1
+                                elif variante == 1:
+                                    lstSUPartida= lstSystemUserCourseObj[17:34]
                                     variante += 1
                                 else:
-                                    lstSUPartida= lstSystemUserCourseObj[25:]
+                                    lstSUPartida= lstSystemUserCourseObj[34:]
 
                                 for SystemUserCourseObj in lstSUPartida:
                                     sysUser= SystemUserCourseObj.user
