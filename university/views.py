@@ -956,13 +956,52 @@ def enviar_pedidos_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE) :
         su = request_user(request)
         schoolYearObj = SchoolYear.objects.get(begin=2018)
-        lstAlunos= getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
 
-        if lstAlunos: #se tiver alunos
-            systemUserSemSubjTypTurmas, lstSubjTurmasQuerie= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
+        #ex: retorna-> [14514, 14538, ..., 15196]
+        lstAlunos= []
+        lessons= Lesson.objects.filter(professor=su).values("subject__name", "type", "turma").distinct()
+        #print(lessons)
+        #print(lessons.count())
+        
+        formatDicBySubj= {}
+        for subjName, typeTurma in groupby(lessons, lambda a : a["subject__name"]):
+            #print(subjName)
+            #print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
 
-       
-            return render(request, 'teacher/enviar_pedido.html', {})
+            turmas= []
+            lstTypeTurmasQuerie= []
+            for dic in typeTurma :
+                lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
+                turmas.append(dic["type"] + dic["turma"])
+            
+            #print(lstTypeTurmasQuerie)
+            lstSuObjs= list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (reduce(operator.or_, lstTypeTurmasQuerie))).values("user", "turmas"))
+            #print(lstSuObjs)
+            #ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
+            
+            lstSuQueries2= []
+            for suObj in lstSuObjs:
+                lstSuQueries2.append(Q(user=suObj['user']))
+
+            lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
+            
+            formatDicBySU= {}
+            #len(systemUsersObjs) == len(lstPIName)
+            for i in range(0, len(lstPI)):
+                suFC= lstPI[i]["user__user__username"]
+                suName= lstPI[i]["name"]
+                
+                lstTurmasAluno= lstSuObjs[i]['turmas'].split(" ")
+                lstTurmasAlunosSemEspaços= [e for e in lstTurmasAluno if e != ""]
+                
+                formatDicBySU[suFC + " | " + suName] = lstTurmasAlunosSemEspaços
+
+            formatDicBySubj[subjName] = [turmas, formatDicBySU]
+
+        print(formatDicBySubj)
+        #formatDicBySubj-> {'Controvérsias Científicas': [[T11, TP12], {"fc117 | Rute M": ['T11', 'TP11'], "fc117 | Helder C" : [...] }], 'Programação II (LTI)': [[..],{...}]}
+        return render(request, 'teacher/enviar_pedido.html', {'formatDicBySubj':formatDicBySubj})
+        
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -1510,7 +1549,8 @@ def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
     systemUserSemSubjTypTurmas, lstSubjTurmasQuerie= getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
 
     turmaLessonsPossiveis= Lesson.objects.filter(reduce(operator.or_, lstSubjTurmasQuerie)).values("subject__name", "type", "turma", "week_day", "hour", "duration", "room__room_number")
-    #print(turmaLessonsPossiveis)
+    print(1212)
+    print(turmaLessonsPossiveis)
 
 
     dicSytemUsersHorarios= {}

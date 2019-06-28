@@ -70,62 +70,91 @@
 <div class="aqui">
   <h4>ENVIO DE PEDIDO DE MUDANÇA DE TURMA</h4>
   <br>
-</<div>
+<div>
 
+    
 <div class="panel panel-default">
     <div class="panel-body tabs">
+        
         <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Arquitetura de Computadores</a></li>
-            <li><a href="#tab2" data-toggle="tab">Fisica I</a></li>
-            <li><a href="#tab3" data-toggle="tab">Programação I</a></li>
+            {% for subjName, list in formatDicBySubj.items %}
+              {% if forloop.counter == 1 %}
+              <li class="nav-item active ">
+                  <a class="nav-link active" data-toggle="pill"
+                    href="#{{forloop.counter}}">{{subjName}}</a>
+                </li>
+              {% else %}
+              <li class="nav-item ">
+                  <a class="nav-link" data-toggle="pill"
+                    href="#{{forloop.counter}}">{{subjName}}</a>
+                </li>
+              {% endif %}
+            {% endfor %}
+
+            <!--<li class="active"><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>-->
         </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="tab1">
-                <div class="tabs">
+
                     <div class="tab-content">
-                        <div class="tab-pane fade in active" id="subtab1">
-                            <p>1. Escolha o Aluno:</p>
-                            <form action="" method="">
-                              <input type='text' oninput='escolhaAluno()' id='input' list='dlist'>
-                              <datalist id="dlist">
-                                <option id="a1" value=" 36789 | Maria Silva">
-                                <option id="a2" value=" 47653 | Manuel Dias">
-                              </datalist>
-                              <button type="button" id="submitBtn">ok</button>
-                            </form>
+                        {% for subjName, list in formatDicBySubj.items %}
+                            {% if forloop.counter == 1 %}
+                                      <div id="{{forloop.counter}}" class="tab-pane in active">
+                            {% else %}
+                                        <div id="{{forloop.counter}}" class="tab-pane fade">
+                            {% endif %}
+                            <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
+                         
+                            <select onchange="mostrarTurmasActuais(this, {{list.1}})">
+                                {% for user, turmas in list.1.items %}
+                                <option id="{{user}}" value="{{user}}">{{user}}</option>
+                                {% endfor %}
+                            </select>
+                          
                             <br>
                             <p class="o2">2. O Aluno encontra-se atualmente INSCRITO na Turma:</p>
-                            <button type="button" class="btn btn-sm btn-default cenasMinhas ta1">TP21</button>
-                            <button type="button" class="btn btn-sm btn-default cenasMinhas ta1">PL12</button>
+                            <div id="turmasActuais">
+                            </div>
                             <br>
                             <br>
                             <p class="o3">3. Escolha a NOVA Turma:</p>
                             <div class="form-group" style="margin-left: 10%">
                               <label class="nt">
-                                <div class="radio">
-                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP12, 11:00-12:30, 3.2.14
-                                </div>
-                                <div class="radio">
-                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP13, 9:00-10:00, 3.2.14
-                                </div>
-                                <div class="radio">
-                                  <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>TP14, 9:00-10:00, 3.2.14
-                                </div>
+                                  {% for typeTurmas in list.0 %}
+                                  <div class="radio">
+                                    
+                                      {% if forloop.counter == 1 %}
+                                      <input type="radio" name="optionsRadios" id="{{typeTurmas}}" value="{{typeTurmas}}" checked>{{typeTurmas}}
+                                      {% else %}
+                                      <input type="radio" name="optionsRadios" id="{{typeTurmas}}" value="{{typeTurmas}}" >{{typeTurmas}}
+                                      {% endif %}
+                                      
+                                    </div>
+                                  {% endfor %}
+
                               </label>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="tab2">
-                <h4>Fisica I</h4>
-            </div>
-            <div class="tab-pane fade" id="tab3">
-                <h4>Programação I</h4>
-            </div>
-        </div>
+                        {% endfor %}
+     
         <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
+        
     </div>
 </div>
+
+<script>
+    function mostrarTurmasActuais(selectObject, dic) {
+      console.log(selectObject.value)
+      console.log(dic)
+      var value = selectObject.value;  
+      var lstTurmas= dic[selectObject.value]
+      var buttons= ""
+      for (var i= 0; i<lstTurmas.length; i++){
+        console.log(lstTurmas[i])
+        buttons += "<button type='button' class='btn btn-sm btn-default cenasMinhas ta1'>" + lstTurmas[i] + "</button>"
+      }
+     
+      document.getElementById("turmasActuais").innerHTML= buttons
+  }
+
+</script>
 
 {% endblock %}

@@ -118,7 +118,7 @@
 									<td data-cadeiraTurma="{{sobrep.1.2}}|{{sobrep.1.3}}{{sobrep.1.4}}">{{sobrep.1.2}}</td>
 									<td data-cadeiraTurma="{{sobrep.1.2}}|{{sobrep.1.3}}{{sobrep.1.4}}">{{sobrep.1.3}}{{sobrep.1.4}}</td>
 									<td data-toggle="modal" data-target="#exampleModal" data-cadeirasSobrepostas="{{sobrep.1.2}}|{{sobrep.1.3}}{{sobrep.1.4}}||{{sobrep.2.2}}|{{sobrep.2.3}}{{sobrep.2.4}}"  data-weekDaySobrep1="{{sobrep.0}}||{{sobrep.1.0}}||{{sobrep.1.5}}" data-weekDaySobrep2="{{sobrep.0}}||{{sobrep.2.0}}||{{sobrep.2.5}}" data-sem="{{sem}}sem" data-alunoFc="fc{{aluno}}" rowspan="2"><a>Horário</a></td>
-                                    <td rowspan="2"><a>Enviar</a></td>
+                                    <td data-enviar="{{sobrep.1.2}}|{{sobrep.1.3}}{{sobrep.1.4}}||{{sobrep.2.2}}|{{sobrep.2.3}}{{sobrep.2.4}}" rowspan="2"></td>
                                 </tr>
 
                                 <tr>
@@ -294,6 +294,11 @@
                         dicCountLesson[lstLess[i]] = 1
                     }
                 }
+                if(lstCadeirasProf.indexOf(lstLess[i].split("|")[0]) >= 0 && document.getElementById(lstLess[i].split("|")[0]).getAttribute("data-myClasses").indexOf(lstLess[i].split("|")[1]) >= 0){
+                    var enviar= $(this).parent().children().last()
+                    enviar.append('<a>Enviar</a>');
+                }
+                    
             }
 
         });
