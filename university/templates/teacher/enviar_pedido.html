@@ -20,53 +20,6 @@
 
 {% block content %}
 
-
-<style>
- /* .o2, .o3, .ta1, .ta2, .nt{
- 	visibility: hidden;
-  opacity: 0;
- } */
-</style>
-
-
-<script>
-	$(document).ready(function(){
-		$(".ta1").click(function(){
-      $(".o3").css("visibility", "visible");
-			$(".nt").css("visibility", "visible");
-		});
-
-    $(".ta2").click(function(){
-      $(".o3").css("visibility", "visible");
-			$(".nt").css("visibility", "visible");
-		});
-	});
-
-
-  function escolhaAluno() {
-    var val = document.getElementById("input").value;
-    var opts = document.getElementById("dlist").childNodes;
-
-    for (var i = 0; i < opts.length; i++) {
-      if (opts[i].value && opts[i].value == " 36789 | Maria Silva") {
-        alert(opts[i].value);
-        document.getElementsByClassName("o2")[0].style.visibility = "visible";
-        document.getElementsByClassName("ta1")[0].style.visibility = "visible";
-        break;
-      }
-      else if (opts[i].value && opts[i].value == " 47653 | Manuel Dias") {
-        alert(opts[i].value);
-        document.getElementsByClassName("o2")[0].style.visibility = "visible";
-        document.getElementsByClassName("ta2")[0].style.visibility = "visible";
-        break;
-      }
-    }
-  }
-
-</script>
-
-
-
 <div class="aqui">
   <h4>ENVIO DE PEDIDO DE MUDANÇA DE TURMA</h4>
   <br>
@@ -79,15 +32,9 @@
         <ul class="nav nav-tabs">
             {% for subjName, list in formatDicBySubj.items %}
               {% if forloop.counter == 1 %}
-              <li class="nav-item active ">
-                  <a class="nav-link active" data-toggle="pill"
-                    href="#{{forloop.counter}}">{{subjName}}</a>
-                </li>
+              <li class="active"><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>
               {% else %}
-              <li class="nav-item ">
-                  <a class="nav-link" data-toggle="pill"
-                    href="#{{forloop.counter}}">{{subjName}}</a>
-                </li>
+              <li><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>
               {% endif %}
             {% endfor %}
 
@@ -97,13 +44,13 @@
                     <div class="tab-content">
                         {% for subjName, list in formatDicBySubj.items %}
                             {% if forloop.counter == 1 %}
-                                      <div id="{{forloop.counter}}" class="tab-pane in active">
+                                      <div id="{{forloop.counter}}" class="tab-pane active in">
                             {% else %}
                                         <div id="{{forloop.counter}}" class="tab-pane fade">
                             {% endif %}
                             <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
                          
-                            <select onchange="mostrarTurmasActuais(this, {{list.1}})">
+                            <select onchange="mostrarTurmasActuais(this, {{list.1}}, '{{subjName}}')">
                                 {% for user, turmas in list.1.items %}
                                 <option id="{{user}}" value="{{user}}">{{user}}</option>
                                 {% endfor %}
@@ -111,7 +58,8 @@
                           
                             <br>
                             <p class="o2">2. O Aluno encontra-se atualmente INSCRITO na Turma:</p>
-                            <div id="turmasActuais">
+                            <p>nota: é para aparecer todas as turmas em q o aluno esta inscrito ou apenas as turmas que ele esta inscito e q sao lecionadas por este prof?</p>
+                            <div id="turmasActuais{{subjName}}">
                             </div>
                             <br>
                             <br>
@@ -122,9 +70,9 @@
                                   <div class="radio">
                                     
                                       {% if forloop.counter == 1 %}
-                                      <input type="radio" name="optionsRadios" id="{{typeTurmas}}" value="{{typeTurmas}}" checked>{{typeTurmas}}
+                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}" checked>{{typeTurmas}}
                                       {% else %}
-                                      <input type="radio" name="optionsRadios" id="{{typeTurmas}}" value="{{typeTurmas}}" >{{typeTurmas}}
+                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}" >{{typeTurmas}}
                                       {% endif %}
                                       
                                     </div>
@@ -141,7 +89,7 @@
 </div>
 
 <script>
-    function mostrarTurmasActuais(selectObject, dic) {
+    function mostrarTurmasActuais(selectObject, dic, subjName) {
       console.log(selectObject.value)
       console.log(dic)
       var value = selectObject.value;  
@@ -152,7 +100,7 @@
         buttons += "<button type='button' class='btn btn-sm btn-default cenasMinhas ta1'>" + lstTurmas[i] + "</button>"
       }
      
-      document.getElementById("turmasActuais").innerHTML= buttons
+      document.getElementById("turmasActuais"+subjName).innerHTML= buttons
   }
 
 </script>
