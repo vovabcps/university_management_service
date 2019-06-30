@@ -96,23 +96,24 @@
 				data: JSON.stringify({'info': info}),
 				success: function (data) {
 					console.log(data)
-						if (data['message'] == "success") {
-							if (button.name.split("|")[2] == "True"){
-								button.innerHTML = "Abrir Turma"
-								button.style.backgroundColor="green";
-								button.name = button.name.split("|")[0]+"|"+button.name.split("|")[1]+"|"+"False"
+					if (data['message'] == "success") {
+						if (button.name.split("|")[2] == "True"){
+							button.innerHTML = "Abrir Turma"
+							button.style.backgroundColor="green";
+							button.name = button.name.split("|")[0]+"|"+button.name.split("|")[1]+"|"+"False"
 
-								}
-							else if (button.name.split("|")[2] == "False"){
-								button.innerHTML = "Fechar Turma"
-								button.style.backgroundColor="red";
-								button.name = button.name.split("|")[0]+"|"+button.name.split("|")[1]+"|"+"True"
+						}
+						else if (button.name.split("|")[2] == "False"){
+							button.innerHTML = "Fechar Turma"
+							button.style.backgroundColor="red";
+							button.name = button.name.split("|")[0]+"|"+button.name.split("|")[1]+"|"+"True"
 
-							}
-						} else {
-								alert("Nao é possivel alterar a turma")
 						}
 					}
+					else {
+							alert("Nao é possivel alterar a turma")
+					}
+				}
 			});
 		})
 

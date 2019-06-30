@@ -86,6 +86,11 @@ class LessonSystemUserAdmin(admin.ModelAdmin):
   list_display = ["id", "get_lesson_information", "get_systemUser_user", "presente", "date"]
 admin.site.register(LessonSystemUser,  LessonSystemUserAdmin)
 
+class SystemUserMensagensAdmin(admin.ModelAdmin):
+  search_fields = ["remetente", "destinatario", "subject"]
+  list_filter = ["is_accepted"]
+  list_display = ["remetente","destinatario", "subject", "turmaInicial", "turmaFinal", "is_accepted"]
+admin.site.register(SystemUserMensagens,  SystemUserMensagensAdmin)
 
 class FaculdadeAdmin(admin.ModelAdmin):
   search_fields = ["name", "sigla"]

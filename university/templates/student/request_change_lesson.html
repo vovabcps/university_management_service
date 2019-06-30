@@ -23,12 +23,6 @@
   /* display: none; */
  }
 
- .begin{
-   /*center object*/
-   margin: auto;
-   width: 35%;
-
- }
 </style>
 
 
@@ -37,10 +31,10 @@
 
     $(document).ready(function(){
       $("#tabd").click(function(){
-        $(".begin").css("display", "none");
+
         $(".incognito").css("display", "block");
         // $(".incognito").css("visibility", "visible");
-        // $(".begin").css("visibility", "hidden");
+
       });
     });
   
@@ -52,7 +46,7 @@
 
 
 <div class="row" id="myrow">
-    <h4 class="begin">Escolhe uma Disciplina: </h4>
+
           <div class="col-md-12">
               <div class="panel panel-default">
                 
@@ -70,12 +64,11 @@
                               <div class="form-group">
                                 <p>Regente da cadeira: {{obj.subjectRegente}}</p>
                               </div>
-
                               <br>
                                 <!-- <h4>{{obj.subjectName}}</h4> -->
                                 <p>1. Seleciona a Turma ATUAL:</p>
                                 {% for elem in obj.classes %}
-                                  <button type="button" class="btn btn-sm btn-default cenasMinhas">{{ elem.0 }}</button>
+                                  <button type="button" class="btn btn-sm btn-default cenasMinhas">{{ elem }}</button>
                                 {%endfor%}
 
                                 <div class="incognito">
@@ -85,7 +78,7 @@
                                     {% for elem in obj.classest %}
                                           <div class="radio" id={{obj.idNoHashTagRadio}}>
                                             <div>
-                                              <input type="radio" name="{{obj.id}}" id="optionsRadios+{{obj.id}}" value="option+{{obj.id}}">{{ elem }}
+                                              <input type="radio" name="{{obj.id}}" id="{{obj.subjectName}}|{{elem}}" value="{{elem}}">{{ elem }}
                                               <!-- <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" -->
                                             </div>
                                           </div>
@@ -95,39 +88,82 @@
                             </div>
                           {%endfor%}
                       </div>
-                  <button style="float: right; margin: 20px" class="btn btn-lg btn-primary" onclick="sendRequest()">Submit Request</button>
+                  <button style="float: right; margin: 20px" class="btn btn-lg btn-primary" id="theBigBadSubmitWolf">Submit Request</button>
               </div>
           </div>
   </div><!--/.row-->
-
-  <!-- <h1>TESTE</h1>
-    {% if turmasEscolha %}
-      {% for key, value in turmasEscolha.items %}
-          <!-- <li><a href="{{key}}">{{value}}</a></li>
-          <p>{{ key }}</p>
-          <p>{{ value }}</p>
-      {% endfor %}
-  {% endif %}
-<p> -------- </p>
-  {% if regDict %}
-      {% for key, value in regDict.items %}
-        <p>{{ key }}</p>
-        <p>{{ value }}</p>
-      {% endfor %}
-    {% endif %} -->
-
-
 
 
 
   <script>
       $(document).ready(function(){
-        console.log($('a[href="#tab1"]').html())
+
+
+
         $('li:has(a[href="#tab1"])').addClass('active')
         $('#tab1').addClass('in')
         $('#tab1').addClass('active')
 
+        var myButton
+        var myRadio
+        var mySub = $('a[href="#tab1"]').html()
+        console.log(mySub)
+        console.log(myButton)
+        console.log(myRadio)
+
+        $(".cenasMinhas").click(function(){
+            myButton = this.innerHTML
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+        })
+
+        $("input:radio").click(function(){
+
+            myRadio = this.value
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+        })
+
+        $('a[data-toggle="tab"]').click(function(){
+            myButton = undefined
+            myRadio = undefined
+
+            var mySub= this.innerHTML
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+            $("input[type='radio']:checked").filter(":first").prop("checked", false)
+        })
+
+
+
+        $("#theBigBadSubmitWolf").click(function(){
+
+			var info = mySub + "|" + myButton + "|" + myRadio
+			$.ajax({
+				type: "POST",
+				url: 'request_change_lesson',
+				data: JSON.stringify({'new_info': info}),
+				success: function (data) {
+					console.log(data)
+					if (data['message'] == "success") {
+                            alert("Pedido enviado ao regente da cadeira com sucesso!")
+					}
+					else {
+							alert("Escolha uma turma para a qual ainda nao tenha feito um pedido e lembre-se:\nSó pode trocar entre turmas do mesmo tipo")
+					}
+				}
+			});
+		})
+
+
+
+
     });
+
+
 
   </script>
 

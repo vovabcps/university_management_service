@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mysql', #'NAME': 'wyvern', university
         'USER': 'root', #os.getenv('DATABASE_USER'), django
-        'PASSWORD': 'pass', #os.getenv('DATABASE_PASSWORD'),
+        'PASSWORD': 'tutumtcamoes4', #os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }

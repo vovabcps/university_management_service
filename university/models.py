@@ -288,7 +288,7 @@ class SystemUserMensagens(models.Model):
     subject= models.ForeignKey(Subject, on_delete=models.CASCADE)
     turmaInicial= models.CharField(max_length=200)
     turmaFinal= models.CharField(max_length=200)
-
+    is_accepted= models.BooleanField(null=True)
 
 
 

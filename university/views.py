@@ -609,87 +609,223 @@ def consult_university_s(request):
 
 def request_change_lesson_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE) :
-
-        #### Turmas atuais
-        class RequestChangeLesson:
-
-            def __init__(self, tab_name, sub_name, sub_reg, classes_students, classes_list_turmas):
-                self.id = "#"+tab_name
-                self.idNoHashTag = tab_name
-                self.idNoHashTagRadio = "radio"+tab_name
-                self.subjectName = sub_name
-                self.subjectRegente = sub_reg
-                self.classes = classes_students
-                self.classest = classes_list_turmas
-
         su = request_user(request)
         schoolYearObj = SchoolYear.objects.get(begin=2018)
-        
-        turmaLessons = []
 
-        finalList = []
+        if request.method == "GET":
+            #### Turmas atuais
+            class RequestChangeLesson:
 
-        suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
-
-        i = 1
-        for suSubj in suSubjs:
-            subj = suSubj.subject
-            sem = suSubj.subjSemestre
-            SUregente= subj.regente
-            piObj= PersonalInfo.objects.get(user=SUregente)
-            regenteName= piObj.name
-            lstTurmas = suSubj.turmas.split(" ")
-            # ex: lstTurmas-> ["T11","TP13","PL13"]
-            lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
-
-            myListOfTuples =[]
-            for typeTurma in lstTurmasSemEspaços:
-
-                # Lista dos users da turma x e materia y
-                myList = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj, subjSemestre=sem))
-                print(typeTurma)
-                print(subj.name)
-
-                # Lista turmas de um aluno
-                myListOfCollegues=[]
-                for line in myList:
-                    myListOfCollegues.append(PersonalInfo.objects.get(user=line.user))
-
-                myListOfTuples.append((typeTurma, myListOfCollegues))
-
-            # Turmas todas
-            discTurmas = Lesson.objects.values_list('subject__name', 'type', 'turma', 'week_day', 'hour', 'room__room_number').filter(subject=subj)
-
-            tTurmaComp = list()
-
-            for discTurma in discTurmas:
-                tSubj = discTurma[0]
-                tType = discTurma[1]
-                tTurma = discTurma[2]
-                tWeek_Day = discTurma[3]
-                tHour = discTurma[4]
-                tRoom = discTurma[5]
-
-                t = tType + str(tTurma)
-                a = tType + str(tTurma) + ', ' + str(tWeek_Day) + ', ' + str(tHour) + ', ' + 'Sala ' + str(tRoom)
-
-                tTurmaComp.append(a)
+                def __init__(self, tab_name, sub_name, sub_reg, classes_students, classes_list_turmas):
+                    self.id = "#"+tab_name
+                    self.idNoHashTag = tab_name
+                    self.idNoHashTagRadio = "radio"+tab_name
+                    self.subjectName = sub_name
+                    self.subjectRegente = sub_reg
+                    self.classes = classes_students
+                    self.classest = classes_list_turmas
 
 
-            finalList.append(RequestChangeLesson("tab" + str(i), subj.name, regenteName, myListOfTuples, tTurmaComp))
-            i+=1
 
-        return render(request, 'student/request_change_lesson.html', {"finalList":finalList})
+            finalList = []
+
+            suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
+
+            i = 1
+            for suSubj in suSubjs:
+                subj = suSubj.subject
+                sem = suSubj.subjSemestre
+                SUregente= subj.regente
+                piObj= PersonalInfo.objects.get(user=SUregente)
+                regenteName= piObj.name
+                lstTurmas = suSubj.turmas.split(" ")
+                # ex: lstTurmas-> ["T11","TP13","PL13"]
+                lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+
+                # Turmas todas
+                discTurmas = Lesson.objects.values_list('subject__name', 'type', 'turma', 'week_day', 'hour', 'room__room_number').filter(subject=subj)
+
+                tTurmaComp = list()
+
+
+
+                for discTurma in discTurmas:
+                    if discTurma[1]+str(discTurma[2]) not in lstTurmasSemEspaços:
+
+                        tSubj = discTurma[0]
+                        tType = discTurma[1]
+                        tTurma = discTurma[2]
+
+
+                        a = tType + str(tTurma)
+
+                        tTurmaComp.append(a)
+
+
+                finalList.append(RequestChangeLesson("tab" + str(i), subj.name, regenteName, lstTurmasSemEspaços, tTurmaComp))
+                i+=1
+
+            return render(request, 'student/request_change_lesson.html', {"finalList":finalList})
+        elif request.method == "POST":
+
+            #i had no choice sry
+            #### Turmas atuais
+            class RequestChangeLesson:
+
+                def __init__(self, sub_name, classes_students, classes_list_turmas):
+                    self.subjectName = sub_name
+                    self.classes = classes_students
+                    self.classest = classes_list_turmas
+
+            finalList = []
+
+            suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
+
+
+            for suSubj in suSubjs:
+                subj = suSubj.subject
+
+                lstTurmas = suSubj.turmas.split(" ")
+                # ex: lstTurmas-> ["T11","TP13","PL13"]
+                lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+
+                # Turmas todas
+                discTurmas = Lesson.objects.values_list('subject__name', 'type', 'turma', 'week_day', 'hour',
+                                                        'room__room_number').filter(subject=subj)
+
+                tTurmaComp = list()
+
+                for discTurma in discTurmas:
+                    if discTurma[1] + str(discTurma[2]) not in lstTurmasSemEspaços:
+                        tType = discTurma[1]
+                        tTurma = discTurma[2]
+
+                        a = tType + str(tTurma)
+
+                        tTurmaComp.append(a)
+
+                finalList.append(RequestChangeLesson(subj.name, lstTurmasSemEspaços, tTurmaComp))
+
+
+            print(finalList)
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['new_info']
+            my_pretty_info = inf.split("|")
+
+            req_subject = my_pretty_info[0]
+            old_class = my_pretty_info[1]
+            new_class = my_pretty_info[2]
+
+            def validate_input(re_subject,old_class,new_class, finalList):
+
+
+                for obj in finalList:
+                    if obj.subjectName == re_subject and old_class in obj.classes and new_class in obj.classest:
+                        if separateLettersNumb(old_class)[0] == separateLettersNumb(new_class)[0]:
+                            pedidosSent = list(SystemUserMensagens.objects.filter(remetente=su, subject__name=re_subject))
+                            for pedido in pedidosSent:
+                                if pedido.is_accepted != True and pedido.is_accepted != False and pedido.turmaInicial == old_class:
+                                    return False
+
+                            pedidosRecieved= list(SystemUserMensagens.objects.filter(destinatario=su, subject__name=re_subject))
+                            for pedidoR in pedidosRecieved:
+                                if pedidoR.is_accepted != True and pedidoR.is_accepted != False and pedidoR.turmaInicial == old_class:
+                                    return False
+
+                            return True
+
+                        return False
+
+
+                return False
+
+            if validate_input(req_subject, old_class, new_class, finalList):
+                sub=Subject.objects.get(name=req_subject)
+
+                newSysUserMens = SystemUserMensagens(remetente=su, destinatario=sub.regente, subject=sub, turmaInicial=old_class, turmaFinal=new_class)
+                newSysUserMens.save()
+
+                return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+            else:
+
+                return HttpResponse(json.dumps({"message": "failure"}), content_type="application/json")
+
     else:
         return HttpResponseRedirect(reverse('login'))
 
 
 def estado_pedidos_s(request):
-    if is_authenticated(request, university.models.STUDENT_ROLE) :
-        return render(request, 'student/estado_pedidos.html', {})
-    else: 
-        return HttpResponseRedirect(reverse('login'))
+    if is_authenticated(request, university.models.STUDENT_ROLE):
+        if request.method == "GET":
+            su = request_user(request)
+            pedidos = list(SystemUserMensagens.objects.filter(destinatario=su))
 
+            listPedidos = []
+            historicoPedidos = []
+            for p in pedidos:
+                teacher = PersonalInfo.objects.get(user=p.remetente)
+                subj = p.subject
+                startClass = p.turmaInicial
+                finalClass = p.turmaFinal
+                status = p.is_accepted
+                if status == True or status == False:
+                    historicoPedidos.append((teacher, subj, startClass, finalClass, status))
+                else:
+                    listPedidos.append((teacher, subj, startClass, finalClass, status))
+
+            pedidosSent = list(SystemUserMensagens.objects.filter(remetente=su))
+            pedidosS = []
+            for ap in pedidosSent:
+                student = PersonalInfo.objects.get(user=ap.destinatario)
+                subj = ap.subject
+                startClass = ap.turmaInicial
+                finalClass = ap.turmaFinal
+                status = ap.is_accepted
+                if status != True and status != False:
+                    status = "Enviado"
+                pedidosS.append((student, subj, startClass, finalClass, status))
+
+            return render(request, 'student/estado_pedidos.html',
+                          {"listPedidos": listPedidos, "historicoPedidos": historicoPedidos, "pedidosS": pedidosS})
+
+        elif request.method == "POST":
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['info']
+            info = inf.split("|")  # [{{subj}}|{{teacher}}|{{start}}|{{final}}|True]
+
+            teacherSystem = PersonalInfo.objects.get(name=info[1])
+            subjSystem = Subject.objects.get(name=info[0])
+            initial = info[2]
+            final = info[3]
+
+            update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=teacherSystem.user,
+                                                     turmaInicial=initial, turmaFinal=final)
+
+            if info[4] == "True":
+                update.is_accepted = True
+
+                su = request_user(request)
+                pedidos = SystemUserSubject.objects.get(user=su, subject=subjSystem)
+                turmas = pedidos.turmas.split()
+                for t in turmas:
+                    if t == initial:
+                        turmas.pop(turmas.index(t))
+                        turmas.append(final)
+                        break
+                turmasStr = " ".join(turmas)
+                pedidos.turmas = turmasStr
+                pedidos.save()
+
+            elif info[4] == "False":
+                update.is_accepted = False
+
+            update.save()
+
+            return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+    else:
+        return HttpResponseRedirect(reverse('login'))
 
 def apagar_s(request):
     return render(request, 'student/apagar.html', {})
@@ -946,9 +1082,74 @@ def alterar_turmas_t(request):
 
 
 def resposta_pedidos_t(request):
-    if is_authenticated(request, university.models.TEACHER_ROLE) :
-        return render(request, 'teacher/resposta_pedidos_D.html', {})
-    else: 
+    if is_authenticated(request, university.models.TEACHER_ROLE):
+        if request.method == "GET":
+            su = request_user(request)
+            pedidos = list(SystemUserMensagens.objects.filter(destinatario=su))
+
+            listPedidos = []
+            historicoPedidos = []
+            for p in pedidos:
+                student = PersonalInfo.objects.get(user=p.remetente)
+                subj = p.subject
+                startClass = p.turmaInicial
+                finalClass = p.turmaFinal
+                status = p.is_accepted
+                if status == True or status == False:
+                    historicoPedidos.append((student, subj, startClass, finalClass, status))
+                else:
+                    listPedidos.append((student, subj, startClass, finalClass, status))
+
+            pedidosSent = list(SystemUserMensagens.objects.filter(remetente=su))
+            pedidosS = []
+            for ap in pedidosSent:
+                student = PersonalInfo.objects.get(user=ap.destinatario)
+                subj = ap.subject
+                startClass = ap.turmaInicial
+                finalClass = ap.turmaFinal
+                status = ap.is_accepted
+                if status != True and status != False:
+                    status = "Enviado"
+                pedidosS.append((student, subj, startClass, finalClass, status))
+
+            return render(request, 'teacher/resposta_pedidos_D.html',
+                          {"listPedidos": listPedidos, "historicoPedidos": historicoPedidos, "pedidosS": pedidosS})
+
+        elif request.method == "POST":
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['info']
+            info = inf.split("|")
+
+            studentSystem = PersonalInfo.objects.get(name=info[1])
+            subjSystem = Subject.objects.get(name=info[0])
+            initial = info[2]
+            final = info[3]
+
+            update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=studentSystem.user,
+                                                     turmaInicial=initial, turmaFinal=final)
+
+            if info[4] == "True":
+                update.is_accepted = True
+
+                pedidos = SystemUserSubject.objects.get(user=studentSystem.user, subject=subjSystem)
+                turmas = pedidos.turmas.split()
+                for t in turmas:
+                    if t == initial:
+                        turmas.pop(turmas.index(t))
+                        turmas.append(final)
+                        break
+                turmasStr = " ".join(turmas)
+                pedidos.turmas = turmasStr
+                pedidos.save()
+
+            elif info[4] == "False":
+                update.is_accepted = False
+
+            update.save()
+
+            return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+    else:
         return HttpResponseRedirect(reverse('login'))
 
 
@@ -973,32 +1174,35 @@ def enviar_pedidos_t(request):
             for dic in typeTurma :
                 lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
                 turmas.append(dic["type"] + dic["turma"])
-            
+
+
             #print(lstTypeTurmasQuerie)
             lstSuObjs= list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (reduce(operator.or_, lstTypeTurmasQuerie))).values("user", "turmas"))
             #print(lstSuObjs)
             #ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
-            
-            lstSuQueries2= []
-            for suObj in lstSuObjs:
-                lstSuQueries2.append(Q(user=suObj['user']))
+            if lstSuObjs:
+                lstSuQueries2= []
 
-            lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
-            
-            formatDicBySU= {}
-            #len(systemUsersObjs) == len(lstPIName)
-            for i in range(0, len(lstPI)):
-                suFC= lstPI[i]["user__user__username"]
-                suName= lstPI[i]["name"]
-                
-                lstTurmasAluno= lstSuObjs[i]['turmas'].split(" ")
-                lstTurmasAlunosSemEspaços= [e for e in lstTurmasAluno if e != ""]
-                
-                formatDicBySU[suFC + " | " + suName] = lstTurmasAlunosSemEspaços
+                for suObj in lstSuObjs:
+                    lstSuQueries2.append(Q(user=suObj['user']))
+
+
+                lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
+
+                formatDicBySU= {}
+                #len(systemUsersObjs) == len(lstPIName)
+                for i in range(0, len(lstPI)):
+                    suFC= lstPI[i]["user__user__username"]
+                    suName= lstPI[i]["name"]
+
+                    lstTurmasAluno= lstSuObjs[i]['turmas'].split(" ")
+                    lstTurmasAlunosSemEspaços= [e for e in lstTurmasAluno if e != ""]
+
+                    formatDicBySU[suFC + " | " + suName] = lstTurmasAlunosSemEspaços
 
             formatDicBySubj[subjName] = [turmas, formatDicBySU]
 
-        print(formatDicBySubj)
+        #print(formatDicBySubj)
         #formatDicBySubj-> {'Controvérsias Científicas': [[T11, TP12], {"fc117 | Rute M": ['T11', 'TP11'], "fc117 | Helder C" : [...] }], 'Programação II (LTI)': [[..],{...}]}
         return render(request, 'teacher/enviar_pedido.html', {'formatDicBySubj':formatDicBySubj})
         

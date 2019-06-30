@@ -50,15 +50,16 @@
                             {% endif %}
                             <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
                          
-                            <select onchange="mostrarTurmasActuais(this, {{list.1}}, '{{subjName}}')">
+                            <select style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, '{{subjName}}')">
+                                <option hidden disabled selected value> -- select an option -- </option>
                                 {% for user, turmas in list.1.items %}
                                 <option id="{{user}}" value="{{user}}">{{user}}</option>
                                 {% endfor %}
                             </select>
                           
                             <br>
-                            <p class="o2">2. O Aluno encontra-se atualmente INSCRITO na Turma:</p>
-                            <p>nota: é para aparecer todas as turmas em q o aluno esta inscrito ou apenas as turmas que ele esta inscito e q sao lecionadas por este prof?</p>
+                            <p class="o2">2. O Aluno encontra-se atualmente INSCRITO nas Turmas:</p>
+
                             <div id="turmasActuais{{subjName}}">
                             </div>
                             <br>
@@ -68,12 +69,9 @@
                               <label class="nt">
                                   {% for typeTurmas in list.0 %}
                                   <div class="radio">
-                                    
-                                      {% if forloop.counter == 1 %}
-                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}" checked>{{typeTurmas}}
-                                      {% else %}
-                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}" >{{typeTurmas}}
-                                      {% endif %}
+
+                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}">{{typeTurmas}}
+
                                       
                                     </div>
                                   {% endfor %}
