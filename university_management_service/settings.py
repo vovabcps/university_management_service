@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'university_management_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': '104.155.5.49',
+        'HOST': '35.246.60.201',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'wyvern',
         'USER': os.getenv('DATABASE_USER'),
@@ -89,7 +89,7 @@ DATABASES = {
         'PORT': '3306'
     },
     'slave1': {
-        'HOST': '35.205.105.127',
+        'HOST': '35.189.116.95',
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'wyvern',
         'USER': os.getenv('DATABASE_USER'),
@@ -136,7 +136,7 @@ USE_TZ = True
 
 
 #STATIC_URL = '/static/'
-STATIC_URL = 'https://storage.googleapis.com/wyvern-storage/'
+STATIC_URL = 'https://storage.googleapis.com/wyvern-bucket/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
 MIGRATIONS_DATA_ROOT = os.path.join(BASE_DIR, 'university/migrations_data')
 

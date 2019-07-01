@@ -182,7 +182,16 @@
 					</a></li>
 				</ul>
 			</li>
-			<li><a href="{% url 'logout' %}"><em class="fa fa-power-off">&nbsp;</em> Logout</a></li>
+			<li id="logout">
+                <a href="#">
+                    <form style="margin: 0; padding: 0" action="{% url 'logout' %}" method="POST">
+                        {% csrf_token %}
+                        <button style="border: none;background: none;padding: 0;">
+                            <em class="fa fa-power-off">&nbsp;</em> Logout
+                        </button>
+                    </form>
+                </a>
+            </li>
 		</ul>
 	</div><!--/.sidebar-->
 

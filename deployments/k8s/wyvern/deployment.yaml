@@ -39,7 +39,7 @@ spec:
         name: cloudsql-proxy
         # !!! Change instance connection name !!!
         command: ["/cloud_sql_proxy", "--dir=/cloudsql",
-                  "-instances=wyvern-240717:europe-west1:wyvern=tcp:3306",
+                  "-instances=wyvern-244919:europe-west2:wyvern=tcp:3306",
                   "-credential_file=/secrets/cloudsql/credentials.json"]
         volumeMounts:
           - name: cloudsql-oauth-credentials

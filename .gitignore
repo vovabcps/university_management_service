@@ -24,3 +24,4 @@ settings.py
 university/static/our/pics
 db.json
 upload_db.json
+university/static/admin/
