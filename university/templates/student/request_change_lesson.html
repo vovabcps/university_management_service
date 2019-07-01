@@ -17,14 +17,6 @@
 
 {% block content %}
 
-<style>
- .incognito{
- 	/* visibility: hidden; */
-  /* display: none; */
- }
-
-</style>
-
 
 
 <script>
@@ -33,22 +25,18 @@
       $("#tabd").click(function(){
 
         $(".incognito").css("display", "block");
-        // $(".incognito").css("visibility", "visible");
-
       });
     });
-  
-  function sendRequest() {
-
-  }
 
 </script>
 
 
 <div class="row" id="myrow">
-
+    {% if finalList %}
           <div class="col-md-12">
+              
               <div class="panel panel-default">
+                
                 
                   <div class="panel-body tabs">
                       <ul id="tabd" class="nav nav-tabs">
@@ -91,6 +79,9 @@
                   <button style="float: right; margin: 20px" class="btn btn-lg btn-primary" id="theBigBadSubmitWolf">Submit Request</button>
               </div>
           </div>
+          {% else %}
+          <p>Inscreva-se em cadeiras do seu curso :)</p>
+          {% endif %}
   </div><!--/.row-->
 
 
@@ -130,7 +121,7 @@
             myButton = undefined
             myRadio = undefined
 
-            var mySub= this.innerHTML
+            mySub= this.innerHTML
             console.log(mySub)
             console.log(myButton)
             console.log(myRadio)
@@ -142,7 +133,11 @@
         $("#theBigBadSubmitWolf").click(function(){
 
 			var info = mySub + "|" + myButton + "|" + myRadio
-			$.ajax({
+			let csrf = $("[name=csrfmiddlewaretoken]").val();
+      $.ajax({
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf)
+        },
 				type: "POST",
 				url: 'request_change_lesson',
 				data: JSON.stringify({'new_info': info}),
@@ -168,4 +163,3 @@
   </script>
 
 {% endblock %}
-

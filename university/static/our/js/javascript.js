@@ -653,7 +653,11 @@ function aulaEscolhida(aula){
     //dma, mm -> janeiro : 0
     console.log(DMA, aula.children[0].innerHTML, aula.children[1].innerHTML, aula.children[2].innerHTML)
 
-    $.ajax({
+    let csrf = $("[name=csrfmiddlewaretoken]").val();
+        $.ajax({
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrf)
+        },
         type: "POST",
         url: 'presencas_registar',
         data: JSON.stringify({
@@ -726,7 +730,7 @@ function aulaEscolhida(aula){
 function guardarPresenças(week_day, date, turmaEscolhida){
     var alunosEscolhidos= [];
     var alunosNaoEscolhidos= [];
-    $.each($("input[type='checkbox']"), function () {
+    $.each($("input[name='presenca']"), function () {
         if ($(this).is(":checked")){
             alunosEscolhidos.push($(this).val())
         }else{
@@ -742,7 +746,11 @@ function guardarPresenças(week_day, date, turmaEscolhida){
     var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
     localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
         
+    let csrf = $("[name=csrfmiddlewaretoken]").val();
     $.ajax({
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", csrf)
+      },
         type: "POST",
         url: 'presencas_registar',
         data: JSON.stringify({

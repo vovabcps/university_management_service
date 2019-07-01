@@ -44,7 +44,7 @@
 				<div class="panel-body">
 
 
-					<form role="form" id="insert_disciplina" method="post" action="{% url 'choose_lessons_s' %}">
+					<form role="form" id="insert_disciplina" method="post" action="{% url 'choose_lessons_s' %}">{% csrf_token %}
 						<fieldset>
 
 							<table id="students_table" class="table">

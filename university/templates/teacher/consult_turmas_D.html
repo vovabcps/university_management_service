@@ -196,7 +196,11 @@
 
 <script>
 		function pedidoAjax(sem, subjName, typeTurma){
-      $.ajax({
+      let csrf = $("[name=csrfmiddlewaretoken]").val();
+			$.ajax({
+				beforeSend: function(xhr, settings) {
+					xhr.setRequestHeader("X-CSRFToken", csrf)
+				},
         type: "POST",
         url: 'consult_turmas',
         data: JSON.stringify({'sem': sem, 'subjName':subjName, 'typeTurma': typeTurma}),
@@ -233,7 +237,11 @@ $(document).ready(function(){
 		var modal = $(this)
 		modal.find('#alunoFCModal').text(alunoFc)
 
-		$.ajax({
+		let csrf = $("[name=csrfmiddlewaretoken]").val();
+			$.ajax({
+				beforeSend: function(xhr, settings) {
+					xhr.setRequestHeader("X-CSRFToken", csrf)
+				},
 			type: "POST",
 			url: 'consult_turmas',
 			data: JSON.stringify({'aluno': alunoFc}),

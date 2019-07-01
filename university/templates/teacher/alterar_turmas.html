@@ -49,14 +49,14 @@
 												<td>{{tuple.1}}</td>
 
 												{% if tuple.1 == 0 and tuple.2 == True %}
-												<form action="" method="POST">
-												<td><button name ="{{obj.subjectName}}|{{tuple.0}}|{{tuple.2}}" type="button" class="btn btn-sm btn-danger">Fechar Turma</button><form>
-												</form>
+												
+												<td><button name ="{{obj.subjectName}}|{{tuple.0}}|{{tuple.2}}" type="button" class="btn btn-sm btn-danger">Fechar Turma</button></td>
+												
 
 												{% elif tuple.1 == 0 and tuple.2 == False %}
-												<form action="" method="POST">
-												<td><button name ="{{obj.subjectName}}|{{tuple.0}}|{{tuple.2}}" type="button" class="btn btn-sm btn-danger" style='background-color: green'>Abrir Turma</button><td>
-												</form>
+												
+												<td><button name ="{{obj.subjectName}}|{{tuple.0}}|{{tuple.2}}" type="button" class="btn btn-sm btn-danger" style='background-color: green'>Abrir Turma</button></td>
+												
 
 												{% else %}
 												<td></td>
@@ -90,7 +90,11 @@
 			button = this
 			var info = button.name;
 			console.log(info)
+			let csrf = $("[name=csrfmiddlewaretoken]").val();
 			$.ajax({
+				beforeSend: function(xhr, settings) {
+				xhr.setRequestHeader("X-CSRFToken", csrf)
+				},
 				type: "POST",
 				url: 'alterar_turmas',
 				data: JSON.stringify({'info': info}),

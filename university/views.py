@@ -163,7 +163,46 @@ def home_s(request):
                 if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
                     regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
-            return render(request, 'student/home.html', {"suAllSubjects": inscrito, "suRegentes": regentes })
+            listofSubs = []
+            for line in inscrito:
+                listofSubs.append(line.subject)
+
+            ohlord = (list(Lesson.objects.filter(subject__in = listofSubs).values("subject__name", "professor__user")))
+
+            from itertools import groupby
+
+
+
+            tempList = []
+            myLastList = []
+
+            for sub_name, g in groupby(ohlord, lambda a: a["subject__name"]):
+                print(sub_name)
+
+                listofTeachers=[]
+                a= copy.deepcopy(g)
+                for d in a:
+                    if d["professor__user"] not in listofTeachers:
+                        listofTeachers.append(d["professor__user"])
+                        tempList.append(d["professor__user"])
+                myLastList.append((sub_name, listofTeachers))
+                print(listofTeachers)
+            print(tempList)
+
+
+
+            finallyDone = list(PersonalInfo.objects.filter(user__user__in= tempList).values("user__user", "name"))
+
+            TrueFinalList=[]
+            for tuple in myLastList:
+                sub=tuple[0]
+                teacher_string=""
+                for line in finallyDone:
+                    if line["user__user"] in tuple[1]:
+                        teacher_string+= line["name"]+", "
+                TrueFinalList.append((sub,teacher_string[:-2]))
+
+            return render(request, 'student/home.html', {"suAllSubjects": inscrito, "suRegentes": regentes, "myTeachersBoyy": TrueFinalList })
 
         else:
             dadosJson = json.loads(request.body.decode("utf-8"))
@@ -277,18 +316,23 @@ def choose_lessons_s(request):
         if request.method == 'POST':
             valid= True
             print(request.POST)  #so vai buscar as q foram escolhidas!
+            
+            dic= dict(request.POST)
+            dic.pop('csrfmiddlewaretoken')
+            print(dic)
 
-            if len(request.POST) == 0 : #se nao escolher nenhuma cadeira
+            if len(dic) == 0 : #se nao escolher nenhuma cadeira
                 valid= False
                 messages.error(request, "Escolha pelo menos uma cadeira!!")
 
             subjsNameEscolhidas= []
             subjsEscolhidas= []
             credTotaisEscolhidos= 0
-            for anoCourseCredTotalCredFeitos in list(request.POST.keys()) : 
+            print(list(dic.keys()))
+            for anoCourseCredTotalCredFeitos in dic : 
                 ano, course, credTotais, credFeitos= anoCourseCredTotalCredFeitos.split("|")
                 credTotaisSubj= 0
-                for subjSemCred in request.POST.getlist(anoCourseCredTotalCredFeitos) :
+                for subjSemCred in dic[anoCourseCredTotalCredFeitos] :
                     #print(anoCourseCredTotalCredFeitos + ": " + subjSemCred)
                     subjsEscolhidas.append(subjSemCred)
                     subj, sem, cred= subjSemCred.split("|")
@@ -659,7 +703,8 @@ def request_change_lesson_s(request):
 
                         a = tType + str(tTurma)
 
-                        tTurmaComp.append(a)
+                        if a not in tTurmaComp:
+                            tTurmaComp.append(a)
 
 
                 finalList.append(RequestChangeLesson("tab" + str(i), subj.name, regenteName, lstTurmasSemEspaços, tTurmaComp))
@@ -701,8 +746,8 @@ def request_change_lesson_s(request):
                         tTurma = discTurma[2]
 
                         a = tType + str(tTurma)
-
-                        tTurmaComp.append(a)
+                        if a not in tTurmaComp:
+                            tTurmaComp.append(a)
 
                 finalList.append(RequestChangeLesson(subj.name, lstTurmasSemEspaços, tTurmaComp))
 
@@ -753,6 +798,8 @@ def request_change_lesson_s(request):
 
     else:
         return HttpResponseRedirect(reverse('login'))
+
+
 
 
 def estado_pedidos_s(request):
@@ -827,8 +874,6 @@ def estado_pedidos_s(request):
     else:
         return HttpResponseRedirect(reverse('login'))
 
-def apagar_s(request):
-    return render(request, 'student/apagar.html', {})
 
 # --------------------------------------------------------------------------------------------------------------------------------
 #                                                        teacher
@@ -863,11 +908,51 @@ def home_t(request):
                 if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
                     regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
+            listofSubs = []
+            for line in inscrito:
+                listofSubs.append(line.subject)
+
+            ohlord = (list(Lesson.objects.filter(subject__in = listofSubs).values("subject__name", "professor__user")))
+
+            from itertools import groupby
+
+
+
+            tempList = []
+            myLastList = []
+
+            for sub_name, g in groupby(ohlord, lambda a: a["subject__name"]):
+                print(sub_name)
+
+                listofTeachers=[]
+                a= copy.deepcopy(g)
+                for d in a:
+                    if d["professor__user"] not in listofTeachers:
+                        listofTeachers.append(d["professor__user"])
+                        tempList.append(d["professor__user"])
+                myLastList.append((sub_name, listofTeachers))
+                print(listofTeachers)
+            print(tempList)
+
+
+
+            finallyDone = list(PersonalInfo.objects.filter(user__user__in= tempList).values("user__user", "name"))
+
+            TrueFinalList=[]
+            for tuple in myLastList:
+                sub=tuple[0]
+                teacher_string=""
+                for line in finallyDone:
+                    if line["user__user"] in tuple[1]:
+                        teacher_string+= line["name"]+", "
+                TrueFinalList.append((sub,teacher_string[:-2]))
+
             NumberOfStudentsList=[]
             for sub in mySubjects:
                 num = len(SystemUserSubject.objects.filter(anoLetivo = schoolYearObj, subject= sub).values_list("user__user").distinct())
                 NumberOfStudentsList.append((sub, num))
 
+            #-------------- Sobreposicoes --------------
             dicAlunosSobreposicoes= {}
             #print(mySubjectsName)
             lstAlunos= getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
@@ -895,7 +980,7 @@ def home_t(request):
                 dicAlunosSobreposicoes= {}
 
             #print(dicAlunosSobreposicoes)
-            return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary, "NumStdBySub" : NumberOfStudentsList, "dicAlunosSobrepo":dicAlunosSobreposicoes})
+            return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons" : my_dictionary, "NumStdBySub" : NumberOfStudentsList, "myTeachersBoyy": TrueFinalList, "dicAlunosSobrepo":dicAlunosSobreposicoes})
         else:
             dadosJson = json.loads(request.body.decode("utf-8"))
 
@@ -1158,54 +1243,104 @@ def enviar_pedidos_t(request):
         su = request_user(request)
         schoolYearObj = SchoolYear.objects.get(begin=2018)
 
-        #ex: retorna-> [14514, 14538, ..., 15196]
-        lstAlunos= []
-        lessons= Lesson.objects.filter(professor=su).values("subject__name", "type", "turma").distinct()
-        #print(lessons)
-        #print(lessons.count())
-        
-        formatDicBySubj= {}
-        for subjName, typeTurma in groupby(lessons, lambda a : a["subject__name"]):
-            #print(subjName)
-            #print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
+        if request.method == "GET":
+            #ex: retorna-> [14514, 14538, ..., 15196]
+            lstAlunos= []
+            lessons= Lesson.objects.filter(professor=su).values("subject__name", "type", "turma").distinct()
+            #print(lessons)
+            #print(lessons.count())
+            
+            formatDicBySubj= {}
+            for subjName, typeTurma in groupby(lessons, lambda a : a["subject__name"]):
+                #print(subjName)
+                #print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
 
-            turmas= []
-            lstTypeTurmasQuerie= []
-            for dic in typeTurma :
-                lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
-                turmas.append(dic["type"] + dic["turma"])
+                SubjturmasByTeacher= [] #turmas lecionadas pelo prof
+                lstTypeTurmasQuerie= []
+                for dic in typeTurma :
+                    lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
+                    SubjturmasByTeacher.append(dic["type"] + dic["turma"])
+
+                Subjturmas = Lesson.objects.filter(subject__name=subjName).values('type', 'turma').distinct()
+                print(Subjturmas)
+                #[{'type': 'TP', 'turma': '12'}, ... ]
+
+                #print(lstTypeTurmasQuerie)
+                lstSuObjs= list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (reduce(operator.or_, lstTypeTurmasQuerie))).values("user", "turmas"))
+                #print(lstSuObjs)
+                #ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
+                
+                if lstSuObjs:
+                    lstSuQueries2= []
+
+                    for suObj in lstSuObjs:
+                        lstSuQueries2.append(Q(user=suObj['user']))
 
 
-            #print(lstTypeTurmasQuerie)
-            lstSuObjs= list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (reduce(operator.or_, lstTypeTurmasQuerie))).values("user", "turmas"))
-            #print(lstSuObjs)
-            #ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
-            if lstSuObjs:
-                lstSuQueries2= []
+                    lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
 
-                for suObj in lstSuObjs:
-                    lstSuQueries2.append(Q(user=suObj['user']))
+                    formatDicBySU= {}
+                    #len(systemUsersObjs) == len(lstPIName)
+                    for i in range(0, len(lstPI)):
+                        suFC= lstPI[i]["user__user__username"]
+                        suName= lstPI[i]["name"]
+
+                        lstTurmasAluno= lstSuObjs[i]['turmas'].split(" ")
+                        lstTurmasAlunosSemEspaços= [e for e in lstTurmasAluno if e != ""]
+
+                        lstTurmasFiltradas= []
+                        for dicTurma in Subjturmas :
+                            turma= dicTurma['type'] + dicTurma['turma']
+                            if turma not in lstTurmasAlunosSemEspaços:
+                                lstTurmasFiltradas.append(turma)
+
+                        formatDicBySU[suFC + " | " + suName] = [lstTurmasAlunosSemEspaços, lstTurmasFiltradas]
+
+                formatDicBySubj[subjName] = [SubjturmasByTeacher, formatDicBySU]
+
+            #print(formatDicBySubj)
+            #formatDicBySubj-> {'Controvérsias Científicas': [[T11, TP12], {"fc117 | Rute M": [['T11', 'TP11'], [turmas filtradas], "fc117 | Helder C" : [...] }], 'Programação II (LTI)': [[..],{...}]}
+            return render(request, 'teacher/enviar_pedido.html', {'formatDicBySubj':formatDicBySubj})
+            
+        elif request.method == "POST":
+            dadosJson = json.loads(request.body.decode("utf-8"))
+            print(dadosJson)
+            infoAluno= dadosJson['alunoEscolhido']
+
+            try:
+                valid= True
+                alunoFc, nome= infoAluno.split(" | ")
+                u= User.objects.get(username= alunoFc)
+                suAluno= SystemUser.objects.get(user=u)
+                subj= Subject.objects.get(name=dadosJson['mySub'])
+                old_class= dadosJson['turma']
+                new_class= dadosJson['novaTurma']
+
+                lsttTypeTurmaOldClass= separateLettersNumb(old_class)
+                lsttTypeTurmaNewClass= separateLettersNumb(new_class)
+
+                suMensagens= SystemUserMensagens.objects.filter(remetente=su, destinatario=suAluno, subject=subj, turmaInicial=old_class).values("is_accepted")
+                print(suMensagens)
+                for suMsg in suMensagens:
+                    if suMsg['is_accepted'] == None :
+                        valid = False
+
+                if lsttTypeTurmaOldClass[0] != lsttTypeTurmaNewClass[0]:
+                    valid = False
+
+                if valid:
+                    newSysUserMens = SystemUserMensagens(remetente=su, destinatario=suAluno, subject=subj, turmaInicial=old_class, turmaFinal=new_class)
+                    newSysUserMens.save()
+                    return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+
+                else:
+                    return HttpResponse(json.dumps({"message": "failure"}), content_type="application/json")
+
+            except Exception as e:
+                return HttpResponse(json.dumps({"message": "failure"}), content_type="application/json")
 
 
-                lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
 
-                formatDicBySU= {}
-                #len(systemUsersObjs) == len(lstPIName)
-                for i in range(0, len(lstPI)):
-                    suFC= lstPI[i]["user__user__username"]
-                    suName= lstPI[i]["name"]
-
-                    lstTurmasAluno= lstSuObjs[i]['turmas'].split(" ")
-                    lstTurmasAlunosSemEspaços= [e for e in lstTurmasAluno if e != ""]
-
-                    formatDicBySU[suFC + " | " + suName] = lstTurmasAlunosSemEspaços
-
-            formatDicBySubj[subjName] = [turmas, formatDicBySU]
-
-        #print(formatDicBySubj)
-        #formatDicBySubj-> {'Controvérsias Científicas': [[T11, TP12], {"fc117 | Rute M": ['T11', 'TP11'], "fc117 | Helder C" : [...] }], 'Programação II (LTI)': [[..],{...}]}
-        return render(request, 'teacher/enviar_pedido.html', {'formatDicBySubj':formatDicBySubj})
-        
     else: 
         return HttpResponseRedirect(reverse('login'))
 
@@ -1313,6 +1448,7 @@ def presencas_registar_t(request):
                 LessonSystemUser.objects.filter(lesson=lessonObj, date=dateFormat).delete()
 
                 #tenho que criar novos dados, pq podem haver alunos novos nesta turma
+                print(alunosEscolhidos)
                 for alunoEsc in alunosEscolhidos:
                     userObj= User.objects.get(username= alunoEsc)
                     su = SystemUser.objects.get(user=userObj)
@@ -1608,7 +1744,11 @@ def consult_details_post(request) :
     if request.method == 'POST':
             su = request_user(request)
             PIObject = PersonalInfo.objects.get(user=su)
-            keyName = list(request.POST.keys())[0]
+
+            dic= dict(request.POST)
+            dic.pop('csrfmiddlewaretoken')
+            print(dic)
+            keyName = list(dic)[0]
             print("." + keyName + ".")
 
             if keyName == "Nome: ":

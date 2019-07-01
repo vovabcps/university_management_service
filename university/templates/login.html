@@ -1,4 +1,5 @@
 {% load staticfiles %}
+{% csrf_token %}
 <!DOCTYPE html>
 <html>
 <head>
@@ -61,7 +62,11 @@
     function login() {
         email = $('#username').val();
         password = $('#password').val();
-        $.ajax({
+        let csrf = $("[name=csrfmiddlewaretoken]").val();
+		$.ajax({
+			beforeSend: function(xhr, settings) {
+				xhr.setRequestHeader("X-CSRFToken", csrf)
+			},
             type: "POST",
             url: '/',
             data: JSON.stringify({'username': email, 'password': password}),

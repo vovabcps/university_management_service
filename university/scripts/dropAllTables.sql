@@ -24,3 +24,4 @@ DROP TABLE IF EXISTS university_subject;
 DROP TABLE IF EXISTS university_systemuser;
 DROP TABLE IF EXISTS university_role;
 
+

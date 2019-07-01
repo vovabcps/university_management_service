@@ -46,7 +46,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -92,7 +92,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'mysql', #'NAME': 'wyvern', university
         'USER': 'root', #os.getenv('DATABASE_USER'), django
-        'PASSWORD': 'tutumtcamoes4', #os.getenv('DATABASE_PASSWORD'),
+        'PASSWORD': 'pass', #os.getenv('DATABASE_PASSWORD'),
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -106,7 +106,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sys',
         'USER': 'root',
-        'PASSWORD': 'girassol987',
+        'PASSWORD': 'girassol987', //'tutumtcamoes4'
         'PORT': '3306',
     }
 }

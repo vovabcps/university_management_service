@@ -25,10 +25,18 @@ class Room(models.Model):
     room_number = models.CharField(max_length=200, unique=True)
     can_give_class = models.BooleanField()
 
+    def __str__(self):
+        if self.can_give_class:
+            return self.room_number + ", sala de aula"
+        else:
+            return self.room_number + ", gabinete"
+
 
 class Role(models.Model):
     role = models.CharField(max_length=200,  unique=True)
 
+    def __str__(self):
+        return self.role
 
     def is_a(self, role_char):
             return self.role == role_char
@@ -39,13 +47,17 @@ class SystemUser(models.Model):
     #para ser unico: user
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, null=True,  on_delete=models.CASCADE)
-    rooms = models.ManyToManyField(Room) #gabinete
+    rooms = models.ManyToManyField(Room, blank=True) #gabinete
+
+    def __str__(self):
+        return self.user.username
 
     def get_roles(self):
         return self.role.role
 
     def gabinete(self):
         return ",\n".join([room.room_number for room in self.rooms.all()])
+
 
 
 class PersonalInfo(models.Model):
@@ -62,9 +74,10 @@ class PersonalInfo(models.Model):
     vat_number = models.CharField(max_length=200, null=True, unique=True)
     profile_pic = models.CharField(max_length=200, null=True)
 
-
     def get_systemUser_user(self):
         return self.user.user #ex: fc1085
+
+    
 
 
 class Faculdade(models.Model):
@@ -166,6 +179,9 @@ class Subject(models.Model):
     regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)  
     #o regente da cadeira tem q dar aulas dessa cadeira 
     #um professor pode ser regente em mais de uma cadeira
+
+    def __str__(self):
+        return self.name
 
     def get_regente_name(self):
         detalhesOBJ= PersonalInfo.objects.get(user=self.regente)
@@ -289,6 +305,15 @@ class SystemUserMensagens(models.Model):
     turmaInicial= models.CharField(max_length=200)
     turmaFinal= models.CharField(max_length=200)
     is_accepted= models.BooleanField(null=True)
+
+    def get_subject_name(self):
+        return self.subject.name 
+
+    def remetente_fc(self):
+        return self.remetente.user #ex: fc1085
+
+    def destinatario_fc(self):
+        return self.destinatario.user #ex: fc1085
 
 
 

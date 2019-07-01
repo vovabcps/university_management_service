@@ -18,6 +18,7 @@
             <div class="modal-content">
               <div class="modal-body">
                 <form action="" method="POST">
+                    {% csrf_token %}
                   <div class="form-group">
                     <label for="editInput" class="col-form-label ">Message:</label>
                     <textarea name="newValue" class="form-control" id="editInput"></textarea>

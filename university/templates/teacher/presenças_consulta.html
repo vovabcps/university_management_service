@@ -142,7 +142,11 @@
 <script>
 
     function pedidoAjax(sem, subjName, typeTurma){
+      let csrf = $("[name=csrfmiddlewaretoken]").val();
       $.ajax({
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf)
+        },
         type: "POST",
         url: 'presencas_consultar',
         data: JSON.stringify({'sem': sem, 'subjName':subjName, 'typeTurma': typeTurma}),

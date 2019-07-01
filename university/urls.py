@@ -21,7 +21,6 @@ urlpatterns = [
     path('student/request_change_lesson', views.request_change_lesson_s, name='request_change_lesson_s'),
     path('student/estadoPedidos', views.estado_pedidos_s, name='estado_pedidos_s'),
     path('student/passwordchang', views.password_change, name='password_change_s'),
-    path('student/apagar', views.apagar_s, name='apagar_s'),
     
 
     path('teacher/home', views.home_t, name='home_t'), 

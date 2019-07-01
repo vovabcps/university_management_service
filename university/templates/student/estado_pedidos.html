@@ -141,7 +141,11 @@
 				$(this).closest("tr").remove();
 				var info = this.name;
 
+				let csrf = $("[name=csrfmiddlewaretoken]").val();
 				$.ajax({
+					beforeSend: function(xhr, settings) {
+						xhr.setRequestHeader("X-CSRFToken", csrf)
+					},
 					type: "POST",
 					url: 'estadoPedidos',
 					data: JSON.stringify({'info': info}),

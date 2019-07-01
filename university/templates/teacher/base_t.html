@@ -1,4 +1,5 @@
 {% load staticfiles %}
+
 <!DOCTYPE html>
 
 <html>
@@ -28,8 +29,7 @@
 </head>
 
 <body class="{% block bodyclass %}{% endblock %}">
-
-
+		{% csrf_token %}
 
 <!-- Container -->
 <div id="container">
@@ -63,6 +63,14 @@
 							</li>
 							{% endfor %}
 						</ul>
+					</li>
+				</ul>
+				{% else %}
+				<ul class="nav navbar-top-links navbar-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
+							<em style="opacity: 0.5;" class="fa fa-envelope"></em>
+						</a>
 					</li>
 				</ul>
 				{% endif %}
