@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # models
 from django.contrib.auth.models import User
+from django.views.decorators.cache import cache_page
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
@@ -120,14 +121,12 @@ def redirect_to_user_home(request):
 
 def login_user(request):
     creds = json.loads(request.body.decode("utf-8"))
-    print(creds)
     username = creds['username']
     password = creds['password']
     # print(username, password)
     user = authenticate(request, username=username, password=password)
     if user is not None:
         if user.is_active:
-            print("login")
             login(request, user)
             return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
         else:
@@ -151,7 +150,6 @@ def logout_user(request):
 # --------------------------------------------------------------------------------------------------------------------------------
 #                                                        student
 # --------------------------------------------------------------------------------------------------------------------------------
-
 def home_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE):
 
