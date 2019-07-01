@@ -6,8 +6,7 @@ metadata:
   labels:
     app: wyvern-base
 spec:
-  # Number of replicas of our Django application
-  replicas: 2
+  replicas: 3
   template:
     metadata:
       labels:
@@ -19,7 +18,6 @@ spec:
         # delete in production
         imagePullPolicy: Always
         env:
-            # [START cloudsql_secrets]
             - name: DATABASE_USER
               valueFrom:
                 secretKeyRef:
@@ -30,33 +28,14 @@ spec:
                 secretKeyRef:
                   name: cloudsql
                   key: password
-            # [END cloudsql_secrets]
         ports:
         - containerPort: 8080
-
-      # [START proxy_container]
-      - image: b.gcr.io/cloudsql-docker/gce-proxy:latest
-        name: cloudsql-proxy
-        # !!! Change instance connection name !!!
-        command: ["/cloud_sql_proxy", "--dir=/cloudsql",
-                  "-instances=wyvern-244919:europe-west2:wyvern=tcp:3306",
-                  "-credential_file=/secrets/cloudsql/credentials.json"]
-        volumeMounts:
-          - name: cloudsql-oauth-credentials
-            mountPath: /secrets/cloudsql
-            readOnly: true
-          - name: ssl-certs
-            mountPath: /etc/ssl/certs
-          - name: cloudsql
-            mountPath: /cloudsql
-      # [END proxy_container]
-      # [START volumes]
       volumes:
         - name: cloudsql-oauth-credentials
           secret:
             secretName: cloudsql-oauth-credentials
+        - name: cloudsql
+          emptyDir: {}
         - name: ssl-certs
           hostPath:
             path: /etc/ssl/certs
-        - name: cloudsql
-          emptyDir: {}

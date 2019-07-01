@@ -20,108 +20,87 @@
 
 {% block content %}
 
-
-<style>
- #ta, #th, #l2, #l3{
- 	visibility: hidden;
- }
-</style>
-
-
-
-<script>
-	$(document).ready(function(){
-		$("#f1").click(function(){
-			$("#ta").css("visibility", "visible");
-			$("#th").css("visibility", "visible");
-			$("#l2").css("visibility", "visible");
-			$("#l3").css("visibility", "visible");
-		});
-	});
-</script>
-
+<div class="aqui">
+  <h4>ENVIO DE PEDIDO DE MUDANÇA DE TURMA</h4>
+  <br>
+<div>
 
 
 <div class="panel panel-default">
     <div class="panel-body tabs">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Arquitetura de Computadores</a></li>
-            <li><a href="#tab2" data-toggle="tab">Fisica I</a></li>
-            <li><a href="#tab3" data-toggle="tab">Programação I</a></li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="tab1">
-                <h4>Arquitetura de Computadores</h4>
-                <div class="tabs">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a href="#subtab1" data-toggle="tab">Teórica</a></li>
-                        <li><a href="#subtab2" data-toggle="tab">Prática</a></li>
-                        <li><a href="#subtab3" data-toggle="tab">Laboratorial</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="subtab1">
-                            <h4>Teórica</h4>
-                            <p>Turma Atual: T11</p>
 
-                            <p>Escolhe a turma para onde pretendes ir:</p>
+        <ul class="nav nav-tabs">
+            {% for subjName, list in formatDicBySubj.items %}
+              {% if forloop.counter == 1 %}
+              <li class="active"><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>
+              {% else %}
+              <li><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            <!--<li class="active"><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>-->
+        </ul>
+
+                    <div class="tab-content">
+                        {% for subjName, list in formatDicBySubj.items %}
+                            {% if forloop.counter == 1 %}
+                                      <div id="{{forloop.counter}}" class="tab-pane active in">
+                            {% else %}
+                                        <div id="{{forloop.counter}}" class="tab-pane fade">
+                            {% endif %}
+                            <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
+
+                            <select style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, '{{subjName}}')">
+                                <option hidden disabled selected value> -- select an option -- </option>
+                                {% for user, turmas in list.1.items %}
+                                <option id="{{user}}" value="{{user}}">{{user}}</option>
+                                {% endfor %}
+                            </select>
+
+                            <br>
+                            <p class="o2">2. O Aluno encontra-se atualmente INSCRITO nas Turmas:</p>
+
+                            <div id="turmasActuais{{subjName}}">
+                            </div>
+                            <br>
+                            <br>
+                            <p class="o3">3. Escolha a NOVA Turma:</p>
                             <div class="form-group" style="margin-left: 10%">
-                                <label>Monday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>T12, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
+                              <label class="nt">
+                                  {% for typeTurmas in list.0 %}
+                                  <div class="radio">
+
+                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}">{{typeTurmas}}
+
+
+                                    </div>
+                                  {% endfor %}
+
+                              </label>
                             </div>
                         </div>
-                        <div class="tab-pane fade" id="subtab2">
-                            <h4>Prática</h4>
-                            <p>Turma Atual: TP22</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Tuesday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>TP23, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>TP21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab3">
-                            <h4>Laboratorial</h4>
-                            <p>Turma Atual: PL23</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>PL21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" checked>PL22, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="tab2">
-                <h4>Fisica I</h4>
-            </div>
-            <div class="tab-pane fade" id="tab3">
-                <h4>Programação I</h4>
-            </div>
-        </div>
+                        {% endfor %}
+
         <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
+
     </div>
 </div>
+
+<script>
+    function mostrarTurmasActuais(selectObject, dic, subjName) {
+      console.log(selectObject.value)
+      console.log(dic)
+      var value = selectObject.value;
+      var lstTurmas= dic[selectObject.value]
+      var buttons= ""
+      for (var i= 0; i<lstTurmas.length; i++){
+        console.log(lstTurmas[i])
+        buttons += "<button type='button' class='btn btn-sm btn-default cenasMinhas ta1'>" + lstTurmas[i] + "</button>"
+      }
+
+      document.getElementById("turmasActuais"+subjName).innerHTML= buttons
+  }
+
+</script>
 
 {% endblock %}

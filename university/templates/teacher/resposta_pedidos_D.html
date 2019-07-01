@@ -15,122 +15,164 @@
 		<div class="row">
 				<div class="col-md-6">
 					<div class="panel panel-default">
-						<div class="panel-body tabs">
-							<ul class="nav nav-tabs">
-								<li class="active"><a href="#tab1" data-toggle="tab">Projeto Tecnologias de Informação</a></li>
-								<li><a href="#tab2" data-toggle="tab">Projeto Tecnologias de Redes</a></li>
-							</ul>
-							<div class="tab-content">
-								<div class="tab-pane fade in active" id="tab1">
-									<h4>Projeto Tecnologias de Informação</h4>
-									<table class="table">
-										<thead>
+						<div class="panel-body" id="responder_pedidos">
+							{% if listPedidos %}
+								<table class="table" id="responder_pedidos_table">
+									<thead>
 											<tr>
-												<th colspan="5">Mudança de Turma</th>
+												<th colspan="5">Resposta a Pedidos</th>
 											</tr>
 											<tr>
-												<th>Número</th>
-												<th>Nome</th>
+												<th>Disciplina</th>
+												<th>Aluno</th>
 												<th>Origem</th>
 												<th>Mudança</th>
 												<th></th>
 											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>11111</td>
-												<td>Ana Lúcia</td>
-												<td>TP23</td>
-												<td>TP24</td>
-												<td>
-													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
-													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
-												</td>
-											</tr>
-											<tr>
-												<td>22222</td>
-												<td>Claudia Pascoal</td>
-												<td>TP24</td>
-												<td>TP23</td>
-												<td>
-													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
-													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-								<div class="tab-pane fade" id="tab2">
-									<h4>Projeto Tecnologias de Redes</h4>
-									<table class="table">
-										<thead>
-											<tr>
-												<th colspan="5">Mudança de Turma</th>
-											</tr>
-											<tr>
-												<th>Número</th>
-												<th>Nome</th>
-												<th>Origem</th>
-												<th>Mudança</th>
-												<th></th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr>
-												<td>33333</td>
-												<td>Carlos Andrade</td>
-												<td>PL21</td>
-												<td>PL22</td>
-												<td>
-													<button type="button" class="btn btn-sm btn-success">Aceitar</button>
-													<button type="button" class="btn btn-sm btn-danger">Rejeitar</button>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
+									</thead>
+									<tbody>
+											{%for student, subj, start, final, status in listPedidos %}
+												<tr>
+													<td>{{subj.name}}</td>
+													<td>{{student.name}} ({{student.id}})</td>
+													<td>{{start}}</td>
+													<td>{{final}}</td>
+													<td class="options">
+														<button type="button" class="btn btn-sm btn-success" name="{{subj.name}}|{{student.name}}|{{start}}|{{final}}|True">Aceitar</button>
+														<button type="button" class="btn btn-sm btn-danger" name="{{subj.name}}|{{student.name}}|{{start}}|{{final}}|False">Rejeitar</button>
+													</td>
+												</tr>
+											{% endfor %}
+									</tbody>
+								</table>
+							{% else %}
+								<p>De momento não há pedidos para responder.</p>
+							{% endif %}
 						</div>
 					</div><!--/.panel-->
 				</div><!--/.col-->
-	
+
 				<div class="col-md-6">
 					<div class="panel panel-default">
-						<div class="panel-body">
-							<table class="table">
-								<thead>
-									<tr>
-										<th colspan="5">Mudança de Turma</th>
-									</tr>
-									<tr>
-										<th>Número</th>
-										<th>Nome</th>
-										<th>Origem</th>
-										<th>Mudança</th>
-										<th>Ação Tomada</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td>11111</td>
-										<td>Ana Lúcia</td>
-										<td>TP23</td>
-										<td>TP24</td>
-										<td>Aceite</td>
-									</tr>
-									<tr>
-										<td>22222</td>
-										<td>Claudia Pascoal</td>
-										<td>TP24</td>
-										<td>TP23</td>
-										<td>Rejeitado</td>
-									</tr>
-								</tbody>
-							</table>
+						<div class="panel-body" id="historico_pedidos">
+							{% if historicoPedidos %}
+								<table class="table" id="historico_pedidos_table">
+									<thead>
+										<tr>
+											<th colspan="5" style="text-align: center">Pedidos Respondidos</th>
+										</tr>
+										<tr>
+											<th>Disciplina</th>
+											<th>Aluno</th>
+											<th>Origem</th>
+											<th>Mudança</th>
+											<th>Ação (Estado)</th>
+										</tr>
+									</thead>
+									<tbody>
+										{%for student, subj, start, final, status in historicoPedidos %}
+											<tr>
+												<td>{{subj.name}}</td>
+												<td>{{student.name}} ({{student.id}})</td>
+												<td>{{start}}</td>
+												<td>{{final}}</td>
+												{% if status == True %}
+													<td>Aceite</td>
+												{% else %}
+													<td>Rejeitado</td>
+												{% endif %}
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							{% else %}
+								<p>Não há histórico de pedidos respondidos.</p>
+							{% endif %}
+
+							<br>
+
+							{% if pedidosS %}
+								<table class="table" id="pedidosS_table">
+									<thead>
+										<tr>
+											<th colspan="5" style="text-align: center">Pedidos Realizados</th>
+										</tr>
+										<tr>
+											<th>Disciplina</th>
+											<th>Aluno</th>
+											<th>Origem</th>
+											<th>Mudança</th>
+											<th>Ação (Estado)</th>
+										</tr>
+									</thead>
+									<tbody>
+										{%for student, subj, start, final, status in pedidosS %}
+											<tr>
+												<td>{{subj.name}}</td>
+												<td>{{student.name}} ({{student.id}})</td>
+												<td>{{start}}</td>
+												<td>{{final}}</td>
+												{% if status == True %}
+													<td>Aceite</td>
+												{% elif status == False %}
+													<td>Rejeitado</td>
+												{% else %}
+													<td>{{status}}</td>
+												{% endif %}
+											</tr>
+										{% endfor %}
+									</tbody>
+								</table>
+							{% else %}
+								<p>Ainda não realizou nenhum pedido.</p>
+							{% endif %}
 						</div>
 					</div><!--/.panel-->
 				</div><!--/.col-->
 			</div><!--/.row-->
 </div><!--/.main-->
+
+<script>
+		$(document).ready(function(){
+			$("#responder_pedidos_table button").click(function(){
+				var row = $(this).closest("tr");
+				$(this).closest("tr").remove();
+				var info = this.name;
+
+				$.ajax({
+					type: "POST",
+					url: 'resposta_pedidos',
+					data: JSON.stringify({'info': info}),
+					success: function (data) {
+						//console.log(data)
+							if (data['message'] == "success") {
+								if (info.split("|")[4] == "True") {
+									row.find(".options").html("Aceite");
+								} else if (info.split("|")[4] == "False") {
+									row.find(".options").html("Rejeitado");
+								}
+
+								var table = $("#responder_pedidos_table");
+								if (table.find("tbody").children().length == 0) {
+									table.remove();
+									$("#responder_pedidos").append("<p>De momento não há pedidos para responder.</p>");
+								}
+
+								row_html = "<tr>" + row.html() + "</tr>";
+								if ($("#historico_pedidos_table").length) {
+									$("#historico_pedidos_table tbody").append(row_html);
+								} else {
+									$("#historico_pedidos p").remove();
+									$("#historico_pedidos").append('<table class="table" id="historico_pedidos_table"><thead><tr><th colspan="5" style="text-align: center">Estado dos Pedidos</th></tr><tr><th>Disciplina</th><th>Professor</th><th>Origem</th><th>Mudança</th><th>Ação Tomada</th></tr></thead><tbody></tbody></table>');
+									$("#historico_pedidos_table tbody").append(row_html);
+								}
+							} else {
+									alert("Algo de errado aconteceu :(")
+							}
+						}
+				});
+			})
+		});
+</script>
 
 {% endblock %}

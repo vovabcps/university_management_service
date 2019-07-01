@@ -296,9 +296,8 @@ function lowerCaseAllWordsExceptFirstLetters(string) {
         sigla = sigla + lista[i][0]
       }else if (lista[i].indexOf('I') > -1 && lista[i].indexOf('(') <= -1) { //(LTI) / PII
                 sigla = sigla + lista[i]
-      }else if (lista[i].length == 1) { //(LTI) / PII
+      }else if (lista[i].length == 1 && lista[i] === lista[i].toUpperCase()) { //(LTI) / PII
         sigla = sigla + lista[i]
-      
       }
     }
     console.log(sigla)
@@ -322,9 +321,9 @@ function marcado(obj,id) {
             e[i].style.opacity= "1";
             e[i].style.boxShadow= "1px 2px 6px 1px #1b3680";
             e[i].classList.add("w3-khaki");
-            e[i].setAttribute('data-'+semestre, false) 
+            e[i].setAttribute('data-'+semestre, false)
         }
-    }  
+    }
 }
 
 
@@ -338,15 +337,15 @@ function move() {
     var aumento= 100/totalAllLessons;
     console.log(totalAllLessons)
 
-    var elem = document.getElementById("myBar");   
+    var elem = document.getElementById("myBar");
     var prog = document.getElementById("percent");
-    var width= prog.innerHTML; 
+    var width= prog.innerHTML;
 
     console.log(aumento)
     console.log(escolhidos)
-    width = escolhidos * aumento; 
+    width = escolhidos * aumento;
     console.log(width)
-    elem.style.width = width + '%'; 
+    elem.style.width = width + '%';
     prog.innerHTML = width.toFixed(2);
     if (width >= 100) {
       elem.style.backgroundColor= "green";
@@ -390,7 +389,7 @@ function minicToggle(mcName){
 
 
 window.onscroll = function() {myFunction()};
-    
+
 function myFunction() {
 	if (document.body.scrollTop > 15|| document.documentElement.scrollTop > 15) {
 		document.getElementById("bar_nav").classList.add("nse-top-navigation--with-bottom-shadow");
@@ -416,7 +415,7 @@ function calend(triger, dicAulas){
     var DataDeHojeManipuladaSTR= DiaDeHojeCerto + MesAnoDeHojeManipuladaSTR;
     var d = DataDeHojeManipuladaSTR.split("/");
     var DataDeHojeManipulada= new Date(d[2], parseInt(d[1])-1, d[0]);
-    
+
 
 
     if (triger == undefined){
@@ -426,7 +425,7 @@ function calend(triger, dicAulas){
     }else{
         var mesActual= meses.indexOf(document.getElementById("mes").innerHTML.split("<br>")[0]);
         var anoActual= parseInt(document.getElementById("ano").innerHTML);
-    
+
         if (triger == "anterior"){
             if (mesActual == 0) {
                 var mes= 11;
@@ -502,7 +501,7 @@ function buildCalendar(mes, ano, DataDeHojeManipulada){
                 }else{
                     td.setAttribute("data-aulas", "false")
                 }
-                
+
                 if(is_ferias(dmaCheck, ferias)){
                     td.setAttribute("bgcolor", 'blanchedalmond')
                     td.setAttribute("data-aulas", "false")
@@ -559,12 +558,12 @@ function inserirAulas(dicAulas,mes,ano){
 
     for (var sem in dicAulas) {
         var dicAulasSem= dicAulas[sem]
-        for (var diaDaSemana in dicAulasSem) { //para cada dia da semana 
+        for (var diaDaSemana in dicAulasSem) { //para cada dia da semana
             var lstAulas= dicAulasSem[diaDaSemana] //as aulas que tenho nesse dia de semana
 
             var HTMLaulas="";
 
-            for (var a= 0; a < lstAulas.length; a++){ 
+            for (var a= 0; a < lstAulas.length; a++){
                 //criar o html das aulas que vou ter nesse dia de semana
                 if (lstAulas[a][1] in dicSubjectColor){
                     var color= dicSubjectColor[lstAulas[a][1]];
@@ -596,7 +595,7 @@ function inserirAulas(dicAulas,mes,ano){
 
 
 function getDiasNumMes(mes, ano){
-    //mes+1 por causa do indice ex: março= 2+1 
+    //mes+1 por causa do indice ex: março= 2+1
     // ex: (março) getDiasNumMes(3, 2019) -> 31
     return new Date(ano, mes+1,0).getDate();
 }
@@ -622,9 +621,9 @@ function showAulas(link){
     var diaDaSemana= getDiaDaSemana(diaMesAno[0], diaMesAno[1], diaMesAno[2]);
 
     //modal
-    var modalAulas = document.getElementById("showAulas"); 
+    var modalAulas = document.getElementById("showAulas");
     modalAulas.setAttribute("data-DMA", diaMesAno[0] + "/"+diaMesAno[1]+ "/"+diaMesAno[2]);
-    var HTMLheader= "<div class='headerModal'><div> " + diasDaSemana[diaDaSemana] + ", " + diaMesAno[0] + " " + meses[diaMesAno[1]] + 
+    var HTMLheader= "<div class='headerModal'><div> " + diasDaSemana[diaDaSemana] + ", " + diaMesAno[0] + " " + meses[diaMesAno[1]] +
     "<span onclick=document.getElementById('modalContent').style.display='none' class='closeButton'>&times;</span></div></div>";
     modalAulas.innerHTML = HTMLheader;
     var lst = boxAulas.children;
@@ -681,10 +680,13 @@ function aulaEscolhida(aula){
             aulaEscolhidaTxt += "<h5>Cadeira: <span id='cadeiraEscolhida'>" + nomeSubj + "</span> ("+aula.children[1].innerHTML + ") </h5>"
             var turmaEscolhida= aula.children[2].innerHTML
             aulaEscolhidaTxt += "<h5>Turma: " + turmaEscolhida + "</h5>"
+            var listAlunos= data['alunos']
+            aulaEscolhidaTxt += "<br>Nº de alunos: " + listAlunos.length
+            aulaEscolhidaTxt += "<br>Selecionar todos os alunos: <input type='checkbox' onclick='toggle(this)' />"
             opcao2.innerHTML = aulaEscolhidaTxt;
 
             //tabela
-            var table= document.createElement("Table"); 
+            var table= document.createElement("Table");
             table.setAttribute("id", 'students_table')
             table.setAttribute("class", 'table')
             opcao2.appendChild(table)
@@ -699,7 +701,7 @@ function aulaEscolhida(aula){
 
                 for(var l = 0; l<listAlunos.length; l++){
                     var linha= table.insertRow(-1);
-                    linha.innerHTML = "<td>"+ listAlunos[l][0] +"</td><td>"+ listAlunos[l][1] +"</td><td><div class='checkbox'><label><input type='checkbox' name='presenca' value="+ listAlunos[l][0] +"></label></div></td>"
+                    linha.innerHTML = "<td>"+ listAlunos[l][0] +"</td><td>"+ listAlunos[l][1] +"</td><td><div class='checkbox'><label><input style='transform: scale(1.2)' type='checkbox' name='presenca' value="+ listAlunos[l][0] +"></label></div></td>"
                 }
 
                 opcao2.innerHTML += "<button onclick=guardarPresenças('"+ diasDaSemana[diaDaSemana]+"','"+ date +"','"+ turmaEscolhida+ "') style='float: right' class='btn btn-lg btn-primary'>Submit</button>"
@@ -734,44 +736,40 @@ function guardarPresenças(week_day, date, turmaEscolhida){
     console.log(alunosEscolhidos)
     console.log(alunosNaoEscolhidos)
 
-    if (alunosEscolhidos.length == 0){
-        alert("Escolha pelo menos um aluno!")
-    }else{
-        var cadeiraEscolhida= document.getElementById("cadeiraEscolhida").innerHTML
+    var cadeiraEscolhida= document.getElementById("cadeiraEscolhida").innerHTML
 
-        //guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
-        var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
-        localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
-            
-        $.ajax({
-            type: "POST",
-            url: 'presencas_registar',
-            data: JSON.stringify({
+    //guardar temporariamente, assim se quizer mudar alguma opçao nao presisa de escolher todo novamente
+    var alunosEscolhidosLessonDate= JSON.stringify(alunosEscolhidos);
+    localStorage.setItem(cadeiraEscolhida + ", " + date + ", " + turmaEscolhida, alunosEscolhidosLessonDate);
+
+    $.ajax({
+        type: "POST",
+        url: 'presencas_registar',
+        data: JSON.stringify({
             'alunosEscolhidos': alunosEscolhidos,
             'alunosNaoEscolhidos': alunosNaoEscolhidos,
             'week_day':week_day.toUpperCase(),
             'date':date,
             'cadeiraEscolhida': cadeiraEscolhida,
             'turmaEscolhida': turmaEscolhida
-            }),
-            success: function (data) {
-                console.log(data)
-                alert("Presenças guardadas")
-            }
-        });
-    }
+        }),
+        success: function (data) {
+            console.log(data)
+            alert("Presenças guardadas")
+        }
+    });
 }
 
 // ------------------------------ Calendario responsive -----------------------------------------------------
-var sizes = [ 
+var sizes = [
     window.matchMedia("(max-height: 600px)"),
     window.matchMedia("(max-height: 500px)"),
     window.matchMedia("(max-height: 300px)")
 ]
 function responsiveModel(){
-    for (var i=0; i<sizes.length; i++){ 
-        myFunction(); 
-        sizes[i].addListener(myFunction); 
+    for (var i=0; i<sizes.length; i++){
+        myFunction();
+        sizes[i].addListener(myFunction);
     }
 }
 
@@ -783,12 +781,12 @@ function myFunction(){
     for (var i = 0; i<boxAulas.length; i++){
          if (boxAulas[i].children[0] != undefined && boxAulas[i].children[0].className != "link")
             lstPrim.push(boxAulas[i].children[0]);
-         if (boxAulas[i].children[1] != undefined && boxAulas[i].children[1].className != "link") 
+         if (boxAulas[i].children[1] != undefined && boxAulas[i].children[1].className != "link")
             lstSeg.push(boxAulas[i].children[1]);
-         if (boxAulas[i].children[2] != undefined && boxAulas[i].children[2].className != "link") 
+         if (boxAulas[i].children[2] != undefined && boxAulas[i].children[2].className != "link")
             lstTer.push(boxAulas[i].children[2]);
     }
-    
+
     for (var i = 0; i < lstPrim.length; i++){
         if (sizes[2].matches) lstPrim[i].style.display = "none"; //se for menor q 300px
         else lstPrim[i].style.display = "block"; //se for maior q 300px
@@ -816,12 +814,12 @@ function myFunction(){
         if (contHidden != 0) { //se falta aparecer alguma aula
             var idSpan= lstAulas[lstAulas.length -1].firstElementChild.id;
             document.getElementById(idSpan).innerHTML = contHidden; //atualiza o numero de aulas escondidas
-            lstLink[i].style.display = "block"; 
+            lstLink[i].style.display = "block";
         }else{
-            lstLink[i].style.display = "none"; 
+            lstLink[i].style.display = "none";
         }
     }
-    
+
 }
 
 
@@ -837,7 +835,7 @@ function dragElement(elmnt) {
       /* otherwise, move the DIV from anywhere inside the DIV:*/
       elmnt.onmousedown = dragMouseDown;
     }
-  
+
     function dragMouseDown(e) {
       e = e || window.event;
       // get the mouse cursor position at startup:
@@ -847,7 +845,7 @@ function dragElement(elmnt) {
       // call a function whenever the cursor moves:
       document.onmousemove = elementDrag;
     }
-  
+
     function elementDrag(e) {
       e = e || window.event;
       // calculate the new cursor position:
@@ -859,13 +857,12 @@ function dragElement(elmnt) {
       elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
       elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
     }
-  
+
     function closeDragElement() {
       /* stop moving when mouse button is released:*/
       document.onmouseup = null;
       document.onmousemove = null;
     }
   }
-
 
 

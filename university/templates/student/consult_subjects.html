@@ -40,7 +40,13 @@
                                                             <p>Regente: {{reg.name}} | Gabinete: {{subjs.subject.regente.gabinete}} | Email: {{subjs.subject.regente.user.email}}</p>
                                                         {% endif %}
                                                         {% endfor %}
+                                                        {% for tuple in myTeachersBoyy %}
+                                                        {% if tuple.0 == subjs.subject.name %}
+                                                            <p>Professores: {{tuple.1}}</p>
+                                                        {% endif %}
+                                                        {% endfor %}
                                                     </div>
+
                                                 </div>
                                             </div>
                                             <div class="clear"></div>
@@ -51,7 +57,9 @@
                             </div><!--End .articles-->
                 </div><!--/.col-->
         </div>
-            
+
+
+
         <div class="row">
                 <div class="col-md-12">
                     <div class="panel panel-default">
@@ -66,7 +74,7 @@
 
                             <p>As disciplinas apresentadas abaixo são do curso em que está inscrito: {{allMyCourseSubj.1.course.name}}</p>
                             <br><hr><br>
-                            
+
                             <table id="resultTable" class="table">
                                     <thead>
                                         <tr>
@@ -98,20 +106,20 @@
                 </div>
         </div><!--/.row-->
 	</div><!--/.main-->
-	
+
 
 
 
     <script>
             function DoSearch(id_input, id_table, n_column) {
                 var input, filter, table, tr, td, i;
-                
+
                 input = document.getElementById(id_input);
                 filter = input.value.toUpperCase();
-                
+
                 table = document.getElementById(id_table);
                 tr = table.getElementsByTagName("tr");
-                
+
                 for (i = 0; i < tr.length; i++) {
                 td = tr[i].getElementsByTagName("td")[n_column];
 

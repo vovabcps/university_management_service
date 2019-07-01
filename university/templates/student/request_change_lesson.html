@@ -2,126 +2,169 @@
 {% load i18n static %}
 {% load university_mytags %}
 
+{% block title %}Pedidos Mudança Turma{% endblock %}
+
+{% block content_title %}Pedidos de mudança de turma{% endblock %}
+
+{% block breadcrumbs %}
+› Mudança de Turma
+{% endblock %}
 
 {% block extrahead %}
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
-
-{% block title %}Pedidos Mudança Turma{% endblock %}
-
-{% block content_title %}{% endblock %}
-
-{% block breadcrumbs %}
-› Mudança de Turma
-{% endblock %}
-
-
 {% block content %}
 
-
 <style>
- #ta, #th, #l2, #l3{
- 	visibility: hidden;
+ .incognito{
+ 	/* visibility: hidden; */
+  /* display: none; */
  }
+
 </style>
 
 
 
 <script>
-	$(document).ready(function(){
-		$("#f1").click(function(){
-			$("#ta").css("visibility", "visible");
-			$("#th").css("visibility", "visible");
-			$("#l2").css("visibility", "visible");
-			$("#l3").css("visibility", "visible");
-		});
-	});
+
+    $(document).ready(function(){
+      $("#tabd").click(function(){
+
+        $(".incognito").css("display", "block");
+        // $(".incognito").css("visibility", "visible");
+
+      });
+    });
+
+  function sendRequest() {
+
+  }
+
 </script>
 
 
+<div class="row" id="myrow">
 
-<div class="panel panel-default">
-    <div class="panel-body tabs">
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Arquitetura de Computadores</a></li>
-            <li><a href="#tab2" data-toggle="tab">Fisica I</a></li>
-            <li><a href="#tab3" data-toggle="tab">Programação I</a></li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane fade in active" id="tab1">
-                <h4>Arquitetura de Computadores</h4>
-                <div class="tabs">
-                    <ul class="nav nav-pills">
-                        <li class="active"><a href="#subtab1" data-toggle="tab">Teórica</a></li>
-                        <li><a href="#subtab2" data-toggle="tab">Prática</a></li>
-                        <li><a href="#subtab3" data-toggle="tab">Laboratorial</a></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade in active" id="subtab1">
-                            <h4>Teórica</h4>
-                            <p>Turma Atual: T11</p>
+          <div class="col-md-12">
+              <div class="panel panel-default">
 
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Monday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>T12, 9:00-10:00, 3.2.14
-                                    </label>
+                  <div class="panel-body tabs">
+                      <ul id="tabd" class="nav nav-tabs">
+                          {% for obj in finalList %}
+                            <li><a href={{obj.id}} data-toggle="tab">{{obj.subjectName}}</a></li>
+                          {%endfor%}
+                      </ul>
+                      <div class="tab-content">
+
+                            {% for obj in finalList %}
+
+                            <div class="tab-pane fade" id={{obj.idNoHashTag}}>
+                              <div class="form-group">
+                                <p>Regente da cadeira: {{obj.subjectRegente}}</p>
+                              </div>
+                              <br>
+                                <!-- <h4>{{obj.subjectName}}</h4> -->
+                                <p>1. Seleciona a Turma ATUAL:</p>
+                                {% for elem in obj.classes %}
+                                  <button type="button" class="btn btn-sm btn-default cenasMinhas">{{ elem }}</button>
+                                {%endfor%}
+
+                                <div class="incognito">
+                                  <br>
+                                  <p>2. Seleciona a turma para onde pretendes MUDAR:</p>
+                                  <div class="form-group" style="margin-left: 10%">
+                                    {% for elem in obj.classest %}
+                                          <div class="radio" id={{obj.idNoHashTagRadio}}>
+                                            <div>
+                                              <input type="radio" name="{{obj.id}}" id="{{obj.subjectName}}|{{elem}}" value="{{elem}}">{{ elem }}
+                                              <!-- <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" -->
+                                            </div>
+                                          </div>
+                                    {%endfor%}
                                 </div>
+                              </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab2">
-                            <h4>Prática</h4>
-                            <p>Turma Atual: TP22</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Tuesday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2" checked>TP23, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>TP21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade" id="subtab3">
-                            <h4>Laboratorial</h4>
-                            <p>Turma Atual: PL23</p>
-                            <p>Escolhe a turma para onde pretendes ir:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                                <label>Friday</label>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios3" value="option3" checked>PL21, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                                <div class="radio">
-                                    <label>
-                                        <input type="radio" name="optionsRadios" id="optionsRadios4" value="option4" checked>PL22, 9:00-10:00, 3.2.14
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="tab-pane fade" id="tab2">
-                <h4>Fisica I</h4>
-            </div>
-            <div class="tab-pane fade" id="tab3">
-                <h4>Programação I</h4>
-            </div>
-        </div>
-        <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
-    </div>
-</div>
+                          {%endfor%}
+                      </div>
+                  <button style="float: right; margin: 20px" class="btn btn-lg btn-primary" id="theBigBadSubmitWolf">Submit Request</button>
+              </div>
+          </div>
+  </div><!--/.row-->
+
+
+
+  <script>
+      $(document).ready(function(){
+
+
+
+        $('li:has(a[href="#tab1"])').addClass('active')
+        $('#tab1').addClass('in')
+        $('#tab1').addClass('active')
+
+        var myButton
+        var myRadio
+        var mySub = $('a[href="#tab1"]').html()
+        console.log(mySub)
+        console.log(myButton)
+        console.log(myRadio)
+
+        $(".cenasMinhas").click(function(){
+            myButton = this.innerHTML
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+        })
+
+        $("input:radio").click(function(){
+
+            myRadio = this.value
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+        })
+
+        $('a[data-toggle="tab"]').click(function(){
+            myButton = undefined
+            myRadio = undefined
+
+            var mySub= this.innerHTML
+            console.log(mySub)
+            console.log(myButton)
+            console.log(myRadio)
+            $("input[type='radio']:checked").filter(":first").prop("checked", false)
+        })
+
+
+
+        $("#theBigBadSubmitWolf").click(function(){
+
+			var info = mySub + "|" + myButton + "|" + myRadio
+			$.ajax({
+				type: "POST",
+				url: 'request_change_lesson',
+				data: JSON.stringify({'new_info': info}),
+				success: function (data) {
+					console.log(data)
+					if (data['message'] == "success") {
+                            alert("Pedido enviado ao regente da cadeira com sucesso!")
+					}
+					else {
+							alert("Escolha uma turma para a qual ainda nao tenha feito um pedido e lembre-se:\nSó pode trocar entre turmas do mesmo tipo")
+					}
+				}
+			});
+		})
+
+
+
+
+    });
+
+
+
+  </script>
 
 {% endblock %}

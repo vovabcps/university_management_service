@@ -3,291 +3,267 @@
 
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
 
-  <link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
-  <link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
-  <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
-	<link href="{% static 'template/css/style.css' %}" rel="stylesheet">
-	
-	<link href="{% static 'our/css/style.css' %}" rel="stylesheet">
-	<script src="{% static 'our/js/javascript.js' %}"></script>
+    <link href="{% static 'template/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/datepicker3.css' %}" rel="stylesheet">
+    <link href="{% static 'template/css/style.css' %}" rel="stylesheet">
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <link href="{% static 'our/css/style.css' %}" rel="stylesheet">
+    <script src="{% static 'our/js/javascript.js' %}"></script>
 
-	<link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
-	
-	{% block extrahead %}{% endblock %}
-  {% block extrastyle %}{% endblock %}
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+
+    <link href="//fonts.googleapis.com/css?family=Montserrat:300,300i,400,400i,500,500i,600,600i,700,700i"
+          rel="stylesheet">
+
+    {% block extrahead %}{% endblock %}
+    {% block extrastyle %}{% endblock %}
 
 
-  {% block responsive %}
-      <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  {% endblock %}
+    {% block responsive %}
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    {% endblock %}
 </head>
 
 <body class="{% block bodyclass %}{% endblock %}">
 
 
-
 <!-- Container -->
 <div id="container">
 
-<!-- Header -->
-{% block nav-global %}
+    <!-- Header -->
+    {% block nav-global %}
 
-		<nav id="bar_nav" class="navbar navbar-custom navbar-fixed-top nse-top-navigation__menu-container" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span></button>
-				<a class="navbar-brand" href=""><span>wyvern</span>|PROFESSOR</a>
-				<ul class="nav navbar-top-links navbar-right">
-					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
-						<em class="fa fa-envelope"></em><span class="label label-danger">15</span>
-					</a>
-						<ul class="dropdown-menu dropdown-messages">
-							<li>
-								<div class="dropdown-messages-box"><a href="" class="pull-left">
-									<img alt="image" class="img-circle" src="http://placehold.it/40/30a5ff/fff">
-									</a>
-									<div class="message-body"><small class="pull-right">3 mins ago</small>
-										<a href=""><strong>John Doe</strong> commented on <strong>your photo</strong>.</a>
-									<br /><small class="text-muted">1:24 pm - 25/03/2015</small></div>
-								</div>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<div class="dropdown-messages-box"><a href="" class="pull-left">
-									<img alt="image" class="img-circle" src="http://placehold.it/40/30a5ff/fff">
-									</a>
-									<div class="message-body"><small class="pull-right">1 hour ago</small>
-										<a href="">New message from <strong>Jane Doe</strong>.</a>
-									<br /><small class="text-muted">12:27 pm - 25/03/2015</small></div>
-								</div>
-							</li>
-							<li class="divider"></li>
-							<li>
-								<div class="all-butt-on"><a href="">
-									<em class="fa fa-inbox"></em> <strong>All Messages</strong>
-								</a></div>
-							</li>
-						</ul>
-					</li>
-					<li class="dropdown"><a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
-						<em class="fa fa-bell"></em><span class="label label-info">5</span>
-					</a>
-						<ul class="dropdown-menu dropdown-alerts">
-							<li><a href="">
-								<div><em class="fa fa-envelope"></em> 1 New Message
-									<span class="pull-right text-muted small">3 mins ago</span></div>
-							</a></li>
-							<li class="divider"></li>
-							<li><a href="">
-								<div><em class="fa fa-heart"></em> 12 New Likes
-									<span class="pull-right text-muted small">4 mins ago</span></div>
-							</a></li>
-							<li class="divider"></li>
-							<li><a href="">
-								<div><em class="fa fa-user"></em> 5 New Followers
-									<span class="pull-right text-muted small">4 mins ago</span></div>
-							</a></li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div><!-- /.container-fluid -->
-	</nav>
-  {% endblock %}
+        <nav id="bar_nav" class="navbar navbar-custom navbar-fixed-top nse-top-navigation__menu-container"
+             role="navigation">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                            data-target="#sidebar-collapse"><span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span></button>
+                    <a class="navbar-brand" href=""><span>wyvern</span>|PROFESSOR</a>
+                    {% if pedidosNotification %}
+                        <ul class="nav navbar-top-links navbar-right">
+                            <li class="dropdown">
+                                <a class="dropdown-toggle count-info" data-toggle="dropdown" href="">
+                                    <em class="fa fa-envelope"></em>
+                                    <span class="label label-danger">{{ pedidosNotification|length }}</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-messages">
+                                    {% for remetente, subj in pedidosNotification %}
+                                        <li>
+                                            <div class="dropdown-messages-box">
+                                                <div class="message-body">
+                                                    <a href="{% url 'resposta_pedidos_t' %}">Novo pedido do aluno
+                                                        <strong>{{ remetente.name }}</strong>.</a>
+                                                    <br/>
+                                                    <small class="text-muted">Disciplina: {{ subj.name }}</small>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        </ul>
+                    {% endif %}
+                </div>
+            </div><!-- /.container-fluid -->
+        </nav>
+    {% endblock %}
     <!-- END Header -->
 
 
+    <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
+        <div class="profile-sidebar">
+            <div class="profile-userpic">
+                <img src="{% static personalData.profile_pic %}" class="img-responsive" alt="">
+            </div>
+            <div class="profile-usertitle">
+                <div class="profile-usertitle-name">{{ personalData.name }}</div>
+                <div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div class="divider"></div>
+        <ul class="nav menu">
+            <li id="home"><a href="{% url 'home_t' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
 
-
-
-
-  <div id="sidebar-collapse" class="col-sm-3 col-lg-2 sidebar">
-		<div class="profile-sidebar">
-			<div class="profile-userpic">
-				<img src="{% static personalData.profile_pic %}" class="img-responsive" alt="">
-			</div>
-			<div class="profile-usertitle">
-				<div class="profile-usertitle-name">{{personalData.name}}</div>
-				<div class="profile-usertitle-status"><span class="indicator label-success"></span>Online</div>
-			</div>
-			<div class="clear"></div>
-		</div>
-		<div class="divider"></div>
-		<ul class="nav menu">
-			<li id="home" ><a href="{% url 'home_t' %}"><em class="fa fa-dashboard">&nbsp;</em>Dashboard</a></li>
-
-						<li id="consultar" class="parent "><a data-toggle="collapse" href="#sub-item-1">
-				<em class="fa fa-navicon">&nbsp;</em> Consultas Gerais <span data-toggle="collapse" href="#sub-item-1" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-1">
-					<li><a class="" href="{% url 'consult_details_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Dados Pessoais
-					</a></li>
-            <li><a class="" href="{% url 'horario_atual_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Horário
-					</a></li>
+            <li id="consultar" class="parent "><a data-toggle="collapse" href="#sub-item-1">
+                <em class="fa fa-navicon">&nbsp;</em> Consultas Gerais <span data-toggle="collapse" href="#sub-item-1"
+                                                                             class="icon pull-right"><em
+                    class="fa fa-plus"></em></span>
+            </a>
+                <ul class="children collapse" id="sub-item-1">
+                    <li><a class="" href="{% url 'consult_details_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Dados Pessoais
+                    </a></li>
+                    <li><a class="" href="{% url 'horario_atual_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Horário
+                    </a></li>
                     <li><a class="" href="{% url 'consult_contacts_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Pesquisa de Contactos
-					</a></li>
-				</ul>
-			</li>
+                        <span class="fa fa-arrow-right">&nbsp;</span> Pesquisa de Contactos
+                    </a></li>
+                </ul>
+            </li>
             <li id="disciplinas" class="parent "><a data-toggle="collapse" href="#sub-item-2">
-				<em class="fa fa-navicon">&nbsp;</em> Disciplinas <span data-toggle="collapse" href="#sub-item-2" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-2">
-					<li><a class="" href="{% url 'consult_turmas_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Consulta Turmas
-					</a></li>
+                <em class="fa fa-navicon">&nbsp;</em> Disciplinas <span data-toggle="collapse" href="#sub-item-2"
+                                                                        class="icon pull-right"><em
+                    class="fa fa-plus"></em></span>
+            </a>
+                <ul class="children collapse" id="sub-item-2">
+                    <li><a class="" href="{% url 'consult_turmas_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Consulta Turmas
+                    </a></li>
                     <li><a class="" href="{% url 'enviar_pedidos_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Envio de Pedido
-					</a></li>
+                        <span class="fa fa-arrow-right">&nbsp;</span> Envio de Pedido
+                    </a></li>
                     <li><a class="" href="{% url 'resposta_pedidos_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Resposta a Pedidos
-					</a></li>
+                        <span class="fa fa-arrow-right">&nbsp;</span> Resposta a Pedidos
+                    </a></li>
                     <li><a class="" href="{% url 'alterar_turmas_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Alterar Turmas
-					</a></li>
-				</ul>
-			</li>
+                        <span class="fa fa-arrow-right">&nbsp;</span> Alterar Turmas
+                    </a></li>
+                </ul>
+            </li>
             <li id="presenças" class="parent "><a data-toggle="collapse" href="#sub-item-3">
-				<em class="fa fa-navicon">&nbsp;</em> Presenças <span data-toggle="collapse" href="#sub-item-3" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-3">
-					<li><a class="" href="{% url 'presencas_registar_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Registo
-					</a></li>
-					<li><a class="" href="{% url 'presencas_consultar_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Consulta
-					</a></li>
-				</ul>
-			</li>
+                <em class="fa fa-navicon">&nbsp;</em> Presenças <span data-toggle="collapse" href="#sub-item-3"
+                                                                      class="icon pull-right"><em
+                    class="fa fa-plus"></em></span>
+            </a>
+                <ul class="children collapse" id="sub-item-3">
+                    <li><a class="" href="{% url 'presencas_registar_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Registo
+                    </a></li>
+                    <li><a class="" href="{% url 'presencas_consultar_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Consulta
+                    </a></li>
+                </ul>
+            </li>
             <li id="passwordchang" class="parent "><a data-toggle="collapse" href="#sub-item-4">
-				<em class="fa fa-navicon">&nbsp;</em> Gestão de Passwords <span data-toggle="collapse" href="#sub-item-4" class="icon pull-right"><em class="fa fa-plus"></em></span>
-				</a>
-				<ul class="children collapse" id="sub-item-4">
-					<li><a class="" href="{% url 'password_change_t' %}">
-						<span class="fa fa-arrow-right">&nbsp;</span> Alteração de Passwords
-					</a></li>
-				</ul>
-			</li>
-			<li id="logout">
-                <a href="#">
-                    <form style="margin: 0; padding: 0" action="{% url 'logout' %}" method="POST">
-                        {% csrf_token %}
+                <em class="fa fa-navicon">&nbsp;</em> Gestão de Passwords <span data-toggle="collapse"
+                                                                                href="#sub-item-4"
+                                                                                class="icon pull-right"><em
+                    class="fa fa-plus"></em></span>
+            </a>
+                <ul class="children collapse" id="sub-item-4">
+                    <li><a class="" href="{% url 'password_change_t' %}">
+                        <span class="fa fa-arrow-right">&nbsp;</span> Alteração de Passwords
+                    </a></li>
+                </ul>
+            </li>
+            <li id="logout">
+
+                <form style="margin: 0; padding: 0" action="{% url 'logout' %}" method="POST">
+                    {% csrf_token %}
+                    <a href="#">
                         <button style="border: none;background: none;padding: 0;">
                             <em class="fa fa-power-off">&nbsp;</em> Logout
                         </button>
-                    </form>
-                </a>
+                    </a>
+                </form>
+
             </li>
-		</ul>
-	</div><!--/.sidebar-->
+        </ul>
+    </div><!--/.sidebar-->
 
 
+    <!-- Content -->
+    <div id="content" class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
 
 
-     <!-- Content -->
-  <div id="content" class="col-sm-9 col-sm-offset-3 col-lg-10 col-lg-offset-2 main">
-   
-
-    <!-- caminho -->
-    <div class="row">
-      <div class="breadcrumbs">
-       <a href="{% url 'home_t' %}"><em class="fa fa-home"></em></a>
-       {% block breadcrumbs %}
-        {% endblock %}
-      </div>
-    </div>
-
-		
-   <!-- messages -->
-     {% block messages %}
-        {% if messages %}
-        <ul class="messagelist">{% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
-        {% endfor %}</ul>
-        {% endif %}
-    {% endblock messages %}
-
-
-
-
-    <!-- header -->
-        {% block pretitle %}{% endblock %}
-        
+        <!-- caminho -->
         <div class="row">
-			    <div class="col-lg-12">
-				    <h1 class="page-header">{% block content_title %}{% endblock %}</h1>
-			    </div>
-		    </div><!--/.row-->
+            <div class="breadcrumbs">
+                <a href="{% url 'home_t' %}"><em class="fa fa-home"></em></a>
+                {% block breadcrumbs %}
+                {% endblock %}
+            </div>
+        </div>
+
+
+        <!-- messages -->
+        {% block messages %}
+            {% if messages %}
+                <ul class="messagelist">{% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|capfirst }}</li>
+                {% endfor %}</ul>
+            {% endif %}
+        {% endblock messages %}
+
+
+
+
+        <!-- header -->
+        {% block pretitle %}{% endblock %}
+
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{% block content_title %}{% endblock %}</h1>
+            </div>
+        </div><!--/.row-->
 
         {% block sidebar %}{% endblock %}
         {% block content %}
-        {% block object-tools %}{% endblock %}
-        {{ content }}
+            {% block object-tools %}{% endblock %}
+            {{ content }}
         {% endblock %}
-        
+
         <br class="clear">
     </div>
     <!-- END Content -->
-  </div>
+</div>
 
-    {% block footer %}
-      <footer class="rodape">
-          <p class="reservado"> © 2019 G05 ALL RIGHTS RESERVED</p> 
-      </footer>
-    {% endblock %}
+{% block footer %}
+    <footer class="rodape">
+        <p class="reservado"> © 2019 G05 ALL RIGHTS RESERVED</p>
+    </footer>
+{% endblock %}
 
 
 </div>
 <!-- END Container -->
 
 
-
-
-  <script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
-  <script src="{% static 'template/js/bootstrap.min.js' %}"></script>
-  <script src="{% static 'template/js/chart.min.js' %}"></script>
-  <script src="{% static 'template/js/chart-data.js' %}"></script>
-  <script src="{% static 'template/js/easypiechart.js' %}"></script>
-  <script src="{% static 'template/js/easypiechart-data.js' %}"></script>
-  <script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
-  <script src="{% static 'template/js/custom.js' %}"></script>
+<script src="{% static 'template/js/jquery-1.11.1.min.js' %}"></script>
+<script src="{% static 'template/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'template/js/chart.min.js' %}"></script>
+<script src="{% static 'template/js/chart-data.js' %}"></script>
+<script src="{% static 'template/js/easypiechart.js' %}"></script>
+<script src="{% static 'template/js/easypiechart-data.js' %}"></script>
+<script src="{% static 'template/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'template/js/custom.js' %}"></script>
 
 
 <script>
-var pageArray = location.pathname.split('/');
-console.log(pageArray);
-var pag, li;
-if (pageArray[pageArray.length - 1] == ""){
-    pag = pageArray[pageArray.length - 2]
-}else{
-    pag = pageArray[pageArray.length - 1]
-}
+    var pageArray = location.pathname.split('/');
+    console.log(pageArray);
+    var pag, li;
+    if (pageArray[pageArray.length - 1] == "") {
+        pag = pageArray[pageArray.length - 2]
+    } else {
+        pag = pageArray[pageArray.length - 1]
+    }
 
-if (pag == "consult_details" || pag == "consult_contacts" || pag == "horario"){
-	pag="consultar";  
-} 
+    if (pag == "consult_details" || pag == "consult_contacts" || pag == "horario") {
+        pag = "consultar";
+    }
 
-if (pag == "consult_turmas" || pag == "resposta_pedidos" || pag =="enviar_pedidos" || pag =="alterar_turmas"){
-	pag="disciplinas";  
-} 
+    if (pag == "consult_turmas" || pag == "resposta_pedidos" || pag == "enviar_pedidos" || pag == "alterar_turmas") {
+        pag = "disciplinas";
+    }
 
-if (pag == "presencas_registar" || pag == "presencas_consultar"){
-	pag="presenças";
-}
+    if (pag == "presencas_registar" || pag == "presencas_consultar") {
+        pag = "presenças";
+    }
 
-li= document.getElementById(pag);
-console.log(pag)
-li.classList.add("active");
+    li = document.getElementById(pag);
+    console.log(pag);
+    li.classList.add("active");
 </script>
 
 </body>

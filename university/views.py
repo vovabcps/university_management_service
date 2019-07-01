@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 
 # models
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
 from .models import *
@@ -27,6 +28,10 @@ from django.core.files.storage import FileSystemStorage, default_storage
 import sys
 import re
 from itertools import groupby
+from django.db.models import Q
+import operator
+from functools import reduce
+import copy
 
 # password change
 from django.contrib.auth import update_session_auth_hash
@@ -38,7 +43,6 @@ from django.core.validators import validate_email
 
 # date django model, presenças
 from datetime import datetime, timedelta
-from django.views.decorators.csrf import csrf_exempt
 
 
 # --------------------- all in common -----------------------
@@ -151,19 +155,30 @@ def logout_user(request):
 def home_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE):
 
-        su = request_user(request)
-        schoolYearObj = SchoolYear.objects.get(begin=2018)
-        inscrito = list(SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj))
-        # print(inscrito)
+        if request.method == 'GET':
+            su = request_user(request)
+            schoolYearObj = SchoolYear.objects.get(begin=2018)
+            inscrito = list(SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj))
+            # print(inscrito)
 
-        suCourse = SystemUserCourse.objects.get(user=su).course
+            suCourse = SystemUserCourse.objects.get(user=su).course
 
-        regentes = []
-        for sub in inscrito:
-            if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
-                regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
+            regentes = []
+            for sub in inscrito:
+                if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
+                    regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
-        return render(request, 'student/home.html', {"suAllSubjects": inscrito, "suRegentes": regentes})
+            return render(request, 'student/home.html', {"suAllSubjects": inscrito, "suRegentes": regentes})
+
+        else:
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            # horario cadeira, prim pedido ajax
+            nomeCadeira = dadosJson['nomeCadeira']
+            print(nomeCadeira)
+            schedule = buildHorarioSubject(nomeCadeira)
+            return HttpResponse(json.dumps({"message": "success", 'schedule': schedule}),
+                                content_type="application/json")
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -482,7 +497,7 @@ def consult_subjects_s(request):
         allMyCourseSubj = list(CourseSubject.objects.filter(course=suCourse))
 
         miniCs = Course_MiniCourse.objects.filter(course=suCourse)
-        print(miniCs)
+        # print(miniCs)
 
         nameBefore = []
         for mC in miniCs:
@@ -498,8 +513,44 @@ def consult_subjects_s(request):
             if PersonalInfo.objects.filter(user=sub.subject.regente).first() not in regentes:
                 regentes.append(PersonalInfo.objects.filter(user=sub.subject.regente).first())
 
+        listofSubs = []
+        for line in inscrito:
+            listofSubs.append(line.subject)
+
+        ohlord = (list(Lesson.objects.filter(subject__in=listofSubs).values("subject__name", "professor__user")))
+
+        from itertools import groupby
+
+        tempList = []
+        myLastList = []
+
+        for sub_name, g in groupby(ohlord, lambda a: a["subject__name"]):
+            print(sub_name)
+
+            listofTeachers = []
+            a = copy.deepcopy(g)
+            for d in a:
+                if d["professor__user"] not in listofTeachers:
+                    listofTeachers.append(d["professor__user"])
+                    tempList.append(d["professor__user"])
+            myLastList.append((sub_name, listofTeachers))
+            print(listofTeachers)
+        print(tempList)
+
+        finallyDone = list(PersonalInfo.objects.filter(user__user__in=tempList).values("user__user", "name"))
+
+        TrueFinalList = []
+        for tuple in myLastList:
+            sub = tuple[0]
+            teacher_string = ""
+            for line in finallyDone:
+                if line["user__user"] in tuple[1]:
+                    teacher_string += line["name"] + ", "
+            TrueFinalList.append((sub, teacher_string[:-2]))
+
         return render(request, 'student/consult_subjects.html',
-                      {"suAllSubjects": inscrito, "suRegentes": regentes, "allMyCourseSubj": allMyCourseSubj})
+                      {"suAllSubjects": inscrito, "suRegentes": regentes, "allMyCourseSubj": allMyCourseSubj,
+                       "myTeachersBoyy": TrueFinalList})
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -541,9 +592,19 @@ def consult_presencas_s(request):
                 bySchoolYear[anoletivo][tupleLessonName] = {}
 
             if lessonType not in bySchoolYear[anoletivo][tupleLessonName]:
-                bySchoolYear[anoletivo][tupleLessonName][lessonType] = [(l.date, l.presente)]
+                if l.presente == True:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType] = [[1, 100], [(l.date, l.presente)]]
+                else:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType] = [[0, 0], [(l.date, l.presente)]]
             else:
-                bySchoolYear[anoletivo][tupleLessonName][lessonType].append((l.date, l.presente))
+                bySchoolYear[anoletivo][tupleLessonName][lessonType][1].append((l.date, l.presente))
+                classesTotal = len(bySchoolYear[anoletivo][tupleLessonName][lessonType][1])
+                if l.presente == True:
+                    bySchoolYear[anoletivo][tupleLessonName][lessonType][0][0] += 1
+
+                classes = bySchoolYear[anoletivo][tupleLessonName][lessonType][0][0]
+                percentage = (float(classes) / float(classesTotal)) * 100
+                bySchoolYear[anoletivo][tupleLessonName][lessonType][0][1] = percentage
 
         schoolYears.sort()
         return render(request, 'student/consult_presenças.html',
@@ -562,14 +623,215 @@ def consult_university_s(request):
 
 def request_change_lesson_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE):
-        return render(request, 'student/request_change_lesson.html', {})
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+
+        if request.method == "GET":
+            #### Turmas atuais
+            class RequestChangeLesson:
+
+                def __init__(self, tab_name, sub_name, sub_reg, classes_students, classes_list_turmas):
+                    self.id = "#" + tab_name
+                    self.idNoHashTag = tab_name
+                    self.idNoHashTagRadio = "radio" + tab_name
+                    self.subjectName = sub_name
+                    self.subjectRegente = sub_reg
+                    self.classes = classes_students
+                    self.classest = classes_list_turmas
+
+            finalList = []
+
+            suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
+
+            i = 1
+            for suSubj in suSubjs:
+                subj = suSubj.subject
+                sem = suSubj.subjSemestre
+                SUregente = subj.regente
+                piObj = PersonalInfo.objects.get(user=SUregente)
+                regenteName = piObj.name
+                lstTurmas = suSubj.turmas.split(" ")
+                # ex: lstTurmas-> ["T11","TP13","PL13"]
+                lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+
+                # Turmas todas
+                discTurmas = Lesson.objects.values_list('subject__name', 'type', 'turma', 'week_day', 'hour',
+                                                        'room__room_number').filter(subject=subj)
+
+                tTurmaComp = list()
+
+                for discTurma in discTurmas:
+                    if discTurma[1] + str(discTurma[2]) not in lstTurmasSemEspaços:
+                        tSubj = discTurma[0]
+                        tType = discTurma[1]
+                        tTurma = discTurma[2]
+
+                        a = tType + str(tTurma)
+
+                        tTurmaComp.append(a)
+
+                finalList.append(
+                    RequestChangeLesson("tab" + str(i), subj.name, regenteName, lstTurmasSemEspaços, tTurmaComp))
+                i += 1
+
+            return render(request, 'student/request_change_lesson.html', {"finalList": finalList})
+        elif request.method == "POST":
+
+            # i had no choice sry
+            #### Turmas atuais
+            class RequestChangeLesson:
+
+                def __init__(self, sub_name, classes_students, classes_list_turmas):
+                    self.subjectName = sub_name
+                    self.classes = classes_students
+                    self.classest = classes_list_turmas
+
+            finalList = []
+
+            suSubjs = SystemUserSubject.objects.filter(user=su, anoLetivo=schoolYearObj)
+
+            for suSubj in suSubjs:
+                subj = suSubj.subject
+
+                lstTurmas = suSubj.turmas.split(" ")
+                # ex: lstTurmas-> ["T11","TP13","PL13"]
+                lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+
+                # Turmas todas
+                discTurmas = Lesson.objects.values_list('subject__name', 'type', 'turma', 'week_day', 'hour',
+                                                        'room__room_number').filter(subject=subj)
+
+                tTurmaComp = list()
+
+                for discTurma in discTurmas:
+                    if discTurma[1] + str(discTurma[2]) not in lstTurmasSemEspaços:
+                        tType = discTurma[1]
+                        tTurma = discTurma[2]
+
+                        a = tType + str(tTurma)
+
+                        tTurmaComp.append(a)
+
+                finalList.append(RequestChangeLesson(subj.name, lstTurmasSemEspaços, tTurmaComp))
+
+            print(finalList)
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['new_info']
+            my_pretty_info = inf.split("|")
+
+            req_subject = my_pretty_info[0]
+            old_class = my_pretty_info[1]
+            new_class = my_pretty_info[2]
+
+            def validate_input(re_subject, old_class, new_class, finalList):
+
+                for obj in finalList:
+                    if obj.subjectName == re_subject and old_class in obj.classes and new_class in obj.classest:
+                        if separateLettersNumb(old_class)[0] == separateLettersNumb(new_class)[0]:
+                            pedidosSent = list(
+                                SystemUserMensagens.objects.filter(remetente=su, subject__name=re_subject))
+                            for pedido in pedidosSent:
+                                if pedido.is_accepted != True and pedido.is_accepted != False and pedido.turmaInicial == old_class:
+                                    return False
+
+                            pedidosRecieved = list(
+                                SystemUserMensagens.objects.filter(destinatario=su, subject__name=re_subject))
+                            for pedidoR in pedidosRecieved:
+                                if pedidoR.is_accepted != True and pedidoR.is_accepted != False and pedidoR.turmaInicial == old_class:
+                                    return False
+
+                            return True
+
+                        return False
+
+                return False
+
+            if validate_input(req_subject, old_class, new_class, finalList):
+                sub = Subject.objects.get(name=req_subject)
+
+                newSysUserMens = SystemUserMensagens(remetente=su, destinatario=sub.regente, subject=sub,
+                                                     turmaInicial=old_class, turmaFinal=new_class)
+                newSysUserMens.save()
+
+                return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+            else:
+
+                return HttpResponse(json.dumps({"message": "failure"}), content_type="application/json")
+
     else:
         return HttpResponseRedirect(reverse('login'))
 
 
 def estado_pedidos_s(request):
     if is_authenticated(request, university.models.STUDENT_ROLE):
-        return render(request, 'student/estado_pedidos.html', {})
+        if request.method == "GET":
+            su = request_user(request)
+            pedidos = list(SystemUserMensagens.objects.filter(destinatario=su))
+
+            listPedidos = []
+            historicoPedidos = []
+            for p in pedidos:
+                teacher = PersonalInfo.objects.get(user=p.remetente)
+                subj = p.subject
+                startClass = p.turmaInicial
+                finalClass = p.turmaFinal
+                status = p.is_accepted
+                if status == True or status == False:
+                    historicoPedidos.append((teacher, subj, startClass, finalClass, status))
+                else:
+                    listPedidos.append((teacher, subj, startClass, finalClass, status))
+
+            pedidosSent = list(SystemUserMensagens.objects.filter(remetente=su))
+            pedidosS = []
+            for ap in pedidosSent:
+                student = PersonalInfo.objects.get(user=ap.destinatario)
+                subj = ap.subject
+                startClass = ap.turmaInicial
+                finalClass = ap.turmaFinal
+                status = ap.is_accepted
+                if status != True and status != False:
+                    status = "Enviado"
+                pedidosS.append((student, subj, startClass, finalClass, status))
+
+            return render(request, 'student/estado_pedidos.html',
+                          {"listPedidos": listPedidos, "historicoPedidos": historicoPedidos, "pedidosS": pedidosS})
+
+        elif request.method == "POST":
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['info']
+            info = inf.split("|")  # [{{subj}}|{{teacher}}|{{start}}|{{final}}|True]
+
+            teacherSystem = PersonalInfo.objects.get(name=info[1])
+            subjSystem = Subject.objects.get(name=info[0])
+            initial = info[2]
+            final = info[3]
+
+            update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=teacherSystem.user,
+                                                     turmaInicial=initial, turmaFinal=final)
+
+            if info[4] == "True":
+                update.is_accepted = True
+
+                su = request_user(request)
+                pedidos = SystemUserSubject.objects.get(user=su, subject=subjSystem)
+                turmas = pedidos.turmas.split()
+                for t in turmas:
+                    if t == initial:
+                        turmas.pop(turmas.index(t))
+                        turmas.append(final)
+                        break
+                turmasStr = " ".join(turmas)
+                pedidos.turmas = turmasStr
+                pedidos.save()
+
+            elif info[4] == "False":
+                update.is_accepted = False
+
+            update.save()
+
+            return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -590,12 +852,14 @@ def home_t(request):
             inscrito = list(Lesson.objects.filter(professor=su))
             # print(inscrito)
             mySubjects = []
+            mySubjectsName = []
             my_dictionary = {}  # key:cadeira, value: turmas em q ele da aulas dessa cadeira
 
             for subj in inscrito:
                 if subj.subject not in list(my_dictionary.keys()):
                     my_dictionary[subj.subject] = ""
                     mySubjects.append(subj.subject)
+                    mySubjectsName.append(subj.subject.name)
 
                 if (subj.type + subj.turma) not in my_dictionary[subj.subject]:
                     my_dictionary[subj.subject] = my_dictionary[subj.subject] + subj.type + subj.turma + " "
@@ -614,10 +878,36 @@ def home_t(request):
                     "user__user").distinct())
                 NumberOfStudentsList.append((sub, num))
 
-            getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
+            dicAlunosSobreposicoes = {}
+            # print(mySubjectsName)
+            lstAlunos = getAllAlunosQueTemAulasComUmProf(su, schoolYearObj)
 
+            if lstAlunos:  # se tiver alunos
+                dicAlunosScheduleDic = buildHorarioLstSystemUser(lstAlunos, schoolYearObj)
+                # print(dicAlunosScheduleDic)
+
+                for aluno, scheduleDic in dicAlunosScheduleDic.items():
+                    # scheduleDic-> {'1sem' : sem1SubjsStr, '2sem': sem2SubjsStr}
+
+                    dic1semOrdend = ordenar_horario(scheduleDic['1sem'])
+                    dic2semOrdend = ordenar_horario(scheduleDic['2sem'])
+
+                    sobrep1sem = aulas_sobrepostas_horario(dic1semOrdend, mySubjectsName)
+                    sobrep2sem = aulas_sobrepostas_horario(dic2semOrdend, mySubjectsName)
+
+                    # testar
+                    # sobrep1sem.append(['sexta', ['10:00', '1:30', 'aaaaaa', 'T', '18', '1.1.12'], ['11:00', '1:30', 'wwwwwww', 'TP', '19', '1.1.13']])
+                    # sobrep2sem= [['Quinta', ['10:00', '1:30', 'adasd', 'T', '12', '1.1.12'], ['11:00', '1:30', 'jhwjhd', 'TP', '13', '1.1.13']]]
+
+                    if sobrep1sem or sobrep2sem:  # se o aluno tiver sobreposiçoes
+                        dicAlunosSobreposicoes[aluno] = {1: sobrep1sem, 2: sobrep2sem}
+            else:
+                dicAlunosSobreposicoes = {}
+
+            # print(dicAlunosSobreposicoes)
             return render(request, 'teacher/home.html', {"suRegentes": regentes, "typesAndLessons": my_dictionary,
-                                                         "NumStdBySub": NumberOfStudentsList})
+                                                         "NumStdBySub": NumberOfStudentsList,
+                                                         "dicAlunosSobrepo": dicAlunosSobreposicoes})
         else:
             dadosJson = json.loads(request.body.decode("utf-8"))
 
@@ -677,32 +967,38 @@ def consult_details_t(request):
 
 def consult_turmas_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE):
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+
         if request.method == 'GET':
-            su = request_user(request)
-            schoolYearObj = SchoolYear.objects.get(begin=2018)
-            dic1SemSubjs, dic2SemSubjs = getAllTypesturmasBySubjsGiveByTeacher(su, schoolYearObj)
-
-            dic1SemSubjs = getAlunosOfTypesturmasInSubjs(1, dic1SemSubjs, schoolYearObj)
-            dic2SemSubjs = getAlunosOfTypesturmasInSubjs(2, dic2SemSubjs, schoolYearObj)
-
-            print(dic1SemSubjs)
-            print(dic2SemSubjs)
-            semestre = {"1": dic1SemSubjs, "2": dic2SemSubjs}
+            semestre = getAllTypesturmasBySubjsGiveByTeacher(su, schoolYearObj)
 
             # 'scheduleDict':{}, 'subjsName':{}-> para nao dar erro no js
             return render(request, 'teacher/consult_turmas_D.html',
                           {'subjsSem': semestre, 'scheduleDict': {}, 'subjsName': {}})
         else:
             dadosJson = json.loads(request.body.decode("utf-8"))
-            alunoFc = dadosJson['aluno']
-            print(alunoFc)
-            u = User.objects.get(username=alunoFc)
-            su = SystemUser.objects.get(user=u)
-            schoolYearObj = SchoolYear.objects.get(begin=2018)
-            subjsNameDict, scheduleDict = buildHorarioSystemUser("Aluno", su, schoolYearObj)
-            return HttpResponse(
-                json.dumps({"message": "success", 'scheduleDict': scheduleDict, 'subjsName': subjsNameDict}),
-                content_type="application/json")
+            print(dadosJson)
+
+            # prim pedido ajax post
+            if 'aluno' not in dadosJson:
+                sem = dadosJson['sem']
+                subj = Subject.objects.get(name=dadosJson['subjName'])
+                listAlunos = getAlunosOfClassInSpecificSubj(sem, subj, dadosJson['typeTurma'], schoolYearObj)
+                return HttpResponse(json.dumps({"message": "success", "JSONalunos": listAlunos}),
+                                    content_type="application/json")
+
+            # seg pedido ajax post (ver horario aluno)
+            else:
+                alunoFc = dadosJson['aluno']
+                print(alunoFc)
+                u = User.objects.get(username=alunoFc)
+                su = SystemUser.objects.get(user=u)
+                schoolYearObj = SchoolYear.objects.get(begin=2018)
+                subjsNameDict, scheduleDict = buildHorarioSystemUser("Aluno", su, schoolYearObj)
+                return HttpResponse(
+                    json.dumps({"message": "success", 'scheduleDict': scheduleDict, 'subjsName': subjsNameDict}),
+                    content_type="application/json")
 
     else:
         return HttpResponseRedirect(reverse('login'))
@@ -710,21 +1006,214 @@ def consult_turmas_t(request):
 
 def alterar_turmas_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE):
-        return render(request, 'teacher/alterar_turmas.html', {})
+
+        class FearAllWhoCodeThis:
+
+            def __init__(self, tab_name, sub_name, classes_num_student):
+                self.id = "#" + tab_name
+                self.idNoHashTag = tab_name
+                self.subjectName = sub_name
+                self.classesDict = classes_num_student
+
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+
+        if request.method == "GET":
+
+            iTeachedThese = list(Lesson.objects \
+                                 .filter(professor=su) \
+                                 .values("subject__name", "type", "turma", "is_open").distinct())
+
+            i_teached_these_list = []
+
+            just_the_subjects = []
+
+            for line in iTeachedThese:
+                i_teached_these_list.append((line["subject__name"], line["type"] + line["turma"], line["is_open"]))
+                just_the_subjects.append(line["subject__name"])
+
+            ohgod = list(SystemUserSubject.objects \
+                         .filter(anoLetivo=schoolYearObj, subject__name__in=just_the_subjects) \
+                         .values("user", "subject__name", "turmas").distinct())
+
+            sweet_baby_jesus = []
+            from itertools import groupby
+
+            i = 1
+            finalList = []
+
+            for sub_name, g in groupby(ohgod, lambda a: a["subject__name"]):
+
+                myList = []
+
+                for tuple in i_teached_these_list:
+
+                    if tuple[0] == sub_name:
+
+                        num_students = 0
+                        a = copy.deepcopy(g)
+
+                        for d in list(a):
+
+                            if tuple[1] in d["turmas"]:
+                                num_students += 1
+
+                        myList.append((tuple[1], num_students, tuple[2]))
+
+                finalList.append(FearAllWhoCodeThis("tab" + str(i), sub_name, myList))
+                i += 1
+
+            return render(request, 'teacher/alterar_turmas.html', {"finalList": finalList})
+
+        elif request.method == 'POST':
+
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['info']
+            my_pretty_info = inf.split("|")
+
+            aaaaah = list(
+                Lesson.objects.filter(subject__name=my_pretty_info[0], type=separateLettersNumb(my_pretty_info[1])[0],
+                                      turma=separateLettersNumb(my_pretty_info[1])[1]))
+
+            for line in aaaaah:
+                if my_pretty_info[2] == "True":
+                    line.is_open = False
+                elif my_pretty_info[2] == "False":
+                    line.is_open = True
+                line.save()
+
+            return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
+
     else:
         return HttpResponseRedirect(reverse('login'))
 
 
 def resposta_pedidos_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE):
-        return render(request, 'teacher/resposta_pedidos_D.html', {})
+        if request.method == "GET":
+            su = request_user(request)
+            pedidos = list(SystemUserMensagens.objects.filter(destinatario=su))
+
+            listPedidos = []
+            historicoPedidos = []
+            for p in pedidos:
+                student = PersonalInfo.objects.get(user=p.remetente)
+                subj = p.subject
+                startClass = p.turmaInicial
+                finalClass = p.turmaFinal
+                status = p.is_accepted
+                if status == True or status == False:
+                    historicoPedidos.append((student, subj, startClass, finalClass, status))
+                else:
+                    listPedidos.append((student, subj, startClass, finalClass, status))
+
+            pedidosSent = list(SystemUserMensagens.objects.filter(remetente=su))
+            pedidosS = []
+            for ap in pedidosSent:
+                student = PersonalInfo.objects.get(user=ap.destinatario)
+                subj = ap.subject
+                startClass = ap.turmaInicial
+                finalClass = ap.turmaFinal
+                status = ap.is_accepted
+                if status != True and status != False:
+                    status = "Enviado"
+                pedidosS.append((student, subj, startClass, finalClass, status))
+
+            return render(request, 'teacher/resposta_pedidos_D.html',
+                          {"listPedidos": listPedidos, "historicoPedidos": historicoPedidos, "pedidosS": pedidosS})
+
+        elif request.method == "POST":
+            dadosJson = json.loads(request.body.decode("utf-8"))
+
+            inf = dadosJson['info']
+            info = inf.split("|")
+
+            studentSystem = PersonalInfo.objects.get(name=info[1])
+            subjSystem = Subject.objects.get(name=info[0])
+            initial = info[2]
+            final = info[3]
+
+            update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=studentSystem.user,
+                                                     turmaInicial=initial, turmaFinal=final)
+
+            if info[4] == "True":
+                update.is_accepted = True
+
+                pedidos = SystemUserSubject.objects.get(user=studentSystem.user, subject=subjSystem)
+                turmas = pedidos.turmas.split()
+                for t in turmas:
+                    if t == initial:
+                        turmas.pop(turmas.index(t))
+                        turmas.append(final)
+                        break
+                turmasStr = " ".join(turmas)
+                pedidos.turmas = turmasStr
+                pedidos.save()
+
+            elif info[4] == "False":
+                update.is_accepted = False
+
+            update.save()
+
+            return HttpResponse(json.dumps({"message": "success"}), content_type="application/json")
     else:
         return HttpResponseRedirect(reverse('login'))
 
 
 def enviar_pedidos_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE):
-        return render(request, 'teacher/enviar_pedido.html', {})
+        su = request_user(request)
+        schoolYearObj = SchoolYear.objects.get(begin=2018)
+
+        # ex: retorna-> [14514, 14538, ..., 15196]
+        lstAlunos = []
+        lessons = Lesson.objects.filter(professor=su).values("subject__name", "type", "turma").distinct()
+        # print(lessons)
+        # print(lessons.count())
+
+        formatDicBySubj = {}
+        for subjName, typeTurma in groupby(lessons, lambda a: a["subject__name"]):
+            # print(subjName)
+            # print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
+
+            turmas = []
+            lstTypeTurmasQuerie = []
+            for dic in typeTurma:
+                lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
+                turmas.append(dic["type"] + dic["turma"])
+
+            # print(lstTypeTurmasQuerie)
+            lstSuObjs = list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (
+                reduce(operator.or_, lstTypeTurmasQuerie))).values("user", "turmas"))
+            # print(lstSuObjs)
+            # ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
+            if lstSuObjs:
+                lstSuQueries2 = []
+
+                for suObj in lstSuObjs:
+                    lstSuQueries2.append(Q(user=suObj['user']))
+
+                lstPI = PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username",
+                                                                                                "name")
+
+                formatDicBySU = {}
+                # len(systemUsersObjs) == len(lstPIName)
+                for i in range(0, len(lstPI)):
+                    suFC = lstPI[i]["user__user__username"]
+                    suName = lstPI[i]["name"]
+
+                    lstTurmasAluno = lstSuObjs[i]['turmas'].split(" ")
+                    lstTurmasAlunosSemEspaços = [e for e in lstTurmasAluno if e != ""]
+
+                    formatDicBySU[suFC + " | " + suName] = lstTurmasAlunosSemEspaços
+
+            formatDicBySubj[subjName] = [turmas, formatDicBySU]
+
+        # print(formatDicBySubj)
+        # formatDicBySubj-> {'Controvérsias Científicas': [[T11, TP12], {"fc117 | Rute M": ['T11', 'TP11'], "fc117 | Helder C" : [...] }], 'Programação II (LTI)': [[..],{...}]}
+        return render(request, 'teacher/enviar_pedido.html', {'formatDicBySubj': formatDicBySubj})
+
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -733,37 +1222,39 @@ def presencas_consultar_t(request):
     if is_authenticated(request, university.models.TEACHER_ROLE):
         su = request_user(request)
         schoolYearObj = SchoolYear.objects.get(begin=2018)
-        dic1SemSubjs, dic2SemSubjs = getAllTypesturmasBySubjsGiveByTeacher(su, schoolYearObj)
+        if request.method == 'GET':
+            semestre = getAllTypesturmasBySubjsGiveByTeacher(su, schoolYearObj)
+            return render(request, 'teacher/presenças_consulta.html', {"subjsSem": semestre})
+        else:  # pedido ajax post
+            dadosJson = json.loads(request.body.decode("utf-8"))
+            print(dadosJson)
 
-        """
-        2018/2019
-            1º semestre: 17/09/2018(seg) a 19/12/2018(quarta)
-            2º semestre: 18/02/2019(seg) a 31/05/2019(sex)
-        """
+            """
+                2018/2019
+                    1º semestre: 17/09/2018(seg) a 19/12/2018(quarta)
+                    2º semestre: 18/02/2019(seg) a 31/05/2019(sex)
+            """
 
-        dataInicio = "17/09/2018"
-        dataFinal = "19/12/2018"
-        ano = "2018"
-        joinFerias = allFeriasDate(ferias, ano)
-        formatFeriados = convertFeriados(feriados, ano)
-        joinFeriasAndFeriados = joinFerias + formatFeriados
-        infoSemPresenças = [dataInicio, dataFinal, joinFeriasAndFeriados]
-        dic1SemSubjs = getAlunosOfTypesturmasInSubjs(1, dic1SemSubjs, schoolYearObj, infoSemPresenças)
+            sem = dadosJson['sem']
+            if sem == "1":
+                dataInicio = "17/09/2018"
+                dataFinal = "19/12/2018"
+                ano = "2018"
+            else:
+                dataInicio = "18/02/2019"
+                dataFinal = "31/05/2019"
+                ano = "2019"
 
-        dataInicio = "18/02/2019"
-        dataFinal = "31/05/2019"
-        ano = "2019"
-        joinFerias = allFeriasDate(ferias, ano)
-        formatFeriados = convertFeriados(feriados, ano)
-        joinFeriasAndFeriados = joinFerias + formatFeriados
-        infoSemPresenças = [dataInicio, dataFinal, joinFeriasAndFeriados]
-        dic2SemSubjs = getAlunosOfTypesturmasInSubjs(2, dic2SemSubjs, schoolYearObj, infoSemPresenças)
+            joinFerias = allFeriasDate(ferias, ano)
+            formatFeriados = convertFeriados(feriados, ano)
+            joinFeriasAndFeriados = joinFerias + formatFeriados
+            infoSemPresenças = [dataInicio, dataFinal, joinFeriasAndFeriados]
+            subj = Subject.objects.get(name=dadosJson['subjName'])
+            listAlunos = getAlunosOfClassInSpecificSubj(sem, subj, dadosJson['typeTurma'], schoolYearObj,
+                                                        infoSemPresenças)
+            return HttpResponse(json.dumps({"message": "success", "JSONalunos": listAlunos}),
+                                content_type="application/json")
 
-        print(dic1SemSubjs)
-        print(dic2SemSubjs)
-        semestre = {"1": dic1SemSubjs, "2": dic2SemSubjs}
-
-        return render(request, 'teacher/presenças_consulta.html', {"subjsSem": semestre})
     else:
         return HttpResponseRedirect(reverse('login'))
 
@@ -803,7 +1294,7 @@ def presencas_registar_t(request):
             dadosJson = json.loads(request.body.decode("utf-8"))
             print(dadosJson)
 
-            # prim pedido ajax
+            # prim pedido ajax post
             if 'alunosEscolhidos' not in dadosJson:
                 aulaEscolhidaInfo = dadosJson
                 sem = aulaEscolhidaInfo['sem'][0]
@@ -814,7 +1305,7 @@ def presencas_registar_t(request):
                 return HttpResponse(json.dumps({"message": "success", "alunos": listAlunos}),
                                     content_type="application/json")
 
-            # seg pedido ajax
+            # seg pedido ajax post
             else:
                 alunosEscolhidosInfo = dadosJson
                 print(alunosEscolhidosInfo)
@@ -859,85 +1350,89 @@ ferias = [["04/03", "06/03"],  # carnaval
           ["17/04", "23/04"]]  # pascoa
 
 
-def getAlunosOfTypesturmasInSubjs(sem, dicSemSubjs, schoolYearObj, infoSemPresenças=[]):
-    # ex: 1, {<Subject: Subject object (1766)>: 'T12 T11', <Subject: Subject object (1767)>: 'T11'}, 2018
-    print(dicSemSubjs)
-    for subj in dicSemSubjs:
-        print(dicSemSubjs[subj])
-        dicSemSubjs[subj] = getAlunosOfClassesInSpecificSubj(sem, subj, dicSemSubjs[subj], schoolYearObj,
-                                                             infoSemPresenças)
-    return dicSemSubjs
-
-
-def getAlunosOfClassesInSpecificSubj(sem, subj, string, schoolYearObj, infoSemPresenças=[]):
-    # ex: 1, AD, " T11 TP12 T14 L15 T11", 2018
-    # a string pode ter turmas repetitas por causa das lessons
-    dicTypeTurmasAlunos = {}
-    lstTypeTurmas = string.split(" ")
-    lstTypeTurmasSemEspaços = [e for e in lstTypeTurmas if e != ""]
-    print(lstTypeTurmasSemEspaços)
-    lstTypeTurmasSemEspaçosUnique = uniqueElements(lstTypeTurmasSemEspaços)
-    print(lstTypeTurmasSemEspaçosUnique)  # [T11, TP12, T14, L15]
-
-    for typeTurma in lstTypeTurmasSemEspaçosUnique:
-        myListOfCollegues = getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, infoSemPresenças)
-        prices_json = json.dumps(myListOfCollegues, cls=DjangoJSONEncoder)
-        type, turma = separateLettersNumb(typeTurma)
-        if type not in list(dicTypeTurmasAlunos.keys()):
-            dicTypeTurmasAlunos[type] = [[turma, prices_json]]
-        else:
-            dicTypeTurmasAlunos[type] = dicTypeTurmasAlunos[type] + [[turma, prices_json]]
-
-    return dicTypeTurmasAlunos
-
-
 def getAlunosOfClassInSpecificSubj(sem, subj, typeTurma, schoolYearObj, infoSemPresenças=[]):
     # ex: 1, AD, T11, 2018
     # obtem todos os alunos que pertencem a uma turma de uma determinada cadeira
     # retorna em json uma lista de listas, em q cada lista tem informaçao sobre um aluno
 
-    suSubjs = list(SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj,
-                                                    subjSemestre=sem))
-    print(infoSemPresenças)
-    if infoSemPresenças:
-        lstDates = getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças)
-        print(lstDates)  # ex: ['19/02/2019', '20/02/2019', ...]
-        type, turma = separateLettersNumb(typeTurma)
-        myListOfCollegues = [lstDates]
+    systemUsersObjs = list(
+        SystemUserSubject.objects.filter(subject=subj, turmas__contains=typeTurma, anoLetivo=schoolYearObj,
+                                         subjSemestre=sem))
+    # systemUsersObjs -> ex: [<SystemUserSubject: SystemUserSubject object (1579)>, ... ]
+
+    if systemUsersObjs:  # se houverem alunos inscritos
+
+        print(infoSemPresenças)
+        if infoSemPresenças:
+            lstDates = getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças)
+            print(lstDates)  # ex: ['19/02/2019', '20/02/2019', ...]
+            lstDataFormatsQueries = []
+            for date_str in lstDates:
+                dataFormat = datetime.strptime(date_str, "%d/%m/%Y").date()
+                lstDataFormatsQueries.append(Q(date=dataFormat))
+
+            type, turma = separateLettersNumb(typeTurma)
+            myListOfCollegues = [lstDates]
+        else:
+            myListOfCollegues = []
+
+        lstSuQueries1 = []
+        lstSuQueries2 = []
+        for suObj in systemUsersObjs:
+            lstSuQueries1.append(Q(user=suObj.user))
+            lstSuQueries2.append(Q(systemUser=suObj.user))
+
+        lstPIName = PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries1)).values("name")
+        # lstPIName -> ex: [{'name': 'Kevin Maia'}, {'name': 'Camila Monteiro'}, ...]
+
+        if infoSemPresenças:  # se nao for uma lista vazia
+            # lista de presenças de um aluno
+            listLessonsSU = LessonSystemUser.objects.filter(
+                reduce(operator.or_, lstSuQueries2) & Q(lesson__type=type) & Q(lesson__subject=subj) & reduce(
+                    operator.or_, lstDataFormatsQueries)).values("systemUser", "date", "presente")
+
+            dicDates = {}
+            for su, datePresent in groupby(listLessonsSU, lambda a: a["systemUser"]):
+                # ex: [{'systemUser': 798, 'date': datetime.date(2018, 9, 18), 'presente': True}, {'systemUser': 798, 'date': datetime.date(2018, 9, 25), 'presente': True}]
+                dates = {}
+                for dic in list(datePresent):
+                    dates[dic['date']] = dic['presente']
+                dicDates[su] = dates
+
+            # print(dicDates)
+            # ex: {117: {datetime.date(2018, 9, 18): False, datetime.date(2018, 9, 25): True}, ...}
+
+        # len(systemUsersObjs) == len(lstPIName)
+        for i in range(0, len(lstPIName)):
+            su = systemUsersObjs[i].user
+
+            if infoSemPresenças:  # se nao for uma lista vazia
+
+                lstPresencasAluno = []
+                for date_str in lstDates:
+                    dateFormat = datetime.strptime(date_str, "%d/%m/%Y").date()
+                    if dicDates:  # se houver alguma presença
+                        if dateFormat in dicDates[su.id]:
+                            is_present = dicDates[su.id][dateFormat]
+                            lstPresencasAluno.append(is_present)
+                        else:
+                            lstPresencasAluno.append("-")
+                    else:
+                        lstPresencasAluno.append("-")
+
+                print(lstPresencasAluno)
+                listInfo = [su.user.username, lstPIName[i]["name"], lstPresencasAluno]
+
+            else:
+                listInfo = [su.user.username, lstPIName[i]["name"], su.user.email]
+                # listInfo ex: ['fc117', 'Kevin Maia', 'fc117@alunos.fc.ul.pt']
+
+            myListOfCollegues.append(listInfo)
+
     else:
         myListOfCollegues = []
 
-    for suSubj in suSubjs:
-        PI = PersonalInfo.objects.get(user=suSubj.user)
-        if infoSemPresenças:  # se nao for uma lista vazia
-            lstPresencasAluno = []
-            for date_str in lstDates:
-                dataFormat = datetime.strptime(date_str, "%d/%m/%Y").date()
-                lSU = LessonSystemUser.objects.filter(systemUser=suSubj.user, lesson__type=type, lesson__subject=subj,
-                                                      date=dataFormat).first()
-                if lSU:  # se aquela aula ja ocorreu
-                    is_presente = lSU.presente
-                    lstPresencasAluno.append(is_presente)
-                else:
-                    lstPresencasAluno.append("-")
-
-            # print(lstPresencasAluno)
-            listInfo = [suSubj.user.user.username, PI.name, lstPresencasAluno]
-
-        else:
-            listInfo = [suSubj.user.user.username, PI.name, suSubj.user.user.email]
-
-        myListOfCollegues.append(listInfo)
     return myListOfCollegues
-
-
-def uniqueElements(lst):
-    # retorna os elementos unicos de uma lista
-    newLst = []
-    for e in lst:
-        if e not in newLst:
-            newLst.append(e)
-    return newLst
 
 
 def getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças):
@@ -952,34 +1447,60 @@ def getAllDatasByTypeturmaSubj2018_2019(subj, typeTurma, infoSemPresenças):
 
 
 def getAllAlunosQueTemAulasComUmProf(systemUser, schoolYearObj):
+    # ex: retorna-> [14514, 14538, ..., 15196]
     lstAlunos = []
     lessons = Lesson.objects.filter(professor=systemUser).values("subject__name", "type", "turma").distinct()
-    print(lessons)
-    print(lessons.count())
+    # print(lessons)
+    # print(lessons.count())
 
     for subjName, typeTurma in groupby(lessons, lambda a: a["subject__name"]):
-        print(subjName)
-        print(typeTurma)  # {'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
+        # print(subjName)
+        # print(typeTurma) #{'subject__name': 'Aplicações Distribuídas', 'type': 'TP', 'turma': '24'}
+        lstTypeTurmasQuerie = []
         for dic in typeTurma:
-            suSubject = SystemUserSubject.objects.filter(subject__name=subjName,
-                                                         turmas__contains=dic["type"] + dic["turma"],
-                                                         anoLetivo=schoolYearObj).values("user")
-            if len(suSubject) != 0:
-                lstAlunos.append(suSubject)
+            lstTypeTurmasQuerie.append(Q(turmas__contains=dic["type"] + dic["turma"]))
 
-    print(lstAlunos)
-    return lstAlunos
+        # print(lstTypeTurmasQuerie)
+        suObjs = list(SystemUserSubject.objects.filter(Q(subject__name=subjName) & Q(anoLetivo=schoolYearObj) & (
+            reduce(operator.or_, lstTypeTurmasQuerie))).values("user"))
+
+        lstAlunos += suObjs
+
+    # print(lstAlunos)
+    # print(len(lstAlunos))
+
+    # elementos unicos de uma lista
+    lstAlunosUnique = []
+    for dic in lstAlunos:
+        if dic["user"] not in lstAlunosUnique:
+            lstAlunosUnique.append(dic["user"])
+
+    # print(lstAlunosUnique)
+    # print(len(lstAlunosUnique))
+    return lstAlunosUnique
 
 
 def getAllTypesturmasBySubjsGiveByTeacher(systemUser, schoolYearObj):
-    suLessons = list(Lesson.objects.filter(professor=systemUser))
+    # ex: ensures-> {1: {sub1Obj: {'T': [11, 12]},
+    #                   sub2Obj: {...}
+    #                   },
+    #               2: {...}
+    #               }
+    suLessons = Lesson.objects.filter(professor=systemUser).values("subject", "type", "turma").distinct()
 
     dic1SemSubjs = {}
     dic2SemSubjs = {}
 
-    for lesson in suLessons:
-        str = lesson.type + lesson.turma
-        subj = lesson.subject
+    for subj_id, typeTurma in groupby(suLessons, lambda a: a["subject"]):
+        subj = Subject.objects.get(id=subj_id)
+        # print(typeTurma) #{'subj_id': 7, 'type': 'TP', 'turma': '24'}
+        dicTypeTurmas = {}
+        for dic in typeTurma:
+            if dic["type"] not in dicTypeTurmas:
+                dicTypeTurmas[dic["type"]] = [dic["turma"]]
+            else:
+                dicTypeTurmas[dic["type"]].append(dic["turma"])
+
         CRsubjs = CourseSubject.objects.filter(subject=subj)
 
         # por a cadeira na listaSemestre certo com as respetivas Turmas
@@ -988,30 +1509,17 @@ def getAllTypesturmasBySubjsGiveByTeacher(systemUser, schoolYearObj):
         if is_semestres_all_same(CRsubjs):
             sem = CRsubjs[0].semester
             if sem == 1:
-                if subj not in list(dic1SemSubjs.keys()):
-                    dic1SemSubjs[subj] = str
-                else:
-                    dic1SemSubjs[subj] = dic1SemSubjs[subj] + " " + str
+                dic1SemSubjs[subj] = dicTypeTurmas
             else:
-                if subj not in list(dic2SemSubjs.keys()):
-                    dic2SemSubjs[subj] = str
-                else:
-                    dic2SemSubjs[subj] = dic2SemSubjs[subj] + " " + str
+                dic2SemSubjs[subj] = dicTypeTurmas
         else:
-            if subj not in list(dic1SemSubjs.keys()):
-                dic1SemSubjs[subj] = str
-            else:
-                dic1SemSubjs[subj] = dic1SemSubjs[subj] + " " + str
-
-            if subj not in list(dic2SemSubjs.keys()):
-                dic2SemSubjs[subj] = str
-            else:
-                dic2SemSubjs[subj] = dic2SemSubjs[subj] + " " + str
+            dic1SemSubjs[subj] = dicTypeTurmas
+            dic2SemSubjs[subj] = dicTypeTurmas
 
     print(dic1SemSubjs)
     print(dic2SemSubjs)
 
-    return [dic1SemSubjs, dic2SemSubjs]
+    return {"1": dic1SemSubjs, "2": dic2SemSubjs}
 
 
 # --------------------------------------------------------------------------------------------------------------------------------
@@ -1192,7 +1700,105 @@ def is_semestres_all_same(courseSubjs):
     return all(crS.semester == courseSubjs[0].semester for crS in courseSubjs)
 
 
+def getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj):
+    # ensures ->   ex:
+    # systemUserSemSubjTypTurmas       [[117, {'1sem': [['Controvérsias Científicas', 'T11 TP11'], ... ],
+    #            '2sem': [['Programação II (LTI)', 'T21 TP25 PL26'], ... ]}],
+    #        ...]
+
+    # print(lstAlunos)
+    lstAlunosQuerie = []
+    for alunos in lstAlunos:
+        lstAlunosQuerie.append(Q(user=alunos))
+
+    suSubjs = SystemUserSubject.objects.filter(
+        reduce(operator.or_, lstAlunosQuerie) & Q(anoLetivo=schoolYearObj)).values("user", "subject__name",
+                                                                                   "subjSemestre", "turmas")
+
+    systemUserSemSubjTypTurmas = []
+    lstSubjTurmasQuerie = []
+    for systemUser, semSubjNameTurmasStr in groupby(suSubjs, lambda a: a["user"]):
+        lst1semSubjsTypeTurmasStr = []
+        lst2semSubjsTypeTurmasStr = []
+
+        for subjSemestre, subjNameTurmasStr in groupby(semSubjNameTurmasStr, lambda a: a["subjSemestre"]):
+            sem = subjSemestre
+
+            for subjName, TurmasStr in groupby(subjNameTurmasStr, lambda a: a["subject__name"]):
+                # print(subjName)
+                lessons = []
+                lstTypeTurmasQuerie = []
+
+                for dic in TurmasStr:
+                    lstTurmas = dic["turmas"].split(" ")
+                    lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+                    # ex: lstTurmasSemEspaços-> ["T11","TP13","PL13"]
+
+                    # todas as turmas em q o aluno esta inscrito numa cadeira
+                    for typeTurma in lstTurmasSemEspaços:
+                        type, turma = separateLettersNumb(typeTurma)
+                        lstTypeTurmasQuerie.append(Q(type=type) & Q(turma=turma))
+
+                lstSubjTurmasQuerie.append(Q(subject__name=subjName) & reduce(operator.or_, lstTypeTurmasQuerie))
+
+                if sem == 1:
+                    lst1semSubjsTypeTurmasStr.append([subjName, dic["turmas"]])
+                else:
+                    lst2semSubjsTypeTurmasStr.append([subjName, dic["turmas"]])
+
+        systemUserSemSubjTypTurmas.append(
+            [systemUser, {'1sem': lst1semSubjsTypeTurmasStr, '2sem': lst2semSubjsTypeTurmasStr}])
+
+    # print(systemUserSemSubjTypTurmas)
+    return [systemUserSemSubjTypTurmas, lstSubjTurmasQuerie]
+
+
+def buildHorarioLstSystemUser(lstAlunos, schoolYearObj):
+    # ex: lstAlunos é uma lista de systemUsers
+    # ex: ensures: dicSytemUsersHorarios= {aluno1: scheduleDict, aluno2: scheduleDict , ...}
+
+    systemUserSemSubjTypTurmas, lstSubjTurmasQuerie = getsystemUsersSemSubjTypTurmas(lstAlunos, schoolYearObj)
+
+    turmaLessonsPossiveis = Lesson.objects.filter(reduce(operator.or_, lstSubjTurmasQuerie)).values("subject__name",
+                                                                                                    "type", "turma",
+                                                                                                    "week_day", "hour",
+                                                                                                    "duration",
+                                                                                                    "room__room_number")
+    print(1212)
+    print(turmaLessonsPossiveis)
+
+    dicSytemUsersHorarios = {}
+    for subjName, rest1 in groupby(turmaLessonsPossiveis, lambda a: a["subject__name"]):
+
+        for typeTurma, rest2 in groupby(rest1, lambda a: a["type"] + a["turma"]):
+            # ex: typeTurma -> T11
+
+            lessons = []
+            for dic in rest2:  # AD T11 terça, AD T11 quinta
+                # dic ex: {'subject__name': 'Programação II (LTI)', 'type': 'T', 'turma': '21', 'week_day': 'SEGUNDA', 'hour': '08:00', 'duration': '1:00', 'room__room_number': '1.5.64'}
+                str = dic["week_day"] + "," + dic["hour"] + "," + dic["duration"] + "," + subjName + "," + dic[
+                    "type"] + "," + dic["turma"] + "," + dic["room__room_number"]
+                lessons.append(str)
+
+            # distribuir a lesson pelos alunos corretos
+            for suSemSubjs in systemUserSemSubjTypTurmas:
+                for sem, lstSubjs in suSemSubjs[1].items():
+                    for lst in lstSubjs:
+                        if lst[0] == subjName and typeTurma in lst[1]:
+                            if suSemSubjs[0] not in dicSytemUsersHorarios:
+                                dicSytemUsersHorarios[suSemSubjs[0]] = {'1sem': [], '2sem': []}
+                            dicSytemUsersHorarios[suSemSubjs[0]][sem] = dicSytemUsersHorarios[suSemSubjs[0]][
+                                                                            sem] + lessons
+
+    return dicSytemUsersHorarios
+
+
 def buildHorarioSystemUser(roleName, systemUser, schoolYearObj):
+    # ex: ensures sem1SubjsStr:
+    # ['QUINTA,08:00,1:00,Programação I (LTI),T,2.1.10', 'QUINTA,09:00,1:30,Programação I (LTI),PL,2.1.11',
+    # 'QUINTA,10:30,1:30,Programação I (LTI),PL,2.1.10', 'QUINTA,12:00,1:30,Programação I (LTI),PL,2.1.11',
+    # 'QUARTA,08:00,1:30,Programação I (LTI),TP,1.5.64', 'QUARTA,09:30,1:30,Programação I (LTI),TP,1.5.63']
+
     sem1SubjsStr = []
     sem2SubjsStr = []
     sem1subjsName = []
@@ -1201,34 +1807,47 @@ def buildHorarioSystemUser(roleName, systemUser, schoolYearObj):
     # aluno
     if roleName == "Aluno":
         # todas as cadeiras que o aluno esta inscrito neste ano
-        suSubjs = SystemUserSubject.objects.filter(user=systemUser, anoLetivo=schoolYearObj)
-        for suSubj in suSubjs:
-            print(suSubj.turmas)
-            lstTurmas = suSubj.turmas.split(" ")
-            subj = suSubj.subject
-            sem = suSubj.subjSemestre
-            print(sem)
-            # ex: lstTurmas-> ["T11","TP13","PL13"]
-            lessons = []
-            lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
-            print(lstTurmasSemEspaços)
+        suSubjs = SystemUserSubject.objects.filter(user=systemUser, anoLetivo=schoolYearObj).values("subject__name",
+                                                                                                    "subjSemestre",
+                                                                                                    "turmas")
 
-            # todas as turmas em q o aluno esta inscrito numa cadeira
-            for typeTurma in lstTurmasSemEspaços:
-                type, turma = separateLettersNumb(typeTurma)
-                turmaLessons = list(Lesson.objects.filter(subject=subj, type=type, turma=turma))
-                for lesson in turmaLessons:
-                    str = lesson.week_day + "," + lesson.hour + "," + lesson.duration + "," + lesson.subject.name + "," + lesson.type + "," + lesson.room.room_number
-                    lessons.append(str)
+        for subjSemestre, subjNameTurmasStr in groupby(suSubjs, lambda a: a["subjSemestre"]):
+            sem = subjSemestre
+
+            lstSubjTurmasQuerie = []
+            for subjName, TurmasStr in groupby(subjNameTurmasStr, lambda a: a["subject__name"]):
+                print(subjName)
+                lessons = []
+                lstTypeTurmasQuerie = []
+
+                for dic in TurmasStr:
+                    lstTurmas = dic["turmas"].split(" ")
+                    lstTurmasSemEspaços = [e for e in lstTurmas if e != ""]
+                    # ex: lstTurmasSemEspaços-> ["T11","TP13","PL13"]
+
+                    # todas as turmas em q o aluno esta inscrito numa cadeira
+                    for typeTurma in lstTurmasSemEspaços:
+                        type, turma = separateLettersNumb(typeTurma)
+                        lstTypeTurmasQuerie.append(Q(type=type) & Q(turma=turma))
+
+                lstSubjTurmasQuerie.append(Q(subject__name=subjName) & reduce(operator.or_, lstTypeTurmasQuerie))
+                if sem == 1:
+                    sem1subjsName.append(subjName)
+                else:
+                    sem2subjsName.append(subjName)
+
+            turmaLessons = list(Lesson.objects.filter(reduce(operator.or_, lstSubjTurmasQuerie)))
+            for lesson in turmaLessons:
+                str = lesson.week_day + "," + lesson.hour + "," + lesson.duration + "," + lesson.subject.name + "," + lesson.type + "," + lesson.room.room_number
+                lessons.append(str)
 
             if sem == 1:
                 sem1SubjsStr = sem1SubjsStr + lessons
-                sem1subjsName.append(subj.name)
             else:
                 sem2SubjsStr = sem2SubjsStr + lessons
-                sem2subjsName.append(subj.name)
 
-                # professor
+
+    # professor
     else:
         suLessons = list(Lesson.objects.filter(professor=systemUser))
         for lesson in suLessons:
@@ -1336,6 +1955,90 @@ def allFeriasDate(ferias, ano):
         dataInicio, dataFinal = f
         newFerias_str = newFerias_str + getDatesBetween2Dates(dataInicio, dataFinal)
     return newFerias_str
+
+
+# ------------------------------------------------ Funçoes auxiliares Sobreposiçoes ------------------------------------------------
+def ordenar_horario(lstLessonsStr):
+    """
+    requires: ['QUARTA,11:00,1:00,Redes de Computadores (LTI),T,11,1.5.67', 'QUINTA,09:30,1:00,Redes de Computadores (LTI),T,11,2.1.14',
+              'QUINTA,08:00,1:30,Redes de Computadores (LTI),TP,11,2.1.15', 'TERÇA,09:00,2:00,Segurança Informática,T,11,2.1.12',
+              'TERÇA,11:00,1:30,Segurança Informática,TP,11,2.1.11']
+
+    ensures: {
+              'QUARTA': [['11:00', '1:00', 'Redes de Computadores (LTI)', 'T', '11', '1.5.67']],
+              'QUINTA': [['08:00', '1:30', 'Redes de Computadores (LTI)', 'TP', '11', '2.1.15'], ['09:30', '1:00', 'Redes de Computadores (LTI)', 'T', '11', '2.1.14']],
+              'TERÇA': [['09:00', '2:00', 'Segurança Informática', 'T', '11', '2.1.12'], ['11:00', '1:30', 'Segurança Informática', 'TP', '11', '2.1.11']]
+              }
+    """
+    lstlessons = []
+    for lessonStr in lstLessonsStr:
+        lesson = lessonStr.split(",")
+        lstlessons.append(lesson)
+
+    scheduleDict = {}
+
+    for lesson in lstlessons:
+        if lesson[0] in scheduleDict:
+            scheduleDict[lesson[0]].append(lesson[1:])
+        else:
+            scheduleDict[lesson[0]] = [lesson[1:]]
+
+    # print(scheduleDict)
+
+    # Importante: para o mesmo dia de semana, as aulas TEM QUE ESTAR POR ORDEM!! (by time)
+    # tenho q formatar primeiro a hora e depois ordenar
+    for weekDay, lessons in scheduleDict.items():
+        scheduleDict[weekDay] = sorted(lessons)
+
+    # print(scheduleDict)
+    return scheduleDict
+
+
+def aulas_sobrepostas_horario(scheduleDict, checkLstCadeiras=[]):
+    """
+    se checkLstCadeiras == [] entao ele devolve todas as sobreposiçoes do horario
+    se checkLstCadeiras != [] entao ele devolve apenas as sobreposiçoes que envolvem cadeiras que estao nessa lista
+      requires: {
+                'QUARTA': [['11:00', '1:00', 'Redes de Computadores (LTI)', 'T', '11', '1.5.67']],
+                'QUINTA': [['08:00', '1:30', 'Redes de Computadores (LTI)', 'TP', '11', '2.1.15'], ['09:30', '1:00', 'Redes de Computadores (LTI)', 'T', '11', '2.1.14']],
+                'TERÇA': [['09:00', '2:00', 'Segurança Informática', 'T', '11', '2.1.12'], ['11:00', '1:30', 'Segurança Informática', 'TP', '11', '2.1.11']]
+                }
+
+      ensures: [] ou
+               [['TERÇA', ['08:00', '1:30', 'Segurança Informática', 'T', '11', '2.1.12'], ['09:00', '0:00', 'Segurança Informática', 'TP', '11', '2.1.11']]] ou
+               [['QUINTA', ['08:00', '1:00', 'Redes de Computadores (LTI)', 'T', '11', '2.1.14'], ['08:00', '2:00', 'Redes de Computadores (LTI)', 'TP', '11', '2.1.15']], ['TERÇA', ['08:00', '2:00', 'Segurança Informática', 'T', '11', '2.1.12'], ['08:00', '3:30', 'Segurança Informática', 'TP', '11', '2.1.11']]]
+      """
+    sobreposicoes = []
+    for weekDay, lstLessons in scheduleDict.items():
+        if len(lstLessons) > 1:
+            primLesson = True
+            for lesson in lstLessons:
+                if primLesson:
+                    lessonToCompare = lesson
+                    primLesson = False
+                else:
+                    if is_lesson1_and_lesson2_sobrepostas(lessonToCompare, lesson):
+                        if checkLstCadeiras:
+                            if lessonToCompare[2] in checkLstCadeiras or lesson[2] in checkLstCadeiras:
+                                sobreposicoes.append([weekDay, lessonToCompare, lesson])
+                        else:
+                            sobreposicoes.append([weekDay, lessonToCompare, lesson])
+                    lessonToCompare = lesson
+    return sobreposicoes
+
+
+def is_lesson1_and_lesson2_sobrepostas(lesson1, lesson2):
+    return addMinutes(lesson1[0], lesson1[1]) > hourToMinutes(lesson2[0])
+
+
+def hourToMinutes(hour):
+    # ex: hour-> "9:00" ou "09:00"
+    lhour = hour.split(":")
+    return int(lhour[0]) * 60 + int(lhour[1])
+
+
+def addMinutes(hour, duration):
+    return hourToMinutes(hour) + hourToMinutes(duration)
 
 
 @require_http_methods(["POST"])
