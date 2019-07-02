@@ -21,6 +21,8 @@
 <div id="content-main">
 	<div class="row" id="myrow">
             <div class="col-md-12">
+
+				{% if finalList %}
                 <div class="panel panel-default">
                     <div class="panel-body tabs">
                         <ul class="nav nav-tabs">
@@ -71,7 +73,11 @@
 
                         </div>
                     </div>
-                </div>
+				</div>
+				
+				{% else %}
+					<p>Nao existem alunos incritos em nenhuma das suas disciplinas.</p>
+				{% endif %}
             </div>
 		</div><!--/.row-->
 

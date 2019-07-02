@@ -848,7 +848,7 @@ def estado_pedidos_s(request):
             final = info[3]
 
             update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=teacherSystem.user,
-                                                     turmaInicial=initial, turmaFinal=final)
+                                                     turmaInicial=initial, turmaFinal=final, is_accepted=None)
 
             if info[4] == "True":
                 update.is_accepted = True
@@ -1212,7 +1212,7 @@ def resposta_pedidos_t(request):
             final = info[3]
 
             update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=studentSystem.user,
-                                                     turmaInicial=initial, turmaFinal=final)
+                                                     turmaInicial=initial, turmaFinal=final, is_accepted=None)
 
             if info[4] == "True":
                 update.is_accepted = True

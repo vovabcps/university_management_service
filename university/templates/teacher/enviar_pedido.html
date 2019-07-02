@@ -20,7 +20,8 @@
 
 {% block content %}
 
-    
+<div id="boop777"></div>    
+
 <div class="panel panel-default">
     <div class="panel-body tabs">
 
@@ -133,6 +134,16 @@
 				}
 			});
   }
+
+
+  $(document).ready(function(){
+    if(localStorage.getItem("{{personalData.name}}") != undefined){
+      var res = localStorage.getItem("{{personalData.name}}")
+      console.log(res)
+      document.getElementById("boop777").innerHTML= res
+  }
+
+  });
 
 </script>
 
