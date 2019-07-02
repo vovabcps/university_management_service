@@ -6,103 +6,115 @@
 {% block content_title %}Registar presenças{% endblock %}
 
 {% block breadcrumbs %}
-        › Registar presenças
+    › Registar presenças
 {% endblock %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 {% endblock %}
 
 {% block content %}
 
-				
-		<div class="row">
-			<div class="col-lg-12">
-				<div class="panel panel-default">
-					<div id="option1Header" class="panel-heading"><span class="fa fa-navicon">&nbsp;</span>1. Escolha a cadeira e a turma</div>
-					<div id="option1" class="panel-body">
-                            <div id="modalContent"><div id="showAulas"></div></div>
 
-                            <div class="containerCaled">
-                                    <div class="w3-row headerMes w3-center">
-                    
-                                            <div class="w3-quarter">
-                                                    <a onclick="buildCalendarMain('anterior')"><i class='fa fa-angle-left' style='font-size:28px;color:#30a5ff;margin-top:3%;'></i></a>
-                                                    <a onclick="buildCalendarMain(undefined)"><button class="w3-btn w3-ripple w3-round" style="margin-top: -4%;background-color:#30a5ff;color: #fff!important;">Hoje</button></a>
-                                                    <a onclick="buildCalendarMain('proximo')"><i class='fa fa-angle-right' style='font-size:28px;color:#30a5ff;'></i></a>
-                                                </div>
-                                            
-                                            <div id="mes" class="w3-half w3-container"> </div>
-                                    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="panel panel-default">
+                <div id="option1Header" class="panel-heading"><span class="fa fa-navicon">&nbsp;</span>1. Escolha a
+                    cadeira e a turma
+                </div>
+                <div id="option1" class="panel-body">
+                    <div id="modalContent">
+                        <div id="showAulas"></div>
+                    </div>
 
-                                    <form method="post" action="{% url 'presencas_registar_t' %}">
-                                        <table id="tabelaCalend"></table>
-                                      </form>
+                    <div class="containerCaled">
+                        <div class="w3-row headerMes w3-center">
+
+                            <div class="w3-quarter">
+                                <a onclick="buildCalendarMain('anterior')"><i class='fa fa-angle-left'
+                                                                              style='font-size:28px;color:#30a5ff;margin-top:3%;'></i></a>
+                                <a onclick="buildCalendarMain(undefined)">
+                                    <button class="w3-btn w3-ripple w3-round"
+                                            style="margin-top: -4%;background-color:#30a5ff;color: #fff!important;">Hoje
+                                    </button>
+                                </a>
+                                <a onclick="buildCalendarMain('proximo')"><i class='fa fa-angle-right'
+                                                                             style='font-size:28px;color:#30a5ff;'></i></a>
+                            </div>
+
+                            <div id="mes" class="w3-half w3-container"></div>
                         </div>
-					</div>
-				</div>
-			</div><!-- /.col-->
-		</div><!-- /.row -->
-        
-        <div class="row">
-            <div class="col-md-12">
-                <div class="panel panel-default">
-                    <div id="option2Header" class="panel-heading"><span class="fa fa-navicon">&nbsp;</span>2. Selecione os Alunos Presentes</div>
-					<div id="option2" class="panel-body" style="display: none">
+
+                        <table id="tabelaCalend"></table>
+
                     </div>
                 </div>
             </div>
-        </div><!--/.row-->
-    
-        
-<script>
-    var lstLessons= {{scheduleDict|safe}};
-    console.log(lstLessons)
-  
-    var dicDiasDaSemenaSem1= formatarOrdenarLstLessons(lstLessons['1sem'])
-    var dicDiasDaSemenaSem2= formatarOrdenarLstLessons(lstLessons['2sem'])
-    var dicAulas= {'1sem': dicDiasDaSemenaSem1, '2sem': dicDiasDaSemenaSem2}
-    console.log(dicAulas)
+        </div><!-- /.col-->
+    </div><!-- /.row -->
 
-    buildCalendarMain()
-    function buildCalendarMain(triger){
-        calend(triger, dicAulas);
-    }
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div id="option2Header" class="panel-heading"><span class="fa fa-navicon">&nbsp;</span>2. Selecione os
+                    Alunos Presentes
+                </div>
+                <div id="option2" class="panel-body" style="display: none">
+                </div>
+            </div>
+        </div>
+    </div><!--/.row-->
 
-    // When the user clicks anywhere outside of the modal, close it
-    var modal = document.getElementById('modalContent');
-    window.onclick = function(event) {
-        if (event.target == modal) {
-            modal.style.display = "none";
+
+    <script>
+        var lstLessons = {{scheduleDict|safe}};
+        console.log(lstLessons);
+
+        var dicDiasDaSemenaSem1 = formatarOrdenarLstLessons(lstLessons['1sem']);
+        var dicDiasDaSemenaSem2 = formatarOrdenarLstLessons(lstLessons['2sem']);
+        var dicAulas = {'1sem': dicDiasDaSemenaSem1, '2sem': dicDiasDaSemenaSem2};
+        console.log(dicAulas);
+
+        buildCalendarMain();
+
+        function buildCalendarMain(triger) {
+            calend(triger, dicAulas);
         }
-    }
 
-    // Arrastar o model
-    dragElement(document.getElementById(("showAulas")));
+        // When the user clicks anywhere outside of the modal, close it
+        var modal = document.getElementById('modalContent');
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        };
 
-    //toogle
-    $(document).ready(function(){
-        $("#option1Header").click(function(){
-          $("#option1").toggle();
+        // Arrastar o model
+        dragElement(document.getElementById(("showAulas")));
+
+        //toogle
+        $(document).ready(function () {
+            $("#option1Header").click(function () {
+                $("#option1").toggle();
+            });
         });
-      });
 
-      $(document).ready(function(){
-        $("#option2Header").click(function(){
-          $("#option2").toggle();
+        $(document).ready(function () {
+            $("#option2Header").click(function () {
+                $("#option2").toggle();
+            });
         });
-      });
 
-      //select all
-      function toggle(source) {
-        checkboxes = document.getElementsByName('presenca');
-        for(var i = 0; i < checkboxes.length; i++){
-          checkboxes[i].checked = source.checked;
+        //select all
+        function toggle(source) {
+            checkboxes = document.getElementsByName('presenca');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
         }
-      }
 
 
-</script>
+    </script>
 
 
 {% endblock %}

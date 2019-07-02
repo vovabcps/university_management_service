@@ -6,267 +6,273 @@
 {% block content_title %}Consultar turmas{% endblock %}
 
 {% block breadcrumbs %}
-        › Consultar turmas
+    › Consultar turmas
 {% endblock %}
 
 {% block extrahead %}
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 {% endblock %}
 
 
 {% block content %}
 
-<div id="content-main">
+    <div id="content-main">
 
-		<!-------- horario aluno -------->
-		<!-- Modal -->
-		<div class="modal fade" style="top:5% !important" id="myModal" role="dialog">
-			<div class="modal-dialog modal-lg">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal">&times;</button>
-						<h4 class="modal-title">Horario do aluno <span id="alunoFCModal"></span> :</h4>
-					</div>
-					<div class="modal-body">
+        <!-------- horario aluno -------->
+        <!-- Modal -->
+        <div class="modal fade" style="top:5% !important" id="myModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Horario do aluno <span id="alunoFCModal"></span> :</h4>
+                    </div>
+                    <div class="modal-body">
 
-						<div class="panel-body">
-		
-							<table id="tabelaSchedule"></table>
-		
-							<div>
-								<p>Legenda:</p>
-								<ul id="legenda"></ul>
-							</div>
-		
-							</div>
-					</div>
-				</div>
-			</div>
-		</div>
+                        <div class="panel-body">
 
+                            <table id="tabelaSchedule"></table>
 
-			<!--------------->
+                            <div>
+                                <p>Legenda:</p>
+                                <ul id="legenda"></ul>
+                            </div>
 
-		
-		<br> <!-- para nao ficar colado ao de cima-->
-		<div class="row">
-		  <div class="col-lg-12">
-			<div class="panel panel-default">
-	  
-					<div class="semestres">
-						<ul class="nav nav-pills" role="tablist">
-							<li class="nav-item active">
-							  <a class="nav-link active" data-toggle="pill" href="#semestre1">1º Semestre</a>
-							</li>
-							<li class="nav-item">
-							  <a class="nav-link" data-toggle="pill" href="#semestre2" >2º Semestre</a>
-							</li>
-						  </ul>
-					</div>
-				
-				</div>
-	  
-				
-	  
-			  <div class="panel-body">
-	  
-			  
-				<div class="w3-row">
-					<div class=" w3-third">
-	  
-				<div class="tab-content">
-				  {% for semestre, subjs in subjsSem.items %}
-	  
-				  {% if semestre == "1" %}
-				  <div id="semestre1" class=" tab-pane active">
-	  
-					{% else %}
-					<div id="semestre2" class=" tab-pane fade">
-					  {% endif %}
-	  
-					  <!-- em comum -->
-					  <ul class="nav nav-pills" role="tablist">
-	  
-						{% for subj, dicTypeTurmaLessons in subjs.items %}
-	  
-						{% if forloop.counter == 1 %}
-						<li class="nav-item active ">
-						  <a class="nav-link active" data-toggle="pill"
-							href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
-						</li>
-						{% else %}
-						<li class="nav-item">
-						  <a class="nav-link " data-toggle="pill" href="#{{semestre}}sem{{subj.getSigla}}">{{subj.name}}</a>
-						</li>
-						{% endif %}
-	  
-						{% endfor %}
-					  </ul>
-	  
-						  <div class="tab-content">
-							 
-							{% for subj, dicTypeTurmaLessons in subjs.items %}
-	  
-							{% if forloop.counter == 1 %}
-							<div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane active">
-							  {% else %}
-							  <div id="{{semestre}}sem{{subj.getSigla}}" class=" tab-pane fade">
-								{% endif %}
-	  
-								{% for tipo, turmasAlunos in dicTypeTurmaLessons.items %}
-								<br>
-								{% if tipo == "T" %}
-								  <p>TEORICAS</p>
-								{% elif  tipo == "TP" %}
-								  <p>PRATICAS</p>
-								{% elif  tipo == "PL" %}
-								  <p>LABORATORIAIS</p>
-								{% elif  tipo == "O" %}
-								  <p>OUTRA</p>
-								{% elif  tipo == "S" %}
-								  <p>SINPOSIO</p>
-								{% else %}
-								  <p>{{tipo}}</p>
-								{% endif %}
-							
-								<div class="turmas">
-								  {% for turma in turmasAlunos %}
-
-								  <button type="button" class="w3-button-small w3-khaki w3-round"
-									onclick="pedidoAjax('{{semestre}}', '{{subj.name}}', '{{tipo}}{{turma}}')">{{tipo}}{{turma}}
-								  </button>
-
-								  {% endfor %}
-								</div>
-
-								{% endfor %}
-							  </div>
-
-							  {% endfor %}
-							</div> <!-- class="tab-content" -->
-
-					  </div>
-					  {% endfor %}
-					</div> <!-- class="tab-content" -->
-					</div>
-
-					<div class="w3-twothird">
-							<div class="row" id='box3'>
-									<div class="col-md-12">
-										<div class="panel panel-default">
-											<div class="panel-heading">Lista Alunos</div>
-											<div class="panel-body">
-													<div id="totalAlunos"></div>
-													<table class="table">
-															<thead>
-																<tr>
-																	<th>Número</th>
-																	<th>Nome</th>
-																	<th>Email</th>
-																	<th>Horario</th>
-																</tr>
-
-															</thead>
-															<tbody id="tabelaAlunos">
-															</tbody>
-														</table>
-
-											</div>
-										</div>
-									</div>
-									</div>
-					  </div>
-
-				  </div> <!-- end row -->
-
-				</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
-			</div><!-- /.panel-->
-		  </div><!-- /.col-->
-		</div><!-- /.row -->
+        <!--------------->
 
 
+        <br> <!-- para nao ficar colado ao de cima-->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="panel panel-default">
+
+                    <div class="semestres">
+                        <ul class="nav nav-pills" role="tablist">
+                            <li class="nav-item active">
+                                <a class="nav-link active" data-toggle="pill" href="#semestre1">1º Semestre</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="pill" href="#semestre2">2º Semestre</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
 
 
-´
+                <div class="panel-body">
 
-</div><!--/.main-->
 
-<script>
-		function pedidoAjax(sem, subjName, typeTurma){
-      $.ajax({
-        type: "POST",
-        url: 'consult_turmas',
-        data: JSON.stringify({'sem': sem, 'subjName':subjName, 'typeTurma': typeTurma}),
-        success: function (data) {
-            console.log(data)
-                if (data['message'] == "success") {
-                  mostrarAlunos(data['JSONalunos'])
-                } else {
-                        alert("Nao é possivel ver o horario")
+                    <div class="w3-row">
+                        <div class=" w3-third">
+
+                            <div class="tab-content">
+                                {% for semestre, subjs in subjsSem.items %}
+
+                                    {% if semestre == "1" %}
+                                        <div id="semestre1" class=" tab-pane active">
+
+                                    {% else %}
+                                        <div id="semestre2" class=" tab-pane fade">
+                                    {% endif %}
+
+                                    <!-- em comum -->
+                                    <ul class="nav nav-pills" role="tablist">
+
+                                        {% for subj, dicTypeTurmaLessons in subjs.items %}
+
+                                            {% if forloop.counter == 1 %}
+                                                <li class="nav-item active ">
+                                                    <a class="nav-link active" data-toggle="pill"
+                                                       href="#{{ semestre }}sem{{ subj.getSigla }}">{{ subj.name }}</a>
+                                                </li>
+                                            {% else %}
+                                                <li class="nav-item">
+                                                    <a class="nav-link " data-toggle="pill"
+                                                       href="#{{ semestre }}sem{{ subj.getSigla }}">{{ subj.name }}</a>
+                                                </li>
+                                            {% endif %}
+
+                                        {% endfor %}
+                                    </ul>
+
+                                    <div class="tab-content">
+
+                                        {% for subj, dicTypeTurmaLessons in subjs.items %}
+
+                                            {% if forloop.counter == 1 %}
+                                                <div id="{{ semestre }}sem{{ subj.getSigla }}" class=" tab-pane active">
+                                            {% else %}
+                                                <div id="{{ semestre }}sem{{ subj.getSigla }}" class=" tab-pane fade">
+                                            {% endif %}
+
+                                        {% for tipo, turmasAlunos in dicTypeTurmaLessons.items %}
+                                            <br>
+                                            {% if tipo == "T" %}
+                                                <p>TEORICAS</p>
+                                            {% elif  tipo == "TP" %}
+                                                <p>PRATICAS</p>
+                                            {% elif  tipo == "PL" %}
+                                                <p>LABORATORIAIS</p>
+                                            {% elif  tipo == "O" %}
+                                                <p>OUTRA</p>
+                                            {% elif  tipo == "S" %}
+                                                <p>SINPOSIO</p>
+                                            {% else %}
+                                                <p>{{ tipo }}</p>
+                                            {% endif %}
+
+                                            <div class="turmas">
+                                                {% for turma in turmasAlunos %}
+
+                                                    <button type="button" class="w3-button-small w3-khaki w3-round"
+                                                            onclick="pedidoAjax('{{ semestre }}', '{{ subj.name }}', '{{ tipo }}{{ turma }}')">{{ tipo }}{{ turma }}
+                                                    </button>
+
+                                                {% endfor %}
+                                            </div>
+
+                                        {% endfor %}
+                                        </div>
+
+                                        {% endfor %}
+                                        </div> <!-- class="tab-content" -->
+
+                                    </div>
+                                {% endfor %}
+                                </div> <!-- class="tab-content" -->
+                                </div>
+
+                                <div class="w3-twothird">
+                                    <div class="row" id='box3'>
+                                        <div class="col-md-12">
+                                            <div class="panel panel-default">
+                                                <div class="panel-heading">Lista Alunos</div>
+                                                <div class="panel-body">
+                                                    <div id="totalAlunos"></div>
+                                                    <table class="table">
+                                                        <thead>
+                                                        <tr>
+                                                            <th>Número</th>
+                                                            <th>Nome</th>
+                                                            <th>Email</th>
+                                                            <th>Horario</th>
+                                                        </tr>
+
+                                                        </thead>
+                                                        <tbody id="tabelaAlunos">
+                                                        </tbody>
+                                                    </table>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div> <!-- end row -->
+
+                        </div>
+
+
+                    </div><!-- /.panel-->
+                </div><!-- /.col-->
+            </div><!-- /.row -->
+
+
+            ´
+
+        </div><!--/.main-->
+
+        <script>
+            function pedidoAjax(sem, subjName, typeTurma) {
+                let csrf = $("[name=csrfmiddlewaretoken]").val();
+                $.ajax({
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrf)
+                    },
+                    type: "POST",
+                    url: 'consult_turmas',
+                    data: JSON.stringify({'sem': sem, 'subjName': subjName, 'typeTurma': typeTurma}),
+                    success: function (data) {
+                        console.log(data);
+                        if (data['message'] == "success") {
+                            mostrarAlunos(data['JSONalunos'])
+                        } else {
+                            alert("Nao é possivel ver o horario")
+                        }
+                    }
+                });
+            }
+
+            function mostrarAlunos(JSONalunos) {
+                console.log(JSONalunos);
+                document.getElementById("totalAlunos").innerHTML = " Total: " + JSONalunos.length + " alunos";
+                var tbody = document.getElementById("tabelaAlunos");
+                tbody.innerHTML = "";
+                for (var i = 0; i < JSONalunos.length; i++) {
+                    var row = tbody.insertRow(-1);
+                    var cell1 = row.insertCell(0).innerHTML = JSONalunos[i][0];
+                    var cell1 = row.insertCell(1).innerHTML = JSONalunos[i][1];
+                    var cell1 = row.insertCell(2).innerHTML = JSONalunos[i][2];
+                    var cell1 = row.insertCell(3).innerHTML = "<a class='verHorarioLink' data-toggle='modal' data-target='#myModal' data-alunofc='" + JSONalunos[i][0] + "' >ver horario</a>";
                 }
             }
-      });
-		}
 
-function mostrarAlunos(JSONalunos){
-	console.log(JSONalunos)
-	document.getElementById("totalAlunos").innerHTML= " Total: "+ JSONalunos.length +" alunos";
-	var tbody= document.getElementById("tabelaAlunos");
-	tbody.innerHTML= "";
-	for(var i=0; i<JSONalunos.length; i++){
-		var row = tbody.insertRow(-1);
-		var cell1 = row.insertCell(0).innerHTML= JSONalunos[i][0];
-		var cell1 = row.insertCell(1).innerHTML= JSONalunos[i][1];
-		var cell1 = row.insertCell(2).innerHTML= JSONalunos[i][2];
-		var cell1 = row.insertCell(3).innerHTML= "<a class='verHorarioLink' data-toggle='modal' data-target='#myModal' data-alunofc='"+ JSONalunos[i][0] +"' >ver horario</a>";
-	}
-}
+            $(document).ready(function () {
+                $('#myModal').on('show.bs.modal', function (event) {
+                    var link = $(event.relatedTarget); // Button that triggered the modal
+                    var alunoFc = link.data('alunofc'); // Extract info from data-* attributes
+                    console.log(alunoFc);
+                    var modal = $(this);
+                    modal.find('#alunoFCModal').text(alunoFc);
 
-$(document).ready(function(){
-	$('#myModal').on('show.bs.modal', function (event) {
-		var link = $(event.relatedTarget) // Button that triggered the modal 
-		var alunoFc = link.data('alunofc') // Extract info from data-* attributes
-		console.log(alunoFc)
-		var modal = $(this)
-		modal.find('#alunoFCModal').text(alunoFc)
+                    let csrf = $("[name=csrfmiddlewaretoken]").val();
+			$.ajax({
+				beforeSend: function(xhr, settings) {
+					xhr.setRequestHeader("X-CSRFToken", csrf)
+				},
+                        type: "POST",
+                        url: 'consult_turmas',
+                        data: JSON.stringify({'aluno': alunoFc}),
+                        success: function (data) {
+                            console.log(data);
+                            if (data['message'] == "success") {
+                                getLessonsSem('1sem', data['scheduleDict'], data['subjsName'])
+                            } else {
+                                alert("Nao é possivel ver o horario")
+                            }
+                        }
+                    });
+                })
+            });
 
-		$.ajax({
-			type: "POST",
-			url: 'consult_turmas',
-			data: JSON.stringify({'aluno': alunoFc}),
-			success: function (data) {
-				console.log(data)
-					if (data['message'] == "success") {
-						getLessonsSem('1sem', data['scheduleDict'], data['subjsName'])
-					} else {
-							alert("Nao é possivel ver o horario")
-					}
-				}
-		});
-	})
-});
+            function getLessonsSem(semestre, scheduleDict, subjsName) {
+                //reset pq os valores do dic tem q estar ordenados
+                document.getElementById("tabelaSchedule").innerHTML = "";
 
-function getLessonsSem(semestre, scheduleDict, subjsName){
-	//reset pq os valores do dic tem q estar ordenados
-	document.getElementById("tabelaSchedule").innerHTML= "";
+                console.log(scheduleDict);
+                var lstLessonsSem = scheduleDict[semestre];
+                var dicDiasDaSemena = formatarOrdenarLstLessons(lstLessonsSem);
+                buildSchedule(dicDiasDaSemena);
 
-	console.log(scheduleDict)
-	var lstLessonsSem= scheduleDict[semestre]
-	var dicDiasDaSemena= formatarOrdenarLstLessons(lstLessonsSem)
-	buildSchedule(dicDiasDaSemena);
+                //legenda
+                var lstSubjsNameSem = subjsName[semestre];
+                txt = "";
+                for (var i = 0; i < lstSubjsNameSem.length; i++) {
+                    txt += "<li>" + getSigla(lstSubjsNameSem[i]) + "- " + lstSubjsNameSem[i] + "</li>"
+                }
+                document.getElementById("legenda").innerHTML = txt
+            }
 
-	//legenda
-	var lstSubjsNameSem= subjsName[semestre];
-	txt=""
-	for(var i=0; i<lstSubjsNameSem.length; i++){
-		txt += "<li>"+ getSigla(lstSubjsNameSem[i]) + "- " + lstSubjsNameSem[i] +"</li>"
-	}
-	document.getElementById("legenda").innerHTML= txt
-}
-
-</script>
+        </script>
 
 {% endblock %}

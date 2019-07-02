@@ -6,54 +6,142 @@
 {% block content_title %}Os Meus Dados{% endblock %}
 
 {% block breadcrumbs %}
-        › Dados Pessoais
+    › Dados Pessoais
 {% endblock %}
 
 {% block content %}
 
-<div id="content-main">
+    <div id="content-main">
 
-        <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-          <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-              <div class="modal-body">
-                <form action="" method="POST">
-                  <div class="form-group">
-                    <label for="editInput" class="col-form-label ">Message:</label>
-                    <textarea name="newValue" class="form-control" id="editInput"></textarea>
-                  </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-primary">Guardar</button>
+        <div class="modal" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        <form action="" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="editInput" class="col-form-label ">Message:</label>
+                                <textarea name="newValue" class="form-control" id="editInput"></textarea>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" class="btn btn-primary">Guardar</button>
+                            </div>
+                        </form>
                     </div>
-                </form>
-              </div>
+                </div>
             </div>
-          </div>
         </div>
-    
-    
-    
-    
-    
-    
+
+
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">Informação Pessoal</div>
                     <div class="panel-body">
-                        <img id="s_consult_details_pic" src="{% static personalData.profile_pic %}" alt="photo" width="150" height="150" style="float: right"  >
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Nome: " id="but1" >Edit</button></div><div class="edit_div_right" id="form1"><h4><strong>Nome:</strong></h4><p>{{personalData.name}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button disabled class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Número de Professor: " id="but2" >Edit</button></div><div class="edit_div_right" id="form2"><h4><strong>Número de aluno:</strong></h4><p>{{personalData.user.user.username}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button disabled class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Email da Faculdade: " id="but3" >Edit</button></div><div class="edit_div_right" id="form3"><h4><strong>Email da Faculdade:</strong></h4><p>{{personalData.user.user.email}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Email Pessoal: " id="but4" >Edit</button></div><div class="edit_div_right" id="form4"><h4><strong>Email Pessoal:</strong></h4><p>{{personalData.personal_email}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Número de Telefone: " id="but5" >Edit</button></div><div class="edit_div_right" id="form5"><h4><strong>Número Telefone:</strong></h4><p>{{personalData.phone_number}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Morada: " id="but6" >Edit</button></div><div class="edit_div_right" id="form6"><h4><strong>Morada:</strong></h4><p>{{personalData.address}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Data de nascimento: " id="but7" >Edit</button></div><div class="edit_div_right" id="form7"><h4><strong>Data de nascimento:</strong></h4><p>{{personalData.birth_date}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Género: " id="but8" >Edit</button></div><div class="edit_div_right" id="form8"><h4><strong>Género:</strong></h4><p>{{personalData.gender}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Nacionalidade: " id="but9" >Edit</button></div><div class="edit_div_right" id="form9"><h4><strong>Nacionalidade:</strong></h4><p>{{personalData.nationality}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="Número de identificação: " id="but10" >Edit</button></div><div class="edit_div_right" id="form10"><h4><strong>Número de Identificação:</strong></h4><p>{{personalData.id_document}}</p></div></div>
-                        <div class="alineinthepersonaldata"><div class="edit_div_left"><button  class="btn btn-lg btn-primary edit_but" data-toggle="modal" data-target="#exampleModal" data-whatever="NIF/VAT: " id="but11" >Edit</button></div><div class="edit_div_right" id="form11"><h4><strong>NIF/VAT:</strong></h4><p>{{personalData.vat_number}}</p></div></div>
+                        <img id="s_consult_details_pic" src="{% static personalData.profile_pic %}" alt="photo"
+                             width="150" height="150" style="float: right">
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Nome: " id="but1">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form1"><h4><strong>Nome:</strong></h4>
+                                <p>{{ personalData.name }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button disabled class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Número de Professor: " id="but2">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form2"><h4><strong>Número de aluno:</strong></h4>
+                                <p>{{ personalData.user.user.username }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button disabled class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Email da Faculdade: " id="but3">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form3"><h4><strong>Email da Faculdade:</strong></h4>
+                                <p>{{ personalData.user.user.email }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Email Pessoal: " id="but4">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form4"><h4><strong>Email Pessoal:</strong></h4>
+                                <p>{{ personalData.personal_email }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Número de Telefone: " id="but5">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form5"><h4><strong>Número Telefone:</strong></h4>
+                                <p>{{ personalData.phone_number }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Morada: " id="but6">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form6"><h4><strong>Morada:</strong></h4>
+                                <p>{{ personalData.address }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Data de nascimento: " id="but7">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form7"><h4><strong>Data de nascimento:</strong></h4>
+                                <p>{{ personalData.birth_date }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Género: " id="but8">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form8"><h4><strong>Género:</strong></h4>
+                                <p>{{ personalData.gender }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Nacionalidade: " id="but9">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form9"><h4><strong>Nacionalidade:</strong></h4>
+                                <p>{{ personalData.nationality }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="Número de identificação: "
+                                        id="but10">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form10"><h4><strong>Número de Identificação:</strong></h4>
+                                <p>{{ personalData.id_document }}</p></div>
+                        </div>
+                        <div class="alineinthepersonaldata">
+                            <div class="edit_div_left">
+                                <button class="btn btn-lg btn-primary edit_but" data-toggle="modal"
+                                        data-target="#exampleModal" data-whatever="NIF/VAT: " id="but11">Edit
+                                </button>
+                            </div>
+                            <div class="edit_div_right" id="form11"><h4><strong>NIF/VAT:</strong></h4>
+                                <p>{{ personalData.vat_number }}</p></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,25 +149,25 @@
     </div><!--/.main-->
 
 
-  <script>
+    <script>
 
-    $(document).ready(function(){
+        $(document).ready(function () {
 
-      $('#exampleModal').on('show.bs.modal', function (event) {
-          var button = $(event.relatedTarget) // Button that triggered the modal
-          var recipient = button.data('whatever') // Extract info from data-* attributes
-          var but_id = button.attr('id')
-          var form_id = "form" + but_id.substring(3)
-          var previousValue = $('#' + form_id + " " + "p").text()
-          var modal = $(this)
-          modal.find('.col-form-label').text(recipient)
-          modal.find('#editInput').val(previousValue)
-          modal.find('#editInput').attr('name', recipient)
+            $('#exampleModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var recipient = button.data('whatever'); // Extract info from data-* attributes
+                var but_id = button.attr('id');
+                var form_id = "form" + but_id.substring(3);
+                var previousValue = $('#' + form_id + " " + "p").text();
+                var modal = $(this);
+                modal.find('.col-form-label').text(recipient);
+                modal.find('#editInput').val(previousValue);
+                modal.find('#editInput').attr('name', recipient)
 
 
-      })
+            })
 
-    });
-  </script>
-	
+        });
+    </script>
+
 {% endblock %}

@@ -11,7 +11,7 @@
 
 {% block title %}Pedidos Mudança Turma{% endblock %}
 
-{% block content_title %}{% endblock %}
+{% block content_title %}Pedidos de mudança de turma{% endblock %}
 
 {% block breadcrumbs %}
 › Mudança de Turma
@@ -19,11 +19,6 @@
 
 
 {% block content %}
-
-<div class="aqui">
-  <h4>ENVIO DE PEDIDO DE MUDANÇA DE TURMA</h4>
-  <br>
-<div>
 
 
 <div class="panel panel-default">
@@ -37,8 +32,6 @@
               <li><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>
               {% endif %}
             {% endfor %}
-
-            <!--<li class="active"><a href="#{{forloop.counter}}" data-toggle="tab">{{subjName}}</a></li>-->
         </ul>
 
                     <div class="tab-content">
@@ -50,8 +43,8 @@
                             {% endif %}
                             <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
 
-                            <select style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, '{{subjName}}')">
-                                <option hidden disabled selected value> -- select an option -- </option>
+                            <select id="alunoEscolhido{{forloop.counter}}" style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, {{forloop.counter}})">
+                                <option hidden disabled selected value> -- Escolha um aluno -- </option>
                                 {% for user, turmas in list.1.items %}
                                 <option id="{{user}}" value="{{user}}">{{user}}</option>
                                 {% endfor %}
@@ -60,45 +53,81 @@
                             <br>
                             <p class="o2">2. O Aluno encontra-se atualmente INSCRITO nas Turmas:</p>
 
-                            <div id="turmasActuais{{subjName}}">
+                            <div id="turmasActuais{{forloop.counter}}">
                             </div>
                             <br>
                             <br>
                             <p class="o3">3. Escolha a NOVA Turma:</p>
                             <div class="form-group" style="margin-left: 10%">
-                              <label class="nt">
-                                  {% for typeTurmas in list.0 %}
-                                  <div class="radio">
-
-                                      <input type="radio" name="optionsRadios{{list.0}}" id="{{typeTurmas}}" value="{{typeTurmas}}">{{typeTurmas}}
-
-
-                                    </div>
-                                  {% endfor %}
-
-                              </label>
+                              <label class="nt" id="turmasPossives{{forloop.counter}}"></label>
                             </div>
+                              <button id="enviarPedButton{{forloop.counter}}" style="float: right; margin: 20px" class="btn btn-lg btn-primary"  onclick="enviarPedido({{forloop.counter}}, '{{subjName}}')">Submit Request</button>
                         </div>
-                        {% endfor %}
 
-        <button style="float: right; margin: 20px" class="btn btn-lg btn-primary">Submit Request</button>
+                        {% endfor %}
 
     </div>
 </div>
 
 <script>
-    function mostrarTurmasActuais(selectObject, dic, subjName) {
+    function mostrarTurmasActuais(selectObject, dic, numTab) {
       console.log(selectObject.value)
       console.log(dic)
-      var value = selectObject.value;
-      var lstTurmas= dic[selectObject.value]
+      var lstTurmas= dic[selectObject.value][0]
       var buttons= ""
       for (var i= 0; i<lstTurmas.length; i++){
         console.log(lstTurmas[i])
-        buttons += "<button type='button' class='btn btn-sm btn-default cenasMinhas ta1'>" + lstTurmas[i] + "</button>"
+        buttons += "<button type='button' class='btn btn-sm btn-default cenasMinhas ta1' onclick=mostrarTurmasPossiveis("+numTab+",'"+  lstTurmas[i] +"')>" + lstTurmas[i] + "</button>"
       }
 
-      document.getElementById("turmasActuais"+subjName).innerHTML= buttons
+      document.getElementById("turmasActuais"+numTab).innerHTML= buttons
+
+      var lstTurmasP= dic[selectObject.value][1]
+      var divs= ""
+      for (var i= 0; i<lstTurmasP.length; i++){
+        console.log(lstTurmasP[i])
+        divs +=  "<div class='radio'><input type='radio' name='optionsRadios" + numTab + "' value="+  lstTurmasP[i] +">" + lstTurmasP[i] +"</div>"
+      }
+
+      document.getElementById("turmasPossives"+numTab).innerHTML= divs
+  }
+
+
+  function mostrarTurmasPossiveis(numTab, turma){
+    document.getElementById("enviarPedButton"+numTab).setAttribute("data-aulaEscolhida", turma)
+  }
+
+
+  function enviarPedido(numTab, subjName){
+    var id= "alunoEscolhido"+numTab
+    console.log("#"+id+"  option:selected")
+    var alunoEscolhido= $( "#"+id+"  option:selected" ).text();
+    console.log(alunoEscolhido)
+
+    var turma= document.getElementById("enviarPedButton"+numTab).getAttribute("data-aulaEscolhida")
+    console.log(turma)
+
+    var novaTurma= $("input[name='optionsRadios" + numTab + "']:checked").val()
+
+
+    let csrf = $("[name=csrfmiddlewaretoken]").val();
+      $.ajax({
+        beforeSend: function(xhr, settings) {
+          xhr.setRequestHeader("X-CSRFToken", csrf)
+        },
+				type: "POST",
+				url: 'enviar_pedidos',
+				data: JSON.stringify({'mySub': subjName, 'alunoEscolhido':alunoEscolhido, 'turma':turma, 'novaTurma':novaTurma}),
+				success: function (data) {
+					console.log(data)
+					if (data['message'] == "success") {
+              alert("Pedido enviado ao aluno "+ alunoEscolhido +" com sucesso!")
+					}
+					else {
+							alert("Siga as instruçoes passo a passo\nEscolha uma turma para a qual ainda nao tenha feito um pedido e lembre-se:\nSó pode trocar entre turmas do mesmo tipo")
+					}
+				}
+			});
   }
 
 </script>

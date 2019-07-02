@@ -130,9 +130,9 @@ admin.site.register(Faculdade, FaculdadeAdmin)
 
 
 class SystemUserMensagensAdmin(admin.ModelAdmin):
-    search_fields = ["remetente", "destinatario", "subject"]
+    search_fields = ["remetente__user__username", "destinatario__user__username", "subject__name"]
     list_filter = ["is_accepted"]
-    list_display = ["remetente", "destinatario", "subject", "turmaInicial", "turmaFinal", "is_accepted"]
+    list_display = ["remetente_fc", "destinatario_fc", "get_subject_name", "turmaInicial", "turmaFinal", "is_accepted"]
 
 
 admin.site.register(SystemUserMensagens, SystemUserMensagensAdmin)

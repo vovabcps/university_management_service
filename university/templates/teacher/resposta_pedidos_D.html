@@ -34,7 +34,7 @@
 											{%for student, subj, start, final, status in listPedidos %}
 												<tr>
 													<td>{{subj.name}}</td>
-													<td>{{student.name}} ({{student.id}})</td>
+													<td>{{student.name}} (fc{{student.id}})</td>
 													<td>{{start}}</td>
 													<td>{{final}}</td>
 													<td class="options">
@@ -73,7 +73,7 @@
 										{%for student, subj, start, final, status in historicoPedidos %}
 											<tr>
 												<td>{{subj.name}}</td>
-												<td>{{student.name}} ({{student.id}})</td>
+												<td>{{student.name}} (fc{{student.id}})</td>
 												<td>{{start}}</td>
 												<td>{{final}}</td>
 												{% if status == True %}
@@ -109,7 +109,7 @@
 										{%for student, subj, start, final, status in pedidosS %}
 											<tr>
 												<td>{{subj.name}}</td>
-												<td>{{student.name}} ({{student.id}})</td>
+												<td>{{student.name}} (fc{{student.id}})</td>
 												<td>{{start}}</td>
 												<td>{{final}}</td>
 												{% if status == True %}
@@ -139,7 +139,11 @@
 				$(this).closest("tr").remove();
 				var info = this.name;
 
+				let csrf = $("[name=csrfmiddlewaretoken]").val();
 				$.ajax({
+					beforeSend: function(xhr, settings) {
+						xhr.setRequestHeader("X-CSRFToken", csrf)
+					},
 					type: "POST",
 					url: 'resposta_pedidos',
 					data: JSON.stringify({'info': info}),

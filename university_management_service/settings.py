@@ -88,14 +88,14 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'PORT': '3306'
     },
-    'slave1': {
-        'HOST': '35.189.116.95',
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'wyvern',
-        'USER': os.getenv('DATABASE_USER'),
-        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
-        'PORT': '3306'
-    }
+    # 'slave1': {
+    #     'HOST': '35.189.116.95',
+    #     'ENGINE': 'django.db.backends.mysql',
+    #     'NAME': 'wyvern',
+    #     'USER': os.getenv('DATABASE_USER'),
+    #     'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+    #     'PORT': '3306'
+    # }
 }
 
 CACHES = {
@@ -140,6 +140,6 @@ STATIC_URL = 'https://storage.googleapis.com/wyvern-bucket/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'university/static')
 MIGRATIONS_DATA_ROOT = os.path.join(BASE_DIR, 'university/migrations_data')
 
-REPLICATED_DATABASE_SLAVES = ['slave1']
-DATABASE_ROUTERS = ['django_replicated.router.ReplicationRouter']
-REPLICATED_DATABASE_DOWNTIME = 20
+# REPLICATED_DATABASE_SLAVES = ['slave1']
+# DATABASE_ROUTERS = ['django_replicated.router.ReplicationRouter']
+# REPLICATED_DATABASE_DOWNTIME = 20

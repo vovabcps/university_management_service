@@ -203,8 +203,11 @@
       txt2sem = txt2sem + allTurmasEscolhidas2sem[i].value + "||";
     }
 
-
+    let csrf = $("[name=csrfmiddlewaretoken]").val();
     $.ajax({
+      beforeSend: function(xhr, settings) {
+        xhr.setRequestHeader("X-CSRFToken", csrf)
+      },
       type: "POST",
       url: 'inscricoes_confirmacao',
       data: JSON.stringify({
