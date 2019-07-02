@@ -1270,6 +1270,7 @@ def enviar_pedidos_t(request):
                 #print(lstSuObjs)
                 #ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
                 
+                formatDicBySU= {}
                 if lstSuObjs:
                     lstSuQueries2= []
 
@@ -1279,7 +1280,7 @@ def enviar_pedidos_t(request):
 
                     lstPI= PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values("user__user__username", "name")
 
-                    formatDicBySU= {}
+                    
                     #len(systemUsersObjs) == len(lstPIName)
                     for i in range(0, len(lstPI)):
                         suFC= lstPI[i]["user__user__username"]

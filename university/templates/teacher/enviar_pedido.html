@@ -23,7 +23,7 @@
     
 <div class="panel panel-default">
     <div class="panel-body tabs">
-        
+
         <ul class="nav nav-tabs">
             {% for subjName, list in formatDicBySubj.items %}
               {% if forloop.counter == 1 %}
@@ -41,29 +41,33 @@
                             {% else %}
                                         <div id="{{forloop.counter}}" class="tab-pane fade">
                             {% endif %}
-                            <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
-                         
-                            <select id="alunoEscolhido{{forloop.counter}}" style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, {{forloop.counter}})">
-                                <option hidden disabled selected value> -- Escolha um aluno -- </option>
-                                {% for user, turmas in list.1.items %}
-                                <option id="{{user}}" value="{{user}}">{{user}}</option>
-                                {% endfor %}
-                            </select>
-                          
-                            <br>
-                            <p class="o2">2. O Aluno encontra-se atualmente INSCRITO nas Turmas:</p>
 
-                            <div id="turmasActuais{{forloop.counter}}">
+                            {% if list.1 %}
+                                <p>1. Escolha um Aluno que pertença a uma das suas turmas:</p>
+                            
+                                <select id="alunoEscolhido{{forloop.counter}}" style="text-align-last:center;text-align:center;-ms-text-align-last:center;-moz-text-align-last:center;" onchange="mostrarTurmasActuais(this, {{list.1}}, {{forloop.counter}})">
+                                    <option hidden disabled selected value> -- Escolha um aluno -- </option>
+                                    {% for user, turmas in list.1.items %}
+                                    <option id="{{user}}" value="{{user}}">{{user}}</option>
+                                    {% endfor %}
+                                </select>
+                              
+                                <br>
+                                <p class="o2">2. O Aluno encontra-se atualmente INSCRITO nas Turmas:</p>
+
+                                <div id="turmasActuais{{forloop.counter}}">
+                                </div>
+                                <br>
+                                <br>
+                                <p class="o3">3. Escolha a NOVA Turma:</p>
+                                <div class="form-group" style="margin-left: 10%">
+                                  <label class="nt" id="turmasPossives{{forloop.counter}}"></label>
+                                </div>
+                                  <button id="enviarPedButton{{forloop.counter}}" style="float: right; margin: 20px" class="btn btn-lg btn-primary"  onclick="enviarPedido({{forloop.counter}}, '{{subjName}}')">Submit Request</button>
+                                  {% else %}
+                                  <p>Nao existem alunos inscritos nas suas turmas</p>
+                                {% endif %}
                             </div>
-                            <br>
-                            <br>
-                            <p class="o3">3. Escolha a NOVA Turma:</p>
-                            <div class="form-group" style="margin-left: 10%">
-                              <label class="nt" id="turmasPossives{{forloop.counter}}"></label>
-                            </div>
-                              <button id="enviarPedButton{{forloop.counter}}" style="float: right; margin: 20px" class="btn btn-lg btn-primary"  onclick="enviarPedido({{forloop.counter}}, '{{subjName}}')">Submit Request</button>
-                        </div>
-                      
                         {% endfor %}
         
     </div>
