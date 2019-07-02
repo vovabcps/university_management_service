@@ -16,9 +16,13 @@
 
 	<div class="row" id="myrow">
             <div class="col-md-12">
+                    {% if finalList %}
                 <div class="panel panel-default">
+
                     <div class="panel-body tabs">
+
                         <ul class="nav nav-tabs">
+
                             {% for obj in finalList %}
 
                             <li><a href={{obj.id}} data-toggle="tab">{{obj.subjectName}}</a></li>
@@ -56,9 +60,13 @@
                             </div>
                             {%endfor%}
 
+
                         </div>
                     </div>
                 </div>
+                {% else %}
+                <p>Para poder pesquisar os seus colegas e professores em primeiro inscreva-se em cadeiras do seu curso :)</p>
+                 {% endif %}
             </div>
 		</div><!--/.row-->
 

@@ -22,6 +22,7 @@
                                 <div class="panel-heading">As Minhas Disciplinas</div>
     
                                 <div class="panel-body articles-container">
+                                        {% if suAllSubjects %}
                                    {% for subjs in suAllSubjects %}
                                         <div class="article border-bottom">
                                             <div class="col-xs-12">
@@ -52,6 +53,9 @@
                                             <div class="clear"></div>
                                         </div><!--End .article-->
                                     {% endfor %}
+                                    {% else %}
+                                            <p>Inscreva-se em cadeiras do seu curso :)</p>
+                                        {% endif %}
 
                                 </div>
                             </div><!--End .articles-->

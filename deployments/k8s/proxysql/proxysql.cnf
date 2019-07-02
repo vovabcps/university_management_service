@@ -1,7 +1,7 @@
 datadir="/var/lib/proxysql"
 admin_variables=
 {
-        admin_credentials="admin_user:secret_password"
+        admin_credentials="proxysql-admin:adminpassw0rd"
         mysql_ifaces="0.0.0.0:6032"
         refresh_interval=2000
 }
@@ -25,8 +25,8 @@ mysql_variables=
         ping_timeout_server=200
         commands_stats=true
         sessions_sort=true
-        monitor_username="proxysql"
-        monitor_password="proxysqlpassw0rd"
+        monitor_username="monitor"
+        monitor_password="monitor_password"
 }
 mysql_replication_hostgroups =
 (
@@ -34,14 +34,14 @@ mysql_replication_hostgroups =
 )
 mysql_servers =
 (
-        { address="192.168.55.171" , port=3306 , hostgroup=10, max_connections=100 },
-        { address="192.168.55.172" , port=3306 , hostgroup=10, max_connections=100 },
-        { address="192.168.55.171" , port=3306 , hostgroup=20, max_connections=100 },
-        { address="192.168.55.172" , port=3306 , hostgroup=20, max_connections=100 }
+        { address="35.246.60.201" , port=3306 , hostgroup=10, max_connections=100 },
+        { address="35.189.116.95" , port=3306 , hostgroup=10, max_connections=100 },
+        { address="35.246.60.201" , port=3306 , hostgroup=20, max_connections=100 },
+        { address="35.189.116.95" , port=3306 , hostgroup=20, max_connections=100 }
 )
 mysql_users =
 (
-        { username = "wordpress" , password = "passw0rd" , default_hostgroup = 10 , active = 1 }
+        { username = "root" , password = "pass" , default_hostgroup = 10 , active = 1 }
 )
 mysql_query_rules =
 (

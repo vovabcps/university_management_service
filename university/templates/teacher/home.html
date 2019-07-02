@@ -293,12 +293,15 @@
         lstCadeirasProf= []
         $.each($("a[data-nomecadeira]"), function () {
             var subj= $(this).attr('data-nomecadeira')
+            console.log(subj)
             lstCadeirasProf.push(subj)
         });
 
         dicCountLesson={}
         $.each($("td[data-cadeirasSobrepostas]"), function () {
             var sobrep= $(this).attr('data-cadeirasSobrepostas')
+            var aluno= $(this).attr('data-alunofc')
+
             lstLess= sobrep.split("||")
             for(var i=0; i<lstLess.length; i++){
                 if(lstCadeirasProf.indexOf(lstLess[i].split("|")[0]) >= 0){
@@ -308,9 +311,12 @@
                         dicCountLesson[lstLess[i]] = 1
                     }
                 }
+
                 if(lstCadeirasProf.indexOf(lstLess[i].split("|")[0]) >= 0 && document.getElementById(lstLess[i].split("|")[0]).getAttribute("data-myClasses").indexOf(lstLess[i].split("|")[1]) >= 0){
                     var enviar= $(this).parent().children().last()
-                    enviar.append('<a>Enviar</a>');
+                    console.log(lstLess[i].split("|"))
+                    var newSubj= lstLess[i].split("|")[0].split(" ").join("??")
+                    enviar.append("<a onclick=enviar_pedido('"+newSubj+"','" +aluno+"','"+ lstLess[i].split("|")[1] +"')>Enviar</a>");
                 }
 
             }
@@ -336,6 +342,21 @@
         }
         document.getElementById("estatistica").innerHTML= "<p><strong>Nas minhas turmas:</strong></p>" + txtMyclasses + "<p><strong>Em outras turmas:</strong></p>" + txtOtherClasses
     });
+
+
+    function enviar_pedido(subjName, alunoEscolhido, turma){
+        var subjName= subjName.split("??").join(" ")
+        console.log(subjName)
+        console.log(alunoEscolhido)
+        console.log(turma)
+
+        localStorage.setItem("{{personalData.name}}", subjName + ", " + alunoEscolhido + ", " + turma);
+        window.location.href = "enviar_pedidos"
+
+        //enviar.append("<a href='{% url 'enviar_pedidos_t' %}'>Enviar</a>");
+    }
+
+
   </script>
 
 {% endblock %}

@@ -851,7 +851,7 @@ def estado_pedidos_s(request):
             final = info[3]
 
             update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=teacherSystem.user,
-                                                     turmaInicial=initial, turmaFinal=final)
+                                                     turmaInicial=initial, turmaFinal=final, is_accepted=None)
 
             if info[4] == "True":
                 update.is_accepted = True
@@ -1210,7 +1210,7 @@ def resposta_pedidos_t(request):
             final = info[3]
 
             update = SystemUserMensagens.objects.get(subject=subjSystem, remetente=studentSystem.user,
-                                                     turmaInicial=initial, turmaFinal=final)
+                                                     turmaInicial=initial, turmaFinal=final, is_accepted=None)
 
             if info[4] == "True":
                 update.is_accepted = True
@@ -1270,6 +1270,7 @@ def enviar_pedidos_t(request):
                 # print(lstSuObjs)
                 # ex: [{'user': 117, 'turmas': 'T11 TP12'}, {'user': 128, 'turmas': 'T11 TP12'}
 
+                formatDicBySU = {}
                 if lstSuObjs:
                     lstSuQueries2 = []
 
@@ -1279,7 +1280,7 @@ def enviar_pedidos_t(request):
                     lstPI = PersonalInfo.objects.filter(reduce(operator.or_, lstSuQueries2)).values(
                         "user__user__username", "name")
 
-                    formatDicBySU = {}
+
                     # len(systemUsersObjs) == len(lstPIName)
                     for i in range(0, len(lstPI)):
                         suFC = lstPI[i]["user__user__username"]

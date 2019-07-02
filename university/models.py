@@ -1,11 +1,6 @@
 from django.db import models
 from django.conf import settings
 
-
-
-
-
-
 STUDENT_ROLE = 'Aluno'
 TEACHER_ROLE = 'Professor'
 ADMIN_ROLE = 'Admin'
@@ -17,6 +12,9 @@ class SchoolYear(models.Model):
 
     def formatSchoolYear(self):
         return str(self.begin) + "/" + str(self.end)
+
+    def __str__(self):
+        return str(self.begin) + " | " + str(self.end)
 
 
 class Room(models.Model):
@@ -43,6 +41,7 @@ class Role(models.Model):
 
 # 1 aluno pode pertece a mais que uma faculdade (so se for minor)
 
+
 class SystemUser(models.Model):
     # para ser unico: user
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
@@ -50,7 +49,7 @@ class SystemUser(models.Model):
     rooms = models.ManyToManyField(Room, blank=True)  # gabinete
 
     def __str__(self):
-        return self.user.username
+        return self.user.username + " | " + self.role.role
 
     def get_roles(self):
         return self.role.role
@@ -76,11 +75,17 @@ class PersonalInfo(models.Model):
     def get_systemUser_user(self):
         return self.user.user  # ex: fc1085
 
+    def __str__(self):
+        return self.name
+
 
 class Faculdade(models.Model):
     name = models.CharField(max_length=200, null=False, default="Faculdade de Ciências")
     sigla = models.CharField(max_length=200, null=False, default="FC")
     link = models.CharField(max_length=200, null=False, default="https://ciencias.ulisboa.pt/")
+
+    def __str__(self):
+        return self.name
 
 
 class Course(models.Model):
@@ -92,9 +97,12 @@ class Course(models.Model):
     credits_numberByYear = models.CharField(max_length=200, null=True)  # 1:60|2:60|3:60 #exepto minicursos
     duration = models.IntegerField(null=True)  # semesters
     timetable = models.CharField(max_length=200, null=True)  # Diurno
-    coordinator = models.OneToOneField(SystemUser, on_delete=models.SET_NULL, null=True)
+    coordinator = models.OneToOneField(SystemUser, limit_choices_to={'role__role' : 'Professor'}, on_delete=models.SET_NULL, null=True)
 
     # o coordenador é um professor qualquer, nao precisa de dar nenhuma aula das cadeiras desse curso
+
+    def __str__(self):
+        return self.name
 
     def get_coordinator_name(self):
         detalhesOBJ = PersonalInfo.objects.get(user=self.coordinator)
@@ -106,8 +114,8 @@ class Course(models.Model):
 
 class Course_MiniCourse(models.Model):
     # para ser unico: course, miniCourse, semestres
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
-    miniCourse = models.ForeignKey(Course, related_name="miniCourso", on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, limit_choices_to={'grau' : 'Licenciatura'}, on_delete=models.CASCADE)
+    miniCourse = models.ForeignKey(Course, related_name="miniCourso", limit_choices_to={'grau__in' : ['Minor', 'Formação', 'Optativas']}, on_delete=models.CASCADE)
     credits_number = models.IntegerField(null=True)
     year = models.IntegerField(default=0)  # 1,2,3,4..
     semestres = models.CharField(max_length=200, null=True)  # o mini curso tem cadeiras em q semestres?
@@ -134,27 +142,39 @@ class Course_MiniCourse(models.Model):
             lstSem = self.semestres.split(",")
             return lstSem[0] + " semestre/" + lstSem[1] + " semestre"
 
+    def __str__(self):
+        return self.miniCourse.name + " | " + self.course.name
+
 
 class SystemUser_Faculdade(models.Model):  # ex: fazer minor em outra faculdade
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
     faculdade = models.ForeignKey(Faculdade, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.user.user + " | " + self.faculdade.name
 
 
 class Course_Faculdade(models.Model):
     faculdade = models.ForeignKey(Faculdade, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.course.name + " | " + self.faculdade.name
+
 
 class Course_SchoolYear(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.course.name + " | " + self.school_year.begin + "/" + self.school_year.end
+
 
 class SystemUserCourse(models.Model):
     # para ser unico: user, course ou user, anoLectivoDeInício
     # users que estao inscritos em cursos
-    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(SystemUser, limit_choices_to={'role__role' : 'Aluno'}, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, limit_choices_to={'grau' : 'Licenciatura'}, on_delete=models.CASCADE)
     estadoActual = models.CharField(max_length=200, null=True)  # ex: matriculado
     anoLectivoDeInício = models.CharField(max_length=200, null=True)  # ex: 2016/2017
     anoActual = models.IntegerField(null=True)  # 1ºano, 2ºano, ...
@@ -168,10 +188,16 @@ class SystemUserCourse(models.Model):
     def get_course_name(self):
         return self.course.name
 
+    def __str__(self):
+        return self.course.name
+
 
 class SystemUser_SchoolYear(models.Model):
     school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
     user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.school_year.begin + "/" + self.school_year.end
 
 
 class Subject(models.Model):
@@ -179,7 +205,7 @@ class Subject(models.Model):
     # id -> codigo
     name = models.CharField(max_length=200, unique=True)
     credits_number = models.IntegerField(default=6)
-    regente = models.ForeignKey(SystemUser, on_delete=models.SET_NULL, null=True)
+    regente = models.ForeignKey(SystemUser, limit_choices_to={'role__role' : 'Professor'}, on_delete=models.SET_NULL, null=True)
 
     # o regente da cadeira tem q dar aulas dessa cadeira
     # um professor pode ser regente em mais de uma cadeira
@@ -229,6 +255,9 @@ class CourseSubject(models.Model):
     def get_subject_credits(self):
         return self.subject.credits_number
 
+    def __str__(self):
+        return self.subject.name
+
 
 class Lesson(models.Model):
     # para ser unico: subject, type, turma, week_day
@@ -241,7 +270,7 @@ class Lesson(models.Model):
     hour = models.CharField(max_length=200, null=True)
     duration = models.CharField(max_length=200, null=True)
     room = models.ForeignKey(Room, on_delete=models.SET_NULL, null=True)
-    professor = models.ForeignKey(SystemUser, on_delete=models.CASCADE, null=True)
+    professor = models.ForeignKey(SystemUser, limit_choices_to={'role__role' : 'Professor'}, on_delete=models.CASCADE, null=True)
     is_open = models.BooleanField(null=False, default=True)
 
     # school_year = models.ForeignKey(SchoolYear, on_delete=models.CASCADE, null=True)
@@ -259,7 +288,8 @@ class Lesson(models.Model):
         return self.room.room_number
 
     def __str__(self):
-        return self.subject.name
+        # return self.subject.name
+        return self.subject.name + ", " + self.type + ", " + self.week_day + ", " + self.hour
 
     class Meta:
         ordering = ['subject__name']
@@ -267,7 +297,7 @@ class Lesson(models.Model):
 
 class SystemUserSubject(models.Model):
     # para ser unico: user, subject, anoLetivo
-    user = models.ForeignKey(SystemUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(SystemUser, limit_choices_to={'role__role' : 'Aluno'}, on_delete=models.CASCADE)
     # 0 - pending, 1 - approved, 2 - not approved
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     subjSemestre = models.IntegerField(null=True)
@@ -286,10 +316,13 @@ class SystemUserSubject(models.Model):
     def get_anoLetivo(self):
         return self.anoLetivo.formatSchoolYear()
 
+    def __str__(self):
+        return self.subject.name
+
 
 class LessonSystemUser(models.Model):
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE)
-    systemUser = models.ForeignKey(SystemUser, on_delete=models.CASCADE)  # so alunos xd
+    systemUser = models.ForeignKey(SystemUser, limit_choices_to={'role__role': 'Aluno'}, on_delete=models.CASCADE)  # so alunos xd
     presente = models.BooleanField()
     date = models.DateField()
 
@@ -298,6 +331,9 @@ class LessonSystemUser(models.Model):
 
     def get_lesson_information(self):
         return self.lesson.get_lesson_detalhes()
+
+    def __str__(self):
+        return str(self.lesson.type) + str(self.lesson.turma)
 
 
 class SystemUserMensagens(models.Model):
@@ -316,4 +352,9 @@ class SystemUserMensagens(models.Model):
 
     def destinatario_fc(self):
         return self.destinatario.user  # ex: fc1085
+
+    def __str__(self):
+        return self.remetente.user + "|" + self.destinatario + "|" + self.turmaInicial + ">>" + self.turmaFinal + " " + self.is_accepted
+
+
 
